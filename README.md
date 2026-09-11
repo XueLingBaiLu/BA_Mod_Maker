@@ -11,7 +11,7 @@
 
 ---
 
-# BA Mod Maker — 断箭 Mod 制作工具 v1.8.53
+# BA Mod Maker — 断箭 Mod 制作工具 v1.8.54
 
 [English](#english) | [Русский](#russian)
 
@@ -20,7 +20,7 @@
 保存时**自动重新加密、保持原文件名**；同时支持把 Blender 插件导出的 **.bamod 素材包**
 （模型/皮肤/姿势）合并进游戏 bundle。
 
-配套 Blender 插件（`BA_Mod_Maker_blender_addon.zip`，v2.7.53）负责模型侧：
+配套 Blender 插件（`BA_Mod_Maker_blender_addon.zip`，v2.7.54）负责模型侧：
 提取游戏模型、可视化编辑挂载点、构建写回 .bamod、动画编辑、皮肤重涂。
 （注：早期版本的「步兵姿势/动画」功能已于 v1.8.52 整体移除。）
 

@@ -2,6 +2,27 @@
 更新日志 · Changelog · Журнал изменений
 ================================================================================
 
+## v1.8.54（BA_Mod_Maker v1.8.54 + Blender 插件 v2.7.54）—— ✅ 确认可用版（F15EX 导入已验证）
+
+【中文】
+- **本版内容 = v1.8.53 的修复** ✓，经**用户实测确认** ✓：导入 **F15EX** 不再报错 ✓、模型正常 ✓
+  修复的是：`NameError: name '_n_clips' is not defined`（`BAMOD_OT_ImportPrefab.execute` ✗）
+- **版本号提升到 v1.8.54**，作为**对外发布标记** ✓（v1.8.53 未发 Release ✓）
+- 其余与 v1.8.53 一致 ✓：⑥步兵姿势/步兵动画已整体移除 ✓、8 个面板功能完好 ✓
+
+【English】
+- This release contains the v1.8.53 fix, **confirmed working by the user** — importing an F15EX no longer
+  raises `NameError: name '_n_clips' is not defined`, and the model imports cleanly.
+- Version bumped to v1.8.54 as the public release marker (v1.8.53 was never published as a Release).
+- Everything else matches v1.8.53: the infantry pose/animation feature is fully removed; all 8 panels work.
+
+【Русский】
+- Релиз содержит исправление из v1.8.53, **подтверждённое пользователем**: импорт F15EX больше не вызывает
+  `NameError: name '_n_clips' is not defined`.
+- Версия поднята до v1.8.54 как публичная метка релиза.
+- Остальное совпадает с v1.8.53: раздел «поза/анимация пехоты» полностью удалён, все 8 панелей работают.
+
+
 ## v1.8.53（BA_Mod_Maker v1.8.53 + Blender 插件 v2.7.53）—— 修复 v1.8.52 引入的导入报错（`_n_clips`）
 
 【中文】

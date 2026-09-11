@@ -17,7 +17,7 @@
 bl_info = {
     "name": "BA Mod Maker（断箭模型工具）",
     "author": "BA Mod Maker",
-    "version": (2, 7, 53),  # AUTO-SYNC from version.py
+    "version": (2, 7, 54),  # AUTO-SYNC from version.py
     "blender": (4, 0, 0),
     "location": "3D View > 侧边栏 > BA Mod",
     "description": "提取游戏模型、可视化编辑挂载点、构建写回（全类型模型）",
