@@ -1,0 +1,11610 @@
+{
+ "Afterburner": {
+  "count": 30,
+  "parents": {
+   "body": 30
+  },
+  "components": {
+   "Transform": 30
+  },
+  "examples": [
+   "NPC_SU24M2",
+   "US_F15E",
+   "RU_SU33"
+  ]
+ },
+ "Aim1": {
+  "count": 1,
+  "parents": {
+   "anim_weapon_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MT-LB_dilemma"
+  ]
+ },
+ "Aim2": {
+  "count": 1,
+  "parents": {
+   "Aim1": 1
+  },
+  "components": {
+   "Transform": 1,
+   "PositionConstraint": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_MT-LB_dilemma"
+  ]
+ },
+ "AimL1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_Ch47"
+  ]
+ },
+ "AimL2": {
+  "count": 1,
+  "parents": {
+   "Door": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_Ch47"
+  ]
+ },
+ "AimR1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_Ch47"
+  ]
+ },
+ "AimR2": {
+  "count": 1,
+  "parents": {
+   "Door": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_Ch47"
+  ]
+ },
+ "AimTo": {
+  "count": 1,
+  "parents": {
+   "anim_turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MT-LB_dilemma"
+  ]
+ },
+ "Aim_1": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "Aim_1_1": {
+  "count": 1,
+  "parents": {
+   "weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "Aim_1_2": {
+  "count": 1,
+  "parents": {
+   "weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "Aim_2": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "Door": {
+  "count": 57,
+  "parents": {
+   "Entrances": 36,
+   "body": 21
+  },
+  "components": {
+   "Transform": 57
+  },
+  "examples": [
+   "RU_BMO1",
+   "US_AH-1W Super_Cobra",
+   "RU_MTLB_RPO"
+  ]
+ },
+ "Door (1)": {
+  "count": 31,
+  "parents": {
+   "Entrances": 31
+  },
+  "components": {
+   "Transform": 31
+  },
+  "examples": [
+   "RU_MTLB_RPO",
+   "US_M2A3",
+   "BALT_Vilkas"
+  ]
+ },
+ "Door (2)": {
+  "count": 1,
+  "parents": {
+   "Entrances": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_RSOV"
+  ]
+ },
+ "Door1": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_AN72P",
+   "RU_MTLB_Mortar",
+   "RU_KA29"
+  ]
+ },
+ "Door1_L": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_Mi24PN",
+   "RU_MI35",
+   "RU_MI24P"
+  ]
+ },
+ "Door1_R": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_MI24P",
+   "RU_Mi24PN",
+   "RU_MI24V_VP"
+  ]
+ },
+ "Door2": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_KA29",
+   "RU_MTLB_Mortar",
+   "RU_AN72P"
+  ]
+ },
+ "Door2_L": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_Mi24PN",
+   "RU_MI24K",
+   "RU_MI35"
+  ]
+ },
+ "Door2_R": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_MI24V_VP",
+   "RU_Mi24PN",
+   "RU_MI35"
+  ]
+ },
+ "DoorL": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_MTLB_IFV",
+   "RU_MTLB_SPAAG",
+   "RU_MTLB_RPO"
+  ]
+ },
+ "DoorR": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_MTLB_IFV",
+   "RU_MTLB_SPAAG",
+   "RU_MTLB_RPO"
+  ]
+ },
+ "Door_1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_Ch47"
+  ]
+ },
+ "Doors_Armored": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "US_HMMWV_gmv",
+   "BALT_HMMWV_BASE",
+   "US_HMMWV_BASE"
+  ]
+ },
+ "Doors_Armored2": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "US_HMMWV_BASE",
+   "US_HMMWV_gmv",
+   "BALT_HMMWV_BASE"
+  ]
+ },
+ "Doors_Armored3": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "US_HMMWV_gmv",
+   "BALT_HMMWV_BASE",
+   "US_HMMWV_BASE"
+  ]
+ },
+ "Doors_Base": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "BALT_HMMWV_BASE",
+   "US_HMMWV_BASE",
+   "US_HMMWV_gmv"
+  ]
+ },
+ "Doors_Base1": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_HMMWV_BASE",
+   "US_HMMWV_gmv",
+   "BALT_HMMWV_BASE"
+  ]
+ },
+ "Doors_Base2": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "BALT_HMMWV_BASE",
+   "US_HMMWV_BASE",
+   "US_HMMWV_gmv"
+  ]
+ },
+ "Engine": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_SU34",
+   "RU_SU35"
+  ]
+ },
+ "Engine 1000HP": {
+  "count": 1,
+  "parents": {
+   "RU_T90A": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_T90A"
+  ]
+ },
+ "Engine 830HP": {
+  "count": 1,
+  "parents": {
+   "RU_T90": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_T90"
+  ]
+ },
+ "Engine1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_SU35",
+   "RU_SU34"
+  ]
+ },
+ "Engine1_L": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "NPC_IL76MD",
+   "RU_IL76MD",
+   "US_B1B"
+  ]
+ },
+ "Engine1_R": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "NPC_IL76MD",
+   "RU_IL76MD",
+   "US_B1B"
+  ]
+ },
+ "Engine2_L": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "NPC_IL76MD",
+   "RU_IL76MD",
+   "US_B1B"
+  ]
+ },
+ "Engine2_R": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "NPC_IL76MD",
+   "US_B1B",
+   "RU_IL76MD"
+  ]
+ },
+ "EngineL": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_SU27SM"
+  ]
+ },
+ "EngineL_0": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_SU27SM"
+  ]
+ },
+ "EngineR": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_SU27SM"
+  ]
+ },
+ "EngineR_0": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_SU27SM"
+  ]
+ },
+ "Entrances": {
+  "count": 79,
+  "parents": {
+   "body": 79
+  },
+  "components": {
+   "Transform": 79,
+   "BoxCollider": 79
+  },
+  "examples": [
+   "US_MH47",
+   "RU_MI35",
+   "US_M2A3_BEV"
+  ]
+ },
+ "Hatch": {
+  "count": 3,
+  "parents": {
+   "turret_0": 1,
+   "body": 2
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_A222_Bereg",
+   "RU_BTR_MDM",
+   "RU_BMD4"
+  ]
+ },
+ "Hatch_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LAV_M_81"
+  ]
+ },
+ "Hatch_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LAV_M_81"
+  ]
+ },
+ "Hatch_R01": {
+  "count": 1,
+  "parents": {
+   "Hatch_R": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LAV_M_81"
+  ]
+ },
+ "Hatch_helper": {
+  "count": 1,
+  "parents": {
+   "special_reload": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM_9P148"
+  ]
+ },
+ "Hatch_optic": {
+  "count": 1,
+  "parents": {
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM_Kvartet"
+  ]
+ },
+ "LOD": {
+  "count": 13,
+  "parents": {
+   "Chassis": 6,
+   "(POLY FEW)_LODS-DON'T-DELETE-MANUALLY": 7
+  },
+  "components": {
+   "Transform": 13,
+   "MeshFilter": 13,
+   "MeshRenderer": 13
+  },
+  "examples": [
+   "RU_A222_Bereg",
+   "BALT_XA180",
+   "RU_MTSM"
+  ]
+ },
+ "LODCube": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MeshFilter": 1,
+   "MeshRenderer": 1
+  },
+  "examples": [
+   "RU_DT30PM"
+  ]
+ },
+ "Rotor_Mid": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_MQ1C",
+   "US_MQ1B"
+  ]
+ },
+ "Rotorangle_0": {
+  "count": 35,
+  "parents": {
+   "body": 35
+  },
+  "components": {
+   "Transform": 35
+  },
+  "examples": [
+   "US_MH60X",
+   "RU_MI26",
+   "RU_MI24V_VP"
+  ]
+ },
+ "Rotorangle_1": {
+  "count": 22,
+  "parents": {
+   "body": 22
+  },
+  "components": {
+   "Transform": 22
+  },
+  "examples": [
+   "RU_MI24V_VP",
+   "US_AH6",
+   "RU_MI8MTV2"
+  ]
+ },
+ "Seat": {
+  "count": 24,
+  "parents": {
+   "Seats": 24
+  },
+  "components": {
+   "Transform": 24,
+   "MonoBehaviour": 24
+  },
+  "examples": [
+   "RU_MI8_MTV5",
+   "US_CH53K",
+   "US_ACV"
+  ]
+ },
+ "Seat (1)": {
+  "count": 26,
+  "parents": {
+   "Seats": 26
+  },
+  "components": {
+   "Transform": 26,
+   "MonoBehaviour": 26
+  },
+  "examples": [
+   "RU_MI38T",
+   "RU_MI8MTV2",
+   "US_RSOV"
+  ]
+ },
+ "Seat (10)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_CV-22_b",
+   "US_LMTV_Warpig"
+  ]
+ },
+ "Seat (11)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_LMTV_Warpig",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (12)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (13)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (14)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (15)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_CV-22_b",
+   "US_MV-22_b"
+  ]
+ },
+ "Seat (16)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (17)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (18)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (19)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (2)": {
+  "count": 27,
+  "parents": {
+   "Seats": 27
+  },
+  "components": {
+   "Transform": 27,
+   "MonoBehaviour": 27
+  },
+  "examples": [
+   "US_M2A2",
+   "US_MH60M_IDAP",
+   "US_M2A3"
+  ]
+ },
+ "Seat (20)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (21)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (22)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (23)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (24)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (25)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (26)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (27)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (28)": {
+  "count": 1,
+  "parents": {
+   "Seats": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "Seat (3)": {
+  "count": 28,
+  "parents": {
+   "Seats": 28
+  },
+  "components": {
+   "Transform": 28,
+   "MonoBehaviour": 28
+  },
+  "examples": [
+   "RU_KA29",
+   "US_MH60X",
+   "RU_Mi8Cargo"
+  ]
+ },
+ "Seat (4)": {
+  "count": 15,
+  "parents": {
+   "Seats": 15
+  },
+  "components": {
+   "Transform": 15,
+   "MonoBehaviour": 15
+  },
+  "examples": [
+   "RU_MI8_MTV5",
+   "US_MH47",
+   "US_CH53K"
+  ]
+ },
+ "Seat (5)": {
+  "count": 9,
+  "parents": {
+   "Seats": 9
+  },
+  "components": {
+   "Transform": 9,
+   "MonoBehaviour": 9
+  },
+  "examples": [
+   "RU_KA29",
+   "US_LMTV_Warpig",
+   "US_MH47"
+  ]
+ },
+ "Seat (6)": {
+  "count": 12,
+  "parents": {
+   "Seats": 12
+  },
+  "components": {
+   "Transform": 12,
+   "MonoBehaviour": 12
+  },
+  "examples": [
+   "US_LMTV_Warpig",
+   "RU_BTR_MDM",
+   "US_MH47"
+  ]
+ },
+ "Seat (7)": {
+  "count": 6,
+  "parents": {
+   "Seats": 6
+  },
+  "components": {
+   "Transform": 6,
+   "MonoBehaviour": 6
+  },
+  "examples": [
+   "US_LMTV_Warpig",
+   "US_MH47",
+   "RU_BTR_MDM"
+  ]
+ },
+ "Seat (8)": {
+  "count": 5,
+  "parents": {
+   "Seats": 5
+  },
+  "components": {
+   "Transform": 5,
+   "MonoBehaviour": 5
+  },
+  "examples": [
+   "US_MH47",
+   "US_CV-22_b",
+   "US_LMTV_Warpig"
+  ]
+ },
+ "Seat (9)": {
+  "count": 3,
+  "parents": {
+   "Seats": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "RU_KA29",
+   "US_LMTV_Warpig",
+   "US_CV-22_b"
+  ]
+ },
+ "Seat1": {
+  "count": 5,
+  "parents": {
+   "Seats": 5
+  },
+  "components": {
+   "Transform": 5,
+   "MonoBehaviour": 5
+  },
+  "examples": [
+   "US_HMMWV_BASE",
+   "BALT_HMMWV_BASE",
+   "US_M1301_ISV"
+  ]
+ },
+ "Seat2": {
+  "count": 10,
+  "parents": {
+   "Seats": 10
+  },
+  "components": {
+   "Transform": 10,
+   "MonoBehaviour": 10
+  },
+  "examples": [
+   "US_STRYKER_ICV",
+   "US_HEMTT",
+   "RU_URAL4320_Federal"
+  ]
+ },
+ "Seat2 (1)": {
+  "count": 7,
+  "parents": {
+   "Seats": 7
+  },
+  "components": {
+   "Transform": 7,
+   "MonoBehaviour": 7
+  },
+  "examples": [
+   "US_HEMTT",
+   "US_HMMWV_gmv",
+   "US_HMMWV_BASE"
+  ]
+ },
+ "Seat2 (2)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_HMMWV_gmv",
+   "US_M1301_ISV"
+  ]
+ },
+ "Seat2 (3)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_HMMWV_gmv",
+   "US_M1301_ISV"
+  ]
+ },
+ "Seat2 (4)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_M1301_ISV",
+   "US_HMMWV_gmv"
+  ]
+ },
+ "Seat2 (5)": {
+  "count": 2,
+  "parents": {
+   "Seats": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_HMMWV_gmv",
+   "US_M1301_ISV"
+  ]
+ },
+ "SeatPoint": {
+  "count": 1,
+  "parents": {
+   "Driver_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Sarmat"
+  ]
+ },
+ "Seats": {
+  "count": 47,
+  "parents": {
+   "body": 47
+  },
+  "components": {
+   "Transform": 47
+  },
+  "examples": [
+   "US_STRYKER_ESV",
+   "RU_MI24P",
+   "US_m1288_base"
+  ]
+ },
+ "Smoke": {
+  "count": 7,
+  "parents": {
+   "Chassis": 4,
+   "RU_BMD2_M": 1,
+   "RU_BMD2_konkurs": 1,
+   "RU_BMD2_base": 1
+  },
+  "components": {
+   "Transform": 7,
+   "SkinnedMeshRenderer": 7
+  },
+  "examples": [
+   "US_HMMWV_LRAS3",
+   "US_HMMWV_TOW",
+   "RU_BMD2_M"
+  ]
+ },
+ "Track_L": {
+  "count": 22,
+  "parents": {
+   "Chassis": 22
+  },
+  "components": {
+   "Transform": 22,
+   "SkinnedMeshRenderer": 21,
+   "MeshFilter": 1,
+   "MeshRenderer": 1
+  },
+  "examples": [
+   "RU_ZSU-2-4",
+   "RU_MTLB_SPAAG",
+   "RU_DT30_Magnolia"
+  ]
+ },
+ "Track_R": {
+  "count": 22,
+  "parents": {
+   "Chassis": 22
+  },
+  "components": {
+   "Transform": 22,
+   "SkinnedMeshRenderer": 21,
+   "MeshFilter": 1,
+   "MeshRenderer": 1
+  },
+  "examples": [
+   "RU_ZSU-2-4",
+   "RU_MTLB_Mortar",
+   "RU_2S1"
+  ]
+ },
+ "VFXPoint_OnCMAbility": {
+  "count": 87,
+  "parents": {
+   "body": 80,
+   "root": 7
+  },
+  "components": {
+   "Transform": 87,
+   "MonoBehaviour": 87
+  },
+  "examples": [
+   "US_TrickMI24",
+   "US_F15EX",
+   "US_MH60X"
+  ]
+ },
+ "VFXPoint_OnSmokeAbility": {
+  "count": 127,
+  "parents": {
+   "body": 116,
+   "root": 7,
+   "US_M109A6": 1,
+   "RU_Derivatsiya": 1,
+   "RU_BMP1": 1,
+   "RU_BMP3_base": 1
+  },
+  "components": {
+   "Transform": 127,
+   "MonoBehaviour": 127
+  },
+  "examples": [
+   "RU_DT30_AA",
+   "BALT_FV107",
+   "RU_T90Razv"
+  ]
+ },
+ "VFX_1": {
+  "count": 93,
+  "parents": {
+   "root": 6,
+   "body": 87
+  },
+  "components": {
+   "Transform": 93
+  },
+  "examples": [
+   "US_MQ9",
+   "US_MC130H",
+   "US_AH6"
+  ]
+ },
+ "VFX_2": {
+  "count": 93,
+  "parents": {
+   "body": 87,
+   "root": 6
+  },
+  "components": {
+   "Transform": 93
+  },
+  "examples": [
+   "RU_MIG29SMT",
+   "US_F22",
+   "US_MH60X"
+  ]
+ },
+ "VFX_2 (1)": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_CV-22_b"
+  ]
+ },
+ "VFX_3": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_CV-22_b",
+   "RU_TU160",
+   "US_MV-22_b"
+  ]
+ },
+ "VFX_AfterBurner_Inversion_L": {
+  "count": 25,
+  "parents": {
+   "body": 25
+  },
+  "components": {
+   "Transform": 25,
+   "PositionConstraint": 1
+  },
+  "examples": [
+   "NPC_SU57",
+   "RU_TU22M3",
+   "RU_SU27SM"
+  ]
+ },
+ "VFX_AfterBurner_Inversion_R": {
+  "count": 24,
+  "parents": {
+   "body": 24
+  },
+  "components": {
+   "Transform": 24,
+   "PositionConstraint": 1
+  },
+  "examples": [
+   "RU_SU24MP",
+   "NPC_F15EX",
+   "US_F15E"
+  ]
+ },
+ "VFX_Death": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "NPC_SU57",
+   "US_AH64E",
+   "US_AH64D"
+  ]
+ },
+ "VFX_Dust": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_RAH66"
+  ]
+ },
+ "VFX_Dust_FoamWater_BIG": {
+  "count": 2,
+  "parents": {
+   "US_Arleigh_Burke": 1,
+   "US_LHA_Damage": 1
+  },
+  "components": {
+   "Transform": 2,
+   "VisualEffect": 2,
+   "VFXRenderer": 2
+  },
+  "examples": [
+   "US_Arleigh_Burke",
+   "US_LHA_Damage"
+  ]
+ },
+ "VFX_FIRE_SMOKE_US_LHA_Damage": {
+  "count": 1,
+  "parents": {
+   "US_LHA_Damage": 1
+  },
+  "components": {
+   "Transform": 1,
+   "VisualEffect": 1,
+   "VFXRenderer": 1
+  },
+  "examples": [
+   "US_LHA_Damage"
+  ]
+ },
+ "VFX_FIRE_SMOKE_US_LHA_Damage_Fire": {
+  "count": 2,
+  "parents": {
+   "US_LHA6": 1,
+   "root": 1
+  },
+  "components": {
+   "Transform": 2,
+   "VisualEffect": 2,
+   "VFXRenderer": 2
+  },
+  "examples": [
+   "Destroyed_LHA",
+   "US_LHA_Damage"
+  ]
+ },
+ "VFX_GroundImpact": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "NPC_SU57"
+  ]
+ },
+ "VFX_Point_Turret_Fly": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_M1117_AAVP"
+  ]
+ },
+ "VFX_Potint_TurretFly": {
+  "count": 22,
+  "parents": {
+   "weapon_0_1": 2,
+   "body": 2,
+   "turret_0": 15,
+   "root": 2,
+   "anim_turret_0": 1
+  },
+  "components": {
+   "Transform": 22
+  },
+  "examples": [
+   "BALT_Leopard2A7",
+   "RU_2S3M1",
+   "RU_T72B3A"
+  ]
+ },
+ "VFX_inversion_trace_L": {
+  "count": 34,
+  "parents": {
+   "body": 29,
+   "Frontwing_main_L": 3,
+   "wing_front_L": 1,
+   "Wing_1L": 1
+  },
+  "components": {
+   "Transform": 34
+  },
+  "examples": [
+   "RU_MiG29K",
+   "US_EA6B_Prowler",
+   "US_F35B"
+  ]
+ },
+ "VFX_inversion_trace_R": {
+  "count": 34,
+  "parents": {
+   "body": 29,
+   "Frontwing_main_R1": 2,
+   "Wing_1R": 1,
+   "wing_front_R": 1,
+   "Frontwing_main_R": 1
+  },
+  "components": {
+   "Transform": 34
+  },
+  "examples": [
+   "US_F16block70",
+   "US_FA18C",
+   "US_F16block52"
+  ]
+ },
+ "VFX_point": {
+  "count": 739,
+  "parents": {
+   "GBU56_LJDAM_LOD (10)": 1,
+   "MK82 (23)": 2,
+   "MK82_Snakeeye (16)": 2,
+   "MK82_Snakeeye (55)": 2,
+   "MK82 (9)": 2,
+   "MK82_Snakeeye (60)": 2,
+   "FAB1500T (13)": 2,
+   "RBK250_LOD (24)": 2,
+   "ODAB_500_LOD (32)": 2,
+   "fab_250 (10)": 2,
+   "RBK500_LOD (1)": 1,
+   "MK82_Snakeeye (52)": 2,
+   "ODAB_500_LOD (29)": 2,
+   "RBK250_LOD (3)": 2,
+   "RBK500_LOD (18)": 1,
+   "RBK250_LOD (35)": 1,
+   "Mk_84_LOD (12)": 1,
+   "MK82 (74)": 1,
+   "RBK250_LOD (8)": 2,
+   "RBK250_LOD (2)": 2,
+   "MK82 (79)": 1,
+   "KAB1500 (5)": 3,
+   "MK82 (24)": 2,
+   "FAB_500_LOD (11)": 1,
+   "GBU56_LJDAM_LOD (7)": 1,
+   "MK82_Snakeeye (14)": 2,
+   "fab_250 (12)": 2,
+   "ODAB_500_LOD (6)": 2,
+   "MK82_Snakeeye (68)": 2,
+   "fab_250 (18)": 2,
+   "MK82_Snakeeye (11)": 2,
+   "ODAB_500_LOD (14)": 2,
+   "fab_250 (27)": 2,
+   "MK82 (62)": 1,
+   "RBK250_LOD (25)": 2,
+   "fab_250 (8)": 2,
+   "AGM86 (8)": 1,
+   "MK82_Snakeeye (70)": 2,
+   "RBK500_LOD (36)": 1,
+   "Mk_84_LOD (14)": 1,
+   "MK82_Snakeeye (34)": 2,
+   "MK82_Snakeeye (69)": 2,
+   "MK82_Snakeeye (40)": 2,
+   "Mk_84_LOD (6)": 1,
+   "ODAB_500_LOD (15)": 2,
+   "MK82_Snakeeye (31)": 2,
+   "ODAB_500_LOD (34)": 2,
+   "RBK250_LOD (43)": 1,
+   "MK82_Snakeeye (29)": 2,
+   "AGM86 (12)": 1,
+   "RBK250_LOD (5)": 2,
+   "RBK500_LOD (2)": 1,
+   "MK82_Snakeeye (78)": 2,
+   "MK82 (51)": 1,
+   "MK82_Snakeeye (15)": 2,
+   "MK82_Snakeeye (4)": 2,
+   "Mk_84_LOD (2)": 1,
+   "MK82 (33)": 2,
+   "MK82 (22)": 2,
+   "FAB1500T (3)": 2,
+   "ODAB_500_LOD (26)": 2,
+   "MK82 (72)": 1,
+   "FAB_500_LOD (2)": 1,
+   "MK82 (5)": 2,
+   "ODAB_500_LOD (2)": 2,
+   "MK82 (43)": 2,
+   "RBK250_LOD (10)": 2,
+   "Mk_84_LOD (8)": 1,
+   "MK82 (8)": 2,
+   "RBK250_LOD (32)": 2,
+   "MK82 (12)": 2,
+   "fab_250 (22)": 2,
+   "MK82 (17)": 2,
+   "FAB9000": 1,
+   "RBK250_LOD (15)": 2,
+   "RBK250_LOD (20)": 2,
+   "RBK250_LOD (14)": 2,
+   "FAB1500T (4)": 4,
+   "MK82 (38)": 2,
+   "fab_250 (2)": 1,
+   "AGM86 (2)": 2,
+   "RBK250_LOD (29)": 2,
+   "MK82_Snakeeye (6)": 2,
+   "MK82_Snakeeye (72)": 2,
+   "RBK250_LOD (22)": 2,
+   "MK82_Snakeeye (41)": 2,
+   "ODAB_500_LOD (30)": 2,
+   "ODAB_500_LOD (5)": 2,
+   "RBK250_LOD (23)": 2,
+   "Mk_84_LOD (21)": 1,
+   "MK82_Snakeeye (54)": 2,
+   "ODAB_500_LOD (18)": 2,
+   "MK82_Snakeeye (23)": 2,
+   "ODAB_500_LOD (24)": 2,
+   "MK82_Snakeeye (84)": 1,
+   "ODAB_500_LOD (36)": 2,
+   "ODAB_500_LOD (17)": 2,
+   "B61_LOD": 2,
+   "FAB1500T": 2,
+   "KAB1500 (9)": 2,
+   "MK82_Snakeeye (7)": 2,
+   "ODAB_500_LOD (16)": 2,
+   "RBK250_LOD (7)": 2,
+   "fab_250 (30)": 2,
+   "RBK250_LOD (19)": 2,
+   "Mk_84_LOD": 1,
+   "MK82_Snakeeye (79)": 2,
+   "MK82 (2)": 1,
+   "RBK250_LOD (16)": 2,
+   "KAB1500": 3,
+   "RBK250_LOD (31)": 2,
+   "MK82 (64)": 1,
+   "MK82_Snakeeye (37)": 2,
+   "RBK250_LOD (26)": 2,
+   "KAB1500 (2)": 3,
+   "ODAB_500_LOD (25)": 2,
+   "MK82 (25)": 2,
+   "KAB1500 (6)": 3,
+   "MK82_Snakeeye (33)": 2,
+   "MK82_Snakeeye (1)": 2,
+   "RBK250_LOD (39)": 1,
+   "MK82_Snakeeye (80)": 2,
+   "fab_250 (6)": 1,
+   "MK82_Snakeeye (13)": 2,
+   "MK82_Snakeeye (67)": 2,
+   "MK82 (35)": 2,
+   "GBU56_LJDAM_LOD (3)": 1,
+   "MK82_Snakeeye (25)": 2,
+   "MK82 (29)": 2,
+   "MK82 (37)": 2,
+   "fab_250 (24)": 2,
+   "MK82_Snakeeye (49)": 2,
+   "MK82_Snakeeye (81)": 2,
+   "RBK500_LOD (29)": 1,
+   "RBK250_LOD (17)": 2,
+   "MK82 (18)": 2,
+   "MK82_Snakeeye (9)": 2,
+   "MK82 (30)": 2,
+   "MK82_Snakeeye (66)": 2,
+   "MK82_Snakeeye (35)": 2,
+   "FAB1500T (10)": 2,
+   "MK82_Snakeeye (44)": 2,
+   "FAB1500T (7)": 3,
+   "GBU56_LJDAM_LOD (1)": 1,
+   "AGM86 (6)": 2,
+   "FAB1500T (17)": 2,
+   "RBK250_LOD (27)": 2,
+   "ODAB_500_LOD (4)": 2,
+   "MK82_Snakeeye (42)": 2,
+   "MK82 (60)": 1,
+   "ODAB_500_LOD (27)": 2,
+   "KAB1500 (12)": 2,
+   "MK82 (67)": 1,
+   "MK82 (41)": 2,
+   "MK82_Snakeeye (43)": 2,
+   "ODAB_500_LOD (13)": 2,
+   "KAB1500 (4)": 3,
+   "MK82_Snakeeye (47)": 2,
+   "fab_250 (25)": 2,
+   "MK82 (4)": 2,
+   "RBK500_LOD (37)": 1,
+   "FAB1500T (11)": 2,
+   "MK82_Snakeeye (27)": 2,
+   "Mk_84_LOD (15)": 1,
+   "RBK250_LOD (4)": 2,
+   "AGM86 (1)": 2,
+   "MK82 (61)": 1,
+   "ODAB_500_LOD (22)": 2,
+   "FAB1500T (5)": 4,
+   "RBK250_LOD (13)": 2,
+   "RBK500_LOD (21)": 1,
+   "fab_250 (17)": 2,
+   "FAB_500_LOD (5)": 1,
+   "MK82_Snakeeye (83)": 2,
+   "MK82 (28)": 2,
+   "RBK500_LOD (24)": 1,
+   "ODAB_500_LOD (40)": 1,
+   "ODAB_500_LOD (9)": 2,
+   "Mk_84_LOD (18)": 1,
+   "MK82 (27)": 2,
+   "RBK500_LOD (33)": 1,
+   "FAB_500_LOD (6)": 1,
+   "RBK500_LOD (39)": 1,
+   "ODAB_500_LOD (33)": 2,
+   "FAB_500_LOD (21)": 1,
+   "MK82 (42)": 2,
+   "ODAB_500_LOD (23)": 2,
+   "FAB1500T (6)": 3,
+   "RBK250_LOD (9)": 2,
+   "ODAB_500_LOD (7)": 2,
+   "fab_250 (35)": 1,
+   "MK82_Snakeeye (63)": 2,
+   "FAB_500_LOD (14)": 1,
+   "MK82_Snakeeye (87)": 1,
+   "FAB1500T (9)": 2,
+   "KAB1500 (1)": 3,
+   "MK82_Snakeeye (77)": 2,
+   "RBK250_LOD (42)": 1,
+   "MK82 (65)": 1,
+   "KAB1500 (14)": 1,
+   "Mk_84_LOD (17)": 1,
+   "fab_250 (34)": 1,
+   "RBK250_LOD (33)": 1,
+   "GBU56_LJDAM_LOD (15)": 1,
+   "RBK250_LOD (6)": 2,
+   "FAB1500T (12)": 2,
+   "MK82_Snakeeye (18)": 2,
+   "RBK250_LOD (12)": 2,
+   "FAB_500_LOD (15)": 1,
+   "RBK500_LOD (20)": 1,
+   "MK82 (46)": 2,
+   "MK82_Snakeeye (17)": 2,
+   "MK82_Snakeeye (64)": 2,
+   "fab_250 (33)": 1,
+   "MK82 (36)": 2,
+   "GBU56_LJDAM_LOD (11)": 1,
+   "RBK500_LOD (23)": 1,
+   "MK82 (39)": 2,
+   "MK82 (40)": 2,
+   "MK82_Snakeeye (53)": 2,
+   "MK82_Snakeeye (24)": 2,
+   "fab_250 (19)": 2,
+   "ODAB_500_LOD (38)": 2,
+   "MK82_Snakeeye (30)": 2,
+   "fab_250 (16)": 2,
+   "ODAB_500_LOD (41)": 1,
+   "fab_250 (31)": 2,
+   "GBU56_LJDAM_LOD (8)": 1,
+   "RBK500_LOD (31)": 1,
+   "Mk_84_LOD (5)": 1,
+   "ODAB_500_LOD (35)": 2,
+   "MK82 (6)": 2,
+   "RBK500_LOD (28)": 1,
+   "MK82 (16)": 2,
+   "MK82_Snakeeye (50)": 2,
+   "Mk_84_LOD (9)": 1,
+   "AGM86 (5)": 1,
+   "RBK250_LOD (28)": 2,
+   "FAB_500_LOD (10)": 1,
+   "RBK250_LOD (1)": 2,
+   "MK82_Snakeeye (93)": 1,
+   "MK82 (3)": 2,
+   "MK82_Snakeeye (71)": 2,
+   "ODAB_500_LOD (10)": 2,
+   "MK82_Snakeeye (61)": 2,
+   "MK82_Snakeeye (88)": 1,
+   "AGM86 (3)": 2,
+   "ODAB_500_LOD (28)": 2,
+   "RBK500_LOD (15)": 1,
+   "ODAB_500_LOD (31)": 2,
+   "MK82 (10)": 2,
+   "fab_250 (1)": 1,
+   "MK82 (15)": 2,
+   "RBK500_LOD (26)": 1,
+   "MK82_Snakeeye (59)": 2,
+   "MK82_Snakeeye (86)": 1,
+   "fab_250 (5)": 1,
+   "MK82 (47)": 2,
+   "MK82 (73)": 1,
+   "FAB_500_LOD (3)": 1,
+   "KAB1500 (3)": 3,
+   "GBU56_LJDAM_LOD (4)": 1,
+   "AGM86 (13)": 1,
+   "MK82 (44)": 2,
+   "MK82 (20)": 2,
+   "MK82 (54)": 1,
+   "ODAB_500_LOD (37)": 2,
+   "FAB_500_LOD (19)": 1,
+   "RBK500_LOD (11)": 1,
+   "KAB1500 (7)": 3,
+   "RBK500_LOD (35)": 1,
+   "MK82 (19)": 2,
+   "AGM86 (7)": 2,
+   "MK82_Snakeeye (46)": 2,
+   "ODAB_500_LOD": 2,
+   "RBK250_LOD (30)": 2,
+   "GBU56_LJDAM_LOD (5)": 1,
+   "RBK500_LOD (4)": 1,
+   "Mk_84_LOD (19)": 1,
+   "MK82_Snakeeye (38)": 2,
+   "Mk_84_LOD (3)": 1,
+   "fab_250 (21)": 2,
+   "RBK500_LOD (32)": 1,
+   "ODAB_500_LOD (12)": 2,
+   "MK82 (77)": 1,
+   "MK82 (75)": 1,
+   "MK82_Snakeeye (51)": 2,
+   "FAB_500_LOD (7)": 1,
+   "MK82 (31)": 2,
+   "fab_250 (11)": 2,
+   "FAB1500T (18)": 1,
+   "MK82_Snakeeye (65)": 2,
+   "GBU56_LJDAM_LOD (6)": 1,
+   "MK82_Snakeeye (20)": 2,
+   "MK82_Snakeeye (10)": 2,
+   "KAB1500 (10)": 2,
+   "MK82 (34)": 2,
+   "MK82_Snakeeye (45)": 2,
+   "KAB1500 (13)": 2,
+   "MK82 (57)": 1,
+   "MK82 (53)": 1,
+   "AGM86 (4)": 2,
+   "RBK500_LOD (13)": 1,
+   "MK82_Snakeeye (74)": 2,
+   "MK82 (58)": 1,
+   "fab_250 (15)": 2,
+   "RBK500_LOD (3)": 1,
+   "fab_250 (29)": 2,
+   "MK82_Snakeeye (2)": 2,
+   "fab_250 (23)": 2,
+   "RBK250_LOD (41)": 1,
+   "MK82_Snakeeye (95)": 1,
+   "FAB_500_LOD (1)": 1,
+   "RBK250_LOD (37)": 1,
+   "MK82 (11)": 2,
+   "MK82 (59)": 1,
+   "MK82_Snakeeye (73)": 2,
+   "Mk_84_LOD (11)": 1,
+   "fab_250 (38)": 1,
+   "fab_250 (9)": 2,
+   "RBK250_LOD (36)": 1,
+   "MK82_Snakeeye (3)": 2,
+   "GBU56_LJDAM_LOD (14)": 1,
+   "RBK500_LOD (6)": 1,
+   "MK82_Snakeeye (82)": 2,
+   "MK82 (45)": 2,
+   "RBK500_LOD (38)": 1,
+   "MK82 (55)": 1,
+   "MK82 (52)": 1,
+   "RBK500_LOD (8)": 1,
+   "MK82 (56)": 1,
+   "GBU56_LJDAM_LOD (12)": 1,
+   "KAB1500 (8)": 2,
+   "fab_250 (14)": 2,
+   "Mk_84_LOD (20)": 1,
+   "MK82 (71)": 1,
+   "RBK500_LOD (5)": 1,
+   "fab_250 (4)": 1,
+   "FAB_500_LOD (8)": 1,
+   "FAB1500T (8)": 2,
+   "ODAB_500_LOD (21)": 2,
+   "RBK500_LOD (14)": 1,
+   "FAB1500T (1)": 2,
+   "fab_250 (20)": 2,
+   "MK82 (50)": 1,
+   "GBU56_LJDAM_LOD (13)": 1,
+   "MK82_Snakeeye (26)": 2,
+   "fab_250 (13)": 2,
+   "MK82 (48)": 1,
+   "MK82_Snakeeye (28)": 2,
+   "Mk_84_LOD (23)": 1,
+   "fab_250 (39)": 1,
+   "RBK500_LOD (16)": 1,
+   "MK82 (69)": 1,
+   "MK82_Snakeeye (19)": 2,
+   "MK82_Snakeeye (5)": 2,
+   "MK82 (21)": 2,
+   "RBK250_LOD (21)": 2,
+   "MK82_Snakeeye (90)": 1,
+   "Mk_84_LOD (4)": 1,
+   "AGM86": 2,
+   "FAB1500T (2)": 2,
+   "Mk_84_LOD (10)": 1,
+   "FAB_500_LOD (9)": 1,
+   "GBU56_LJDAM_LOD": 1,
+   "ODAB_500_LOD (1)": 2,
+   "MK82_Snakeeye (21)": 2,
+   "MK82 (26)": 2,
+   "ODAB_500_LOD (19)": 2,
+   "FAB3000": 1,
+   "MK82_Snakeeye (32)": 2,
+   "RBK250_LOD (40)": 1,
+   "MK82_Snakeeye (39)": 2,
+   "ODAB_500_LOD (8)": 2,
+   "MK82 (49)": 1,
+   "MK82_Snakeeye (8)": 2,
+   "RBK500_LOD (19)": 1,
+   "MK82 (7)": 2,
+   "GBU56_LJDAM_LOD (9)": 1,
+   "MK82_Snakeeye (48)": 2,
+   "MK82 (68)": 1,
+   "MK82": 1,
+   "FAB1500T (15)": 1,
+   "MK82 (78)": 1,
+   "MK82 (32)": 2,
+   "MK82_Snakeeye (89)": 1,
+   "fab_250 (28)": 2,
+   "Mk_84_LOD (1)": 1,
+   "FAB9000 (1)": 1,
+   "RBK500_LOD (25)": 1,
+   "MK82_Snakeeye (56)": 2,
+   "MK82_Snakeeye (36)": 2,
+   "MK82_Snakeeye (58)": 2,
+   "RBK250_LOD (34)": 1,
+   "RBK250_LOD": 2,
+   "ODAB_500_LOD (3)": 2,
+   "fab_250 (40)": 1,
+   "MK82_Snakeeye (12)": 2,
+   "fab_250 (3)": 1,
+   "MK82 (70)": 1,
+   "FAB_500_LOD (20)": 1,
+   "RBK500_LOD (22)": 1,
+   "MK82 (13)": 2,
+   "RBK500_LOD (9)": 1,
+   "RBK250_LOD (38)": 1,
+   "fab_250 (37)": 1,
+   "RBK500_LOD (30)": 1,
+   "RBK500_LOD (12)": 1,
+   "FAB_500_LOD (18)": 1,
+   "FAB_500_LOD (4)": 1,
+   "MK82_Snakeeye (57)": 2,
+   "FAB1500T (16)": 2,
+   "ODAB_500_LOD (11)": 2,
+   "FAB1500T (14)": 2,
+   "MK82_Snakeeye (92)": 1,
+   "body": 1,
+   "MK82_Snakeeye (62)": 2,
+   "ODAB_500_LOD (20)": 2,
+   "MK82_Snakeeye (75)": 2,
+   "MK82 (66)": 1,
+   "AGM86 (9)": 1,
+   "RBK500_LOD (17)": 1,
+   "fab_250 (7)": 1,
+   "RBK250_LOD (11)": 2,
+   "RBK500_LOD (27)": 1,
+   "MK82_Snakeeye (76)": 2,
+   "MK82 (14)": 2,
+   "RBK500_LOD (34)": 1,
+   "fab_250 (26)": 2,
+   "RBK250_LOD (18)": 2,
+   "RBK500_LOD": 1,
+   "Mk_84_LOD (13)": 1,
+   "MK82_Snakeeye (85)": 1,
+   "Mk_84_LOD (16)": 1,
+   "MK82_Snakeeye (94)": 1,
+   "ODAB_500_LOD (39)": 2,
+   "MK82 (1)": 1,
+   "FAB_500_LOD (13)": 1,
+   "FAB_500_LOD (16)": 1,
+   "MK82_Snakeeye (91)": 1,
+   "Mk_84_LOD (7)": 1,
+   "MK82_Snakeeye": 2,
+   "RBK500_LOD (10)": 1,
+   "FAB_500_LOD (17)": 1,
+   "fab_250 (32)": 1,
+   "fab_250 (36)": 1,
+   "RBK500_LOD (7)": 1,
+   "MK82 (63)": 1,
+   "ODAB_500_LOD (42)": 1,
+   "MK82 (76)": 1,
+   "Mk_84_LOD (22)": 1,
+   "FAB_500_LOD (12)": 1,
+   "AGM86 (10)": 1,
+   "MK82_Snakeeye (22)": 2,
+   "AGM86 (11)": 1,
+   "GBU56_LJDAM_LOD (2)": 1,
+   "KAB1500 (11)": 2,
+   "fab_250": 1,
+   "FAB_500_LOD": 1,
+   "ODAB_500_LOD (43)": 1
+  },
+  "components": {
+   "Transform": 739
+  },
+  "examples": [
+   "GBU56_16",
+   "Mk82_45",
+   "B1B Mk82"
+  ]
+ },
+ "VFX_point_L": {
+  "count": 1,
+  "parents": {
+   "LeftHand": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "ZOM_Fatty1"
+  ]
+ },
+ "VFX_point_R": {
+  "count": 1,
+  "parents": {
+   "RightHand": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "ZOM_Fatty1"
+  ]
+ },
+ "Wheel_wreek": {
+  "count": 1,
+  "parents": {
+   "Destroyed_Wheel_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "LODGroup": 1
+  },
+  "examples": [
+   "Destroyed_Wheel_0"
+  ]
+ },
+ "aim": {
+  "count": 1,
+  "parents": {
+   "weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "aim_helper": {
+  "count": 6,
+  "parents": {
+   "anim_weapon_0": 3,
+   "turret_0": 3
+  },
+  "components": {
+   "Transform": 6,
+   "AimConstraint": 5
+  },
+  "examples": [
+   "BALT_M1064",
+   "RU_KA52K",
+   "RU_2S5"
+  ]
+ },
+ "aim_object": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BTR_MDM"
+  ]
+ },
+ "aim_point": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "PositionConstraint": 1
+  },
+  "examples": [
+   "US_M163_PIVADS"
+  ]
+ },
+ "anim_Weapon_1": {
+  "count": 1,
+  "parents": {
+   "anim_turret_1": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_BMD_KornetD_8"
+  ]
+ },
+ "anim_fold": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_CHRIZANTEMA"
+  ]
+ },
+ "anim_hatch_00": {
+  "count": 1,
+  "parents": {
+   "anim_turret": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_KORNET"
+  ]
+ },
+ "anim_hatch_01": {
+  "count": 2,
+  "parents": {
+   "anim_hatch_01": 1,
+   "anim_turret": 1
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_KORNET"
+  ]
+ },
+ "anim_hatch_02": {
+  "count": 1,
+  "parents": {
+   "anim_hatch_00": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_KORNET"
+  ]
+ },
+ "anim_radar_00": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_CHRIZANTEMA"
+  ]
+ },
+ "anim_radar_01": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_CHRIZANTEMA"
+  ]
+ },
+ "anim_recoil_0": {
+  "count": 1,
+  "parents": {
+   "anim_weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "US_stryker_mc"
+  ]
+ },
+ "anim_turret": {
+  "count": 8,
+  "parents": {
+   "body": 8
+  },
+  "components": {
+   "Transform": 8,
+   "ParentConstraint": 3,
+   "MonoBehaviour": 1,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "US_STRYKER_ATGM",
+   "RU_CHRIZANTEMA",
+   "RU_MTLB_shturm"
+  ]
+ },
+ "anim_turret_0": {
+  "count": 17,
+  "parents": {
+   "Fold": 1,
+   "body": 15,
+   "L_Mech": 1
+  },
+  "components": {
+   "Transform": 17,
+   "ParentConstraint": 11,
+   "RotationConstraint": 2,
+   "BoxCollider": 1
+  },
+  "examples": [
+   "RU_MT-LB_dilemma",
+   "US_LAV_AT",
+   "US_LMTV_SLAMRAAM_4"
+  ]
+ },
+ "anim_turret_1": {
+  "count": 1,
+  "parents": {
+   "R_Mech": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_BMD_KornetD_8"
+  ]
+ },
+ "anim_weapon": {
+  "count": 7,
+  "parents": {
+   "helper": 1,
+   "special_anim": 1,
+   "turret_0": 1,
+   "turret_1": 1,
+   "turret_anim": 1,
+   "anim_turret": 2
+  },
+  "components": {
+   "Transform": 7,
+   "ParentConstraint": 3,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_KORNET",
+   "US_STRYKER_ATGM",
+   "RU_2S7M_Malka"
+  ]
+ },
+ "anim_weapon_0": {
+  "count": 21,
+  "parents": {
+   "anim_turret_0": 15,
+   "turret_0": 1,
+   "special_0": 2,
+   "Carrycot": 1,
+   "aniim_turret_0": 1,
+   "helper_main_ turret": 1
+  },
+  "components": {
+   "Transform": 21,
+   "ParentConstraint": 12,
+   "RotationConstraint": 4
+  },
+  "examples": [
+   "S-300V4_2PU",
+   "RU_MT-LB_Virgo",
+   "RU_Tochka_U"
+  ]
+ },
+ "antena": {
+  "count": 13,
+  "parents": {
+   "body": 13
+  },
+  "components": {
+   "Transform": 13
+  },
+  "examples": [
+   "RU_BTR82A",
+   "RU_BRDM3_80A",
+   "RU_NonaSVK"
+  ]
+ },
+ "antena002": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BRDM3_82A",
+   "RU_BRDM3_80A"
+  ]
+ },
+ "antena2": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_DT30_Magnolia"
+  ]
+ },
+ "antena3": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_DT30_TOR",
+   "RU_DT30_PANTSIR"
+  ]
+ },
+ "antena_0": {
+  "count": 11,
+  "parents": {
+   "turret_0": 8,
+   "body": 3
+  },
+  "components": {
+   "Transform": 11
+  },
+  "examples": [
+   "RU_T_14",
+   "RU_Tunguska_SV",
+   "RU_Tunguska_M1"
+  ]
+ },
+ "antena_01": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM"
+  ]
+ },
+ "antena_1": {
+  "count": 7,
+  "parents": {
+   "turret_0": 5,
+   "body": 2
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "RU_Tunguska_SV",
+   "US_M109A7_HMG",
+   "!DEPREC! US_LAV_M"
+  ]
+ },
+ "antena_2": {
+  "count": 5,
+  "parents": {
+   "turret_0": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_M109_IRONTHUNDER",
+   "US_M109A7_AGL",
+   "US_M109A6"
+  ]
+ },
+ "antena_L": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_LAV_M_81",
+   "US_LAV_L",
+   "US_LAV_AT"
+  ]
+ },
+ "antena_R": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_M1117_M1200",
+   "US_LAV_L",
+   "US_LAV_M_81"
+  ]
+ },
+ "antenna": {
+  "count": 53,
+  "parents": {
+   "turret_0": 29,
+   "body": 24
+  },
+  "components": {
+   "Transform": 53
+  },
+  "examples": [
+   "RU_T90Razv_Kord",
+   "US_AAVP7A1",
+   "RU_Reostat"
+  ]
+ },
+ "antenna.001": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BUKM2"
+  ]
+ },
+ "antenna00": {
+  "count": 12,
+  "parents": {
+   "turret_0": 12
+  },
+  "components": {
+   "Transform": 12
+  },
+  "examples": [
+   "US_M2A3_APS",
+   "US_M3A3_APS",
+   "US_M6_Linebacker_A4"
+  ]
+ },
+ "antenna01": {
+  "count": 12,
+  "parents": {
+   "turret_0": 12
+  },
+  "components": {
+   "Transform": 12
+  },
+  "examples": [
+   "US_M6_Linebacker_A3",
+   "US_M2A3_BEV_APS",
+   "US_M2A3_APS"
+  ]
+ },
+ "antenna02": {
+  "count": 5,
+  "parents": {
+   "turret_0": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_M7_BFIST_ERA",
+   "US_M2A3_APS",
+   "US_M2A3_ERA"
+  ]
+ },
+ "antenna03": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_M2A3",
+   "US_M2A3_BEV",
+   "US_M6_Linebacker_A4"
+  ]
+ },
+ "antenna04": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_M7_BFIST"
+  ]
+ },
+ "antenna1": {
+  "count": 7,
+  "parents": {
+   "turret_0": 4,
+   "body": 3
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "RU_BTR90_Bakhcha",
+   "BALT_CR9037",
+   "RU_MTLB_shturm"
+  ]
+ },
+ "antenna1_1": {
+  "count": 1,
+  "parents": {
+   "antenna1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_shturm"
+  ]
+ },
+ "antenna2": {
+  "count": 4,
+  "parents": {
+   "turret_0": 2,
+   "body": 2
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "BALT_CR9037",
+   "BALT_FV107",
+   "US_MATV"
+  ]
+ },
+ "antennaSDM": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_SPRUT_SDM"
+  ]
+ },
+ "antenna_0": {
+  "count": 23,
+  "parents": {
+   "turret_0": 15,
+   "body": 8
+  },
+  "components": {
+   "Transform": 23
+  },
+  "examples": [
+   "US_M1A2SEP",
+   "US_AMPV",
+   "US_M1_ABV_M2"
+  ]
+ },
+ "antenna_00": {
+  "count": 4,
+  "parents": {
+   "turret_0": 3,
+   "body": 1
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_Derivatsiya_57mm",
+   "RU_ZUBR",
+   "US_M8XM35"
+  ]
+ },
+ "antenna_01": {
+  "count": 16,
+  "parents": {
+   "body": 8,
+   "turret_0": 8
+  },
+  "components": {
+   "Transform": 16
+  },
+  "examples": [
+   "RU_BMOT",
+   "RU_BMD_KornetD",
+   "US_LAV_AD_Hydra"
+  ]
+ },
+ "antenna_02": {
+  "count": 6,
+  "parents": {
+   "turret_0": 2,
+   "body": 4
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "US_LAV_AD_Hydra",
+   "US_LAV_AD_Stinger",
+   "RU_MashinaS_MRU"
+  ]
+ },
+ "antenna_03": {
+  "count": 7,
+  "parents": {
+   "body": 5,
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "RU_MashinaS_MRU",
+   "RU_Reostat",
+   "RU_BRM3K_PRP5"
+  ]
+ },
+ "antenna_04": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_MashinaS_MRU",
+   "RU_BRM3K_PRP5"
+  ]
+ },
+ "antenna_05": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BRM3K_PRP5",
+   "RU_MashinaS_MRU"
+  ]
+ },
+ "antenna_1": {
+  "count": 20,
+  "parents": {
+   "turret_0": 14,
+   "body": 6
+  },
+  "components": {
+   "Transform": 20
+  },
+  "examples": [
+   "US_M1A1HC",
+   "US_M1A2C",
+   "US_M1A2SEP2"
+  ]
+ },
+ "antenna_2": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_M113A3",
+   "US_AMPV_MCV",
+   "US_AMPV"
+  ]
+ },
+ "antenna_3": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_M113A3",
+   "US_m981_fist",
+   "US_M901A3"
+  ]
+ },
+ "antenna_Armored": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_HIMARS",
+   "US_LMTV"
+  ]
+ },
+ "antenna_Armored_1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LMTV",
+   "US_HIMARS"
+  ]
+ },
+ "antenna_Base": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LMTV",
+   "US_HIMARS"
+  ]
+ },
+ "antenna_Base_1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LMTV",
+   "US_HIMARS"
+  ]
+ },
+ "antenna_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_ZUBR"
+  ]
+ },
+ "antenna_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_ZUBR"
+  ]
+ },
+ "barrel_T": {
+  "count": 1,
+  "parents": {
+   "weapon_T": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_2s4"
+  ]
+ },
+ "barrel_helper_T": {
+  "count": 1,
+  "parents": {
+   "weapon_T": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_2s4"
+  ]
+ },
+ "body": {
+  "count": 672,
+  "parents": {
+   "root": 659,
+   "root_scale": 7,
+   "body": 4,
+   "roo": 1,
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 672,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_UAZ469_SPG",
+   "RU_T80U",
+   "RU_BTR_D_SkrezhetM"
+  ]
+ },
+ "body12": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MI8_MTV5"
+  ]
+ },
+ "body2": {
+  "count": 3,
+  "parents": {
+   "Chassis": 3
+  },
+  "components": {
+   "Transform": 3,
+   "SkinnedMeshRenderer": 3
+  },
+  "examples": [
+   "US_AC130U",
+   "US_AH-1W Super_Cobra",
+   "US_AC130J"
+  ]
+ },
+ "body_F35": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_F35A"
+  ]
+ },
+ "body_Main": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_MH47"
+  ]
+ },
+ "body_base": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "!DEPREC! US_LMVT"
+  ]
+ },
+ "body_chassis": {
+  "count": 2,
+  "parents": {
+   "Chassis": 2
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_AC130U",
+   "US_AC130J"
+  ]
+ },
+ "body_helper": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_SPAAG_ZU23"
+  ]
+ },
+ "body_main": {
+  "count": 3,
+  "parents": {
+   "Chassis": 3
+  },
+  "components": {
+   "Transform": 3,
+   "SkinnedMeshRenderer": 3
+  },
+  "examples": [
+   "RU_SU25",
+   "RU_MI26",
+   "RU_TU142"
+  ]
+ },
+ "body_main1": {
+  "count": 2,
+  "parents": {
+   "Chassis": 2
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "RU_Sarmat",
+   "!DEPREC! US_LAV_M"
+  ]
+ },
+ "body_radio_low": {
+  "count": 4,
+  "parents": {
+   "low": 4
+  },
+  "components": {
+   "Transform": 4,
+   "SkinnedMeshRenderer": 4
+  },
+  "examples": [
+   "RU_Morskaya_Senior",
+   "RU_Morskaya_RPG",
+   "RU_Morskaya_Lider"
+  ]
+ },
+ "bodymesh": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_RAH66"
+  ]
+ },
+ "death": {
+  "count": 198,
+  "parents": {
+   "body": 147,
+   "root": 33,
+   "RU_Derivatsiya": 1,
+   "RU_T72B_Base": 1,
+   "RU_T72B3A": 1,
+   "RU_T72B3": 1,
+   "RU_T90Razv": 1,
+   "RU_T80": 1,
+   "RU_T90A": 1,
+   "US_M1A1FEP": 1,
+   "RU_BMP1": 1,
+   "RU_T_14": 1,
+   "RU_T90M": 1,
+   "RU_T90": 1,
+   "US_M8Thunderbolt": 1,
+   "US_M109A6": 1,
+   "RU_T80U": 1,
+   "RU_TyphoonVDV": 1,
+   "US_M1_ABV": 1,
+   "BALT_Leopard2A7": 1
+  },
+  "components": {
+   "Transform": 198
+  },
+  "examples": [
+   "US_STRYKER_SHORAD",
+   "US_HMMWV_Avenger",
+   "US_STRYKER_ICV"
+  ]
+ },
+ "death (1)": {
+  "count": 5,
+  "parents": {
+   "body": 4,
+   "root": 1
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_DT30PM",
+   "RU_DT30_Magnolia",
+   "NPC_Leopard2_Traincart"
+  ]
+ },
+ "death (2)": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "NPC_Leopard2_Traincart"
+  ]
+ },
+ "death_1": {
+  "count": 2,
+  "parents": {
+   "root": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_ZUBR",
+   "US_LCAC"
+  ]
+ },
+ "death_2": {
+  "count": 2,
+  "parents": {
+   "root": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LCAC",
+   "RU_ZUBR"
+  ]
+ },
+ "door": {
+  "count": 11,
+  "parents": {
+   "body": 9,
+   "helper_01": 1,
+   "Ramp": 1
+  },
+  "components": {
+   "Transform": 11
+  },
+  "examples": [
+   "RU_Bumerang",
+   "US_PLS_Back",
+   "BALT_CR9037"
+  ]
+ },
+ "door1": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "Iskander_tube",
+   "Iskander_Klub",
+   "Iskander_rocket"
+  ]
+ },
+ "door2": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "Iskander_tube",
+   "Iskander_Klub",
+   "Iskander_rocket"
+  ]
+ },
+ "door_0": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_MH60X",
+   "US_CH53",
+   "US_CH53K"
+  ]
+ },
+ "door_1": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_CH53K",
+   "US_MH60X",
+   "US_RAH66"
+  ]
+ },
+ "door_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "door_L_Rear": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "door_L_Rear_01": {
+  "count": 1,
+  "parents": {
+   "door_L_Rear": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "door_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "door_R_Rear": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "door_R_Rear_01": {
+  "count": 1,
+  "parents": {
+   "door_R_Rear": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "door_Rear": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Mi8_AMTSh"
+  ]
+ },
+ "dust": {
+  "count": 17,
+  "parents": {
+   "body": 15,
+   "root": 2
+  },
+  "components": {
+   "Transform": 17
+  },
+  "examples": [
+   "US_TrickMI24",
+   "RU_MI26",
+   "US_CH53K"
+  ]
+ },
+ "dust1": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_MH47",
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "dust2": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_MH47",
+   "US_MV-22_b",
+   "US_CV-22_b"
+  ]
+ },
+ "dust_left": {
+  "count": 4,
+  "parents": {
+   "body": 3,
+   "root": 1
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_BRM3K",
+   "RU_UAZ469",
+   "RU_BRDM"
+  ]
+ },
+ "dust_left_1": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_CRAM",
+   "US_PATRIOT_PAC2",
+   "US_PATRIOT_PAC3"
+  ]
+ },
+ "dust_left_1 (1)": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_CRAM"
+  ]
+ },
+ "dust_left_3": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_PATRIOT_PAC3MSE",
+   "US_PATRIOT_PAC2",
+   "US_PATRIOT_PAC3"
+  ]
+ },
+ "dust_point_1": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_URAL4320_Federal",
+   "RU_BM_21_Grad",
+   "RU_URAL4320_Guntruck"
+  ]
+ },
+ "dust_point_1 (1)": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_URAL4320_Federal",
+   "RU_URAL4320_Guntruck"
+  ]
+ },
+ "dust_point_2": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_BM_21_Grad",
+   "RU_URAL4320_Federal",
+   "RU_URAL4320_Guntruck"
+  ]
+ },
+ "dust_point_2 (1)": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_URAL4320_Federal",
+   "RU_URAL4320_Guntruck"
+  ]
+ },
+ "dust_point_left": {
+  "count": 169,
+  "parents": {
+   "body": 150,
+   "root": 16,
+   "RU_BMP1": 1,
+   "US_M109A6": 1,
+   "RU_Derivatsiya": 1
+  },
+  "components": {
+   "Transform": 169
+  },
+  "examples": [
+   "US_M1A2SEP",
+   "US_Trick_T14",
+   "US_M8Thunderbolt"
+  ]
+ },
+ "dust_point_left (1)": {
+  "count": 6,
+  "parents": {
+   "root": 1,
+   "body": 5
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "RU_DT30_Magnolia",
+   "RU_DT30_AA",
+   "US_MTV"
+  ]
+ },
+ "dust_point_left_fw": {
+  "count": 9,
+  "parents": {
+   "body": 8,
+   "root": 1
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "US_HEMTT",
+   "RU_s350",
+   "US_LVSR"
+  ]
+ },
+ "dust_point_right": {
+  "count": 167,
+  "parents": {
+   "body": 148,
+   "root": 16,
+   "US_M109A6": 1,
+   "RU_BMP1": 1,
+   "RU_Derivatsiya": 1
+  },
+  "components": {
+   "Transform": 167
+  },
+  "examples": [
+   "RU_BMO1",
+   "RU_BMD_KornetD",
+   "US_PLS"
+  ]
+ },
+ "dust_point_right (1)": {
+  "count": 6,
+  "parents": {
+   "body": 5,
+   "root": 1
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "US_MTVR",
+   "RU_URAL532301",
+   "US_MTV"
+  ]
+ },
+ "dust_point_right_fw": {
+  "count": 9,
+  "parents": {
+   "body": 8,
+   "root": 1
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "RU_S300PM",
+   "US_HEMTT",
+   "US_LVSR"
+  ]
+ },
+ "dust_pont_right": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "BALT_Unimog",
+   "RU_KamAZ43501"
+  ]
+ },
+ "dust_right": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_BRDM",
+   "RU_BRM3K",
+   "RU_BRDM_ATGM"
+  ]
+ },
+ "dust_right_1": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_PATRIOT_PAC3",
+   "US_CRAM",
+   "US_PATRIOT_PAC2"
+  ]
+ },
+ "dust_right_1 (1)": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_CRAM"
+  ]
+ },
+ "dust_right_3": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_PATRIOT_PAC3",
+   "US_PATRIOT_PAC3MSE",
+   "US_PATRIOT_PAC2"
+  ]
+ },
+ "dust_rigth": {
+  "count": 1,
+  "parents": {
+   "root": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_UAZ469"
+  ]
+ },
+ "engine": {
+  "count": 9,
+  "parents": {
+   "body": 9
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "US_RQ4B",
+   "US_RQ7",
+   "US_F16block70"
+  ]
+ },
+ "engine1_L": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_TU160",
+   "RU_TU22M3",
+   "US_F22"
+  ]
+ },
+ "engine1_R": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_F22",
+   "RU_TU22M3",
+   "RU_TU160"
+  ]
+ },
+ "engine2_L": {
+  "count": 7,
+  "parents": {
+   "engine_L": 5,
+   "body": 2
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_FA18C",
+   "US_F22",
+   "RU_SU33"
+  ]
+ },
+ "engine2_R": {
+  "count": 7,
+  "parents": {
+   "engine_R": 5,
+   "body": 2
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_FA18D",
+   "US_F22",
+   "US_FA18C"
+  ]
+ },
+ "engine_L": {
+  "count": 10,
+  "parents": {
+   "body": 10
+  },
+  "components": {
+   "Transform": 10
+  },
+  "examples": [
+   "RU_SU57",
+   "US_FA18C",
+   "RU_MiG29K"
+  ]
+ },
+ "engine_R": {
+  "count": 10,
+  "parents": {
+   "body": 10
+  },
+  "components": {
+   "Transform": 10
+  },
+  "examples": [
+   "RU_MiG29K",
+   "RU_SU33",
+   "RU_SU57"
+  ]
+ },
+ "engineer": {
+  "count": 7,
+  "parents": {
+   "group2": 7
+  },
+  "components": {
+   "Transform": 7,
+   "SkinnedMeshRenderer": 7
+  },
+  "examples": [
+   "US_MARINE_grenadier",
+   "US_MARINE_Machinegun",
+   "US_MARINE_Radio"
+  ]
+ },
+ "exhaust": {
+  "count": 148,
+  "parents": {
+   "body": 136,
+   "root": 10,
+   "US_M109A6": 1,
+   "RU_Derivatsiya": 1
+  },
+  "components": {
+   "Transform": 148
+  },
+  "examples": [
+   "US_IFAV",
+   "US_M3A3",
+   "RU_T14"
+  ]
+ },
+ "exhaust (1)": {
+  "count": 6,
+  "parents": {
+   "body": 3,
+   "root": 3
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "RU_DT30_AA",
+   "RU_DT30PM",
+   "RU_Reostat"
+  ]
+ },
+ "exhaust_1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_KA29"
+  ]
+ },
+ "exhaust_2": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_KA29"
+  ]
+ },
+ "exhaust__left": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_MH47",
+   "US_Ch47"
+  ]
+ },
+ "exhaust_left": {
+  "count": 56,
+  "parents": {
+   "body": 51,
+   "root": 3,
+   "LRot": 2
+  },
+  "components": {
+   "Transform": 56
+  },
+  "examples": [
+   "RU_MI8MTV2",
+   "BALT_XA180",
+   "US_UH-1Y"
+  ]
+ },
+ "exhaust_left (1)": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_CH53K",
+   "US_CH53"
+  ]
+ },
+ "exhaust_left_1": {
+  "count": 30,
+  "parents": {
+   "body": 30
+  },
+  "components": {
+   "Transform": 30
+  },
+  "examples": [
+   "NPC_SU24M2",
+   "US_C130_SuperHercules",
+   "RU_TU142"
+  ]
+ },
+ "exhaust_left_1 (1)": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B52H"
+  ]
+ },
+ "exhaust_left_2": {
+  "count": 13,
+  "parents": {
+   "body": 13
+  },
+  "components": {
+   "Transform": 13
+  },
+  "examples": [
+   "RU_TU142",
+   "US_MC130H",
+   "RU_IL76MD"
+  ]
+ },
+ "exhaust_right": {
+  "count": 65,
+  "parents": {
+   "body": 56,
+   "root": 6,
+   "RRot": 2,
+   "RU_BMP1": 1
+  },
+  "components": {
+   "Transform": 65
+  },
+  "examples": [
+   "RU_MI8MTV2",
+   "US_FA18C",
+   "US_AV8B_Plus"
+  ]
+ },
+ "exhaust_right_1": {
+  "count": 30,
+  "parents": {
+   "body": 30
+  },
+  "components": {
+   "Transform": 30
+  },
+  "examples": [
+   "RU_TU160",
+   "US_B52H",
+   "RU_TU22M3"
+  ]
+ },
+ "exhaust_right_1 (1)": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B52H"
+  ]
+ },
+ "exhaust_right_2": {
+  "count": 13,
+  "parents": {
+   "body": 13
+  },
+  "components": {
+   "Transform": 13
+  },
+  "examples": [
+   "US_AC130_Base",
+   "US_KC130_HarvestHawk",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "fire_y": {
+  "count": 30,
+  "parents": {
+   "RU_T80": 1,
+   "root": 18,
+   "turret_0": 6,
+   "RU_T90A": 1,
+   "RU_T72B3": 1,
+   "RU_T72B3A": 1,
+   "US_M1_ABV": 1,
+   "BALT_Leopard2A7": 1
+  },
+  "components": {
+   "Transform": 30
+  },
+  "examples": [
+   "RU_T80",
+   "US_M8XM291",
+   "US_M1A2SEP2"
+  ]
+ },
+ "fire_z": {
+  "count": 29,
+  "parents": {
+   "weapon_0_1": 20,
+   "recoil_0_0": 1,
+   "BALT_Leopard2A7": 1,
+   "root": 1,
+   "weapon_0_1_2": 5,
+   "RU_T90A": 1
+  },
+  "components": {
+   "Transform": 29
+  },
+  "examples": [
+   "RU_T90",
+   "RU_T90Razv_PKT",
+   "RU_T72B"
+  ]
+ },
+ "hatch": {
+  "count": 28,
+  "parents": {
+   "body": 17,
+   "turret_0": 11
+  },
+  "components": {
+   "Transform": 28
+  },
+  "examples": [
+   "US_M901A3",
+   "RU_T80U",
+   "US_M2A3"
+  ]
+ },
+ "hatch renamed to stop animation": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BMP2_NoATGM"
+  ]
+ },
+ "hatch01": {
+  "count": 4,
+  "parents": {
+   "hatch": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_BMP1PG",
+   "RU_BMP1P",
+   "RU_BMP1AM"
+  ]
+ },
+ "hatch1": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "Iskander_Klub",
+   "Iskander_tube",
+   "Iskander_rocket"
+  ]
+ },
+ "hatch2": {
+  "count": 6,
+  "parents": {
+   "body": 4,
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "Iskander_rocket",
+   "RU_BMP2G",
+   "Iskander_tube"
+  ]
+ },
+ "hatch3": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_shturm"
+  ]
+ },
+ "hatch_0": {
+  "count": 4,
+  "parents": {
+   "turret_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_BRM3KBase",
+   "RU_Reostat",
+   "RU_TOR_M2"
+  ]
+ },
+ "hatch_01": {
+  "count": 3,
+  "parents": {
+   "turret_0": 2,
+   "helper_01": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_TOR_M1",
+   "RU_PRP4",
+   "RU_Kurganets57mm"
+  ]
+ },
+ "hatch_1": {
+  "count": 3,
+  "parents": {
+   "turret_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_Reostat",
+   "RU_TOR_M2",
+   "RU_DT30_TOR"
+  ]
+ },
+ "hatch_11": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOR_M1"
+  ]
+ },
+ "hatchet": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_MATV"
+  ]
+ },
+ "hatchet1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_MATV"
+  ]
+ },
+ "helper": {
+  "count": 52,
+  "parents": {
+   "weapon_0_1": 1,
+   "weapon_0": 11,
+   "turret_0": 28,
+   "anim_turret_0": 4,
+   "turret_1": 3,
+   "body": 2,
+   "anim_turret": 1,
+   "anim_weapon_0": 1,
+   "helper_01": 1
+  },
+  "components": {
+   "Transform": 52,
+   "RotationConstraint": 10,
+   "PositionConstraint": 1
+  },
+  "examples": [
+   "RU_PT76",
+   "US_AH64D",
+   "RU_TOS1"
+  ]
+ },
+ "helper constraint": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BMD2_konkurs"
+  ]
+ },
+ "helper_0": {
+  "count": 3,
+  "parents": {
+   "turret_0": 3
+  },
+  "components": {
+   "Transform": 3,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_T72B",
+   "RU_T1530mm",
+   "RU_T72BA"
+  ]
+ },
+ "helper_00": {
+  "count": 4,
+  "parents": {
+   "turret_0": 4
+  },
+  "components": {
+   "Transform": 4,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "RU_T80UM",
+   "RU_Kurganets57mm",
+   "RU_T80UA"
+  ]
+ },
+ "helper_01": {
+  "count": 16,
+  "parents": {
+   "turret_0": 10,
+   "helper": 2,
+   "weapon_0_1": 4
+  },
+  "components": {
+   "Transform": 16,
+   "RotationConstraint": 6,
+   "AimConstraint": 2
+  },
+  "examples": [
+   "RU_T80U",
+   "RU_T80UM",
+   "RU_Toros_S60"
+  ]
+ },
+ "helper_02": {
+  "count": 4,
+  "parents": {
+   "turret_0": 2,
+   "weapon_0": 2
+  },
+  "components": {
+   "Transform": 4,
+   "RotationConstraint": 2,
+   "AimConstraint": 2
+  },
+  "examples": [
+   "RU_B19",
+   "RU_Toros_S60",
+   "URAL4320_С60"
+  ]
+ },
+ "helper_add_ turret": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_m981_fist"
+  ]
+ },
+ "helper_constrain": {
+  "count": 1,
+  "parents": {
+   "helper_01": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_B19"
+  ]
+ },
+ "helper_main_ turret": {
+  "count": 3,
+  "parents": {
+   "turret_0": 2,
+   "anim_turret_0": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_m981_fist",
+   "US_M901A3",
+   "US_LAV_AT"
+  ]
+ },
+ "joint01_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint01_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint02_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint02_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint03_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint03_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint04_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint04_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_B2"
+  ]
+ },
+ "joint1_L": {
+  "count": 15,
+  "parents": {
+   "body": 14,
+   "wing_front_L": 1
+  },
+  "components": {
+   "Transform": 15
+  },
+  "examples": [
+   "RU_SU25T",
+   "US_B2",
+   "RU_MiG29K"
+  ]
+ },
+ "joint1_R": {
+  "count": 15,
+  "parents": {
+   "body": 14,
+   "wing_front_R": 1
+  },
+  "components": {
+   "Transform": 15
+  },
+  "examples": [
+   "RU_Orion",
+   "RU_SU25",
+   "RU_TU160"
+  ]
+ },
+ "joint2_L": {
+  "count": 15,
+  "parents": {
+   "body": 14,
+   "wing_front_L": 1
+  },
+  "components": {
+   "Transform": 15
+  },
+  "examples": [
+   "US_FA18D",
+   "RU_MiG29K",
+   "RU_Forpost"
+  ]
+ },
+ "joint2_R": {
+  "count": 15,
+  "parents": {
+   "body": 14,
+   "wing_front_R": 1
+  },
+  "components": {
+   "Transform": 15
+  },
+  "examples": [
+   "US_B2",
+   "US_B52H",
+   "RU_Korsar"
+  ]
+ },
+ "joint3_L": {
+  "count": 9,
+  "parents": {
+   "body": 8,
+   "wing_front_L": 1
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "US_B52H",
+   "RU_SU25T",
+   "RU_SU33"
+  ]
+ },
+ "joint3_R": {
+  "count": 9,
+  "parents": {
+   "body": 8,
+   "wing_front_R": 1
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "RU_SU25",
+   "US_EA6B_Prowler",
+   "US_B2"
+  ]
+ },
+ "joint4_L": {
+  "count": 3,
+  "parents": {
+   "wing_front_L": 1,
+   "body": 2
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_TU160",
+   "US_B2",
+   "US_EA6B_Prowler"
+  ]
+ },
+ "joint4_R": {
+  "count": 3,
+  "parents": {
+   "body": 2,
+   "wing_front_R": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_EA6B_Prowler",
+   "RU_TU160",
+   "US_B2"
+  ]
+ },
+ "lod0": {
+  "count": 10,
+  "parents": {
+   "Big_Plane_0": 3,
+   "Small_Plane_0": 3,
+   "crash_lod": 4
+  },
+  "components": {
+   "Transform": 10,
+   "MeshFilter": 10,
+   "MeshRenderer": 10
+  },
+  "examples": [
+   "Landing_crash_Big_0",
+   "US_LHA_Damage",
+   "Destroyed_LHA"
+  ]
+ },
+ "lod1": {
+  "count": 10,
+  "parents": {
+   "crash_lod": 4,
+   "Big_Plane_0": 3,
+   "Small_Plane_0": 3
+  },
+  "components": {
+   "Transform": 10,
+   "MeshFilter": 10,
+   "MeshRenderer": 10
+  },
+  "examples": [
+   "Destroyed_LHA",
+   "US_LHA_Damage",
+   "Landing_crash_Big_0"
+  ]
+ },
+ "lod2": {
+  "count": 4,
+  "parents": {
+   "crash_lod": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MeshFilter": 4,
+   "MeshRenderer": 4
+  },
+  "examples": [
+   "Destroyed_LHA",
+   "US_LHA_Damage"
+  ]
+ },
+ "lod_0": {
+  "count": 705,
+  "parents": {
+   "Army_Gunner": 39,
+   "Marine_rifle2": 16,
+   "Marine_Driver": 8,
+   "Pilot_Helicopter": 118,
+   "Pilot_Plane": 84,
+   "US_ScoutSniper_rifle2": 1,
+   "US_ArmyScout_Radio": 1,
+   "US_Army_granade": 68,
+   "LAV": 1,
+   "RU_Motostrelki_Driver": 72,
+   "RU_GRUSpetsnaz_grenade": 1,
+   "RU_VDV_MG": 2,
+   "RU_VDV_driver": 20,
+   "US_MarineRaider_grenade": 2,
+   "US_ForceRecon_grenade": 1,
+   "RU_VDVSpetsnaz_MG": 2,
+   "RU_Gornostrelki_Granade": 1,
+   "Airborne_Gunner": 3,
+   "RU_VDV_heavy": 4,
+   "T14": 1,
+   "Abrams": 4,
+   "DT30": 1,
+   "BMP3": 1,
+   "Marine_Gunner": 5,
+   "wreek_3": 1,
+   "M548": 1,
+   "RU_Conscript_MG": 1,
+   "US_RangerSniper": 1,
+   "RU_Motostrelki_rifle_heavy": 3,
+   "BTRD": 1,
+   "GreenBerets_Rifle3": 4,
+   "Chernye_Berety_officer": 1,
+   "Wheel_wreek": 1,
+   "M8": 1,
+   "Marine_rifle1": 4,
+   "SSO_rifle3": 2,
+   "US_Ranger_Rifle": 2,
+   "BMD": 1,
+   "Airborne_rifle1": 2,
+   "ZOM_Spitter": 2,
+   "RU_Motostrelki_rifle_light": 2,
+   "RU_Motostrelki_rifle": 1,
+   "RU_VDV_officer": 2,
+   "wreek_1": 1,
+   "US_Ranger_Granade": 1,
+   "Marksmen_rifle1": 1,
+   "RU_GRUSpetsnaz_rifle": 3,
+   "US_Ranger_Rifle1": 3,
+   "RU_Motostrelki_Officer": 1,
+   "GreenBerets_Rifle4": 1,
+   "Delta_Rifle1": 1,
+   "Wreek_tank": 2,
+   "RU_Morskaya_rifle": 2,
+   "RU_Gornostrelki_Officer": 1,
+   "RU_VDV_rifle_1": 3,
+   "Army_Engineer_rifle1": 1,
+   "US_ArmySniper_Rifle2": 2,
+   "US_Ranger_Driver": 12,
+   "RU_Motostrelki_Granade": 1,
+   "ZOM_Boomer_1": 2,
+   "AAVP": 1,
+   "BRDM": 1,
+   "Marine_officer": 1,
+   "ZOM_Runner_Fit": 1,
+   "RU_VDV_rifle_2": 4,
+   "RU_Motostrelki_rifle1": 2,
+   "RU_Conscript_officer": 1,
+   "Airborne_radio": 1,
+   "US_ForceRecon": 1,
+   "ZOM_Walker_Hoody": 2,
+   "US_MarineRaider_rifle2": 1,
+   "T15": 1,
+   "ACV": 1,
+   "BMP": 1,
+   "RU_Motostrelki_MG": 2,
+   "M270": 1,
+   "GreenBerets_Rifle1": 2,
+   "Bereg": 1,
+   "Civ_Civilian_1": 1,
+   "US_RangerRRC": 1,
+   "Morskaya_razvedka_granade": 1,
+   "MTVR": 1,
+   "US_ArmyScout_Officer": 1,
+   "BT3": 1,
+   "Marine_Engineer_rifle2": 1,
+   "US_Pararescuemen_Rifle2": 1,
+   "RU_Morskaya_grenade": 1,
+   "Bradley": 1,
+   "Marine_granade": 1,
+   "ZOM_Walker2": 1,
+   "US_Army_rifle": 3,
+   "Chernye_Berety_rifle": 2,
+   "BUKTOR": 1,
+   "RU_Razvedka_rifle": 1,
+   "RU_Morskaya_MG": 1,
+   "MTLB": 1,
+   "RU_Gornostrelki_MG": 1,
+   "Chernye_Berety_granade": 2,
+   "US_MarineRaider_officer": 1,
+   "Marine_rifle3": 1,
+   "Naparnik": 1,
+   "M109": 1,
+   "RU_Ingenery_sturmoviki_officer": 1,
+   "Delta_Rifle": 2,
+   "ZSU23": 1,
+   "US_Marine": 1,
+   "Marine_radio": 1,
+   "RU_VDV_rifle": 2,
+   "Spetsnaz_VMF_marksmen": 1,
+   "US_MarineRaider_radio": 1,
+   "US_Ranger_Officer": 1,
+   "Miller": 1,
+   "Morskaya_razvedka_rifle": 1,
+   "Marksmen_rifle": 1,
+   "US_Pararescuemen_Officer": 1,
+   "KamazVDV": 1,
+   "Morskaya_razvedka_mg": 1,
+   "Airborne_officer": 1,
+   "RU_VDVSpetsnaz_rifle": 1,
+   "US_RangerRRC_MG": 2,
+   "US_Pararescuemen_MG": 2,
+   "RU_Morskaya_officer": 1,
+   "ZOM_Walker1": 1,
+   "PDSS_rifle": 1,
+   "US_ScoutSniper": 1,
+   "RU_Ingenery_sturmoviki_rifle2": 2,
+   "ZOM_Runner_Red": 1,
+   "RU_VDV_grenade": 2,
+   "RU_Ingenery_sturmoviki_rifle3": 1,
+   "wreek_2": 2,
+   "ZOM_CorpseThrower": 1,
+   "Delta_Officer": 1,
+   "RU_VDVRazvedka_rifle": 1,
+   "Chernye_Berety_MG": 1,
+   "US_ArmySniper_Rifle1": 1,
+   "US_ArmyScout_Rifle1": 2,
+   "RU_GRUSpetsnaz_officer": 1,
+   "US_RangerRRC_Rifle1": 1,
+   "RU_VDVRazvedka_granade": 2,
+   "US_MarineRaider_rifle": 1,
+   "T72": 1,
+   "Delta_MG": 1,
+   "Airborne_Driver": 1,
+   "US_LHA6": 1,
+   "RU_VDVRazvedka_officer": 1,
+   "RU_Razvedka_granade": 1,
+   "RU_Razvedka_officer": 1,
+   "2S1": 1,
+   "MTLBU": 1,
+   "US_PARARESCUEMEN": 1,
+   "HMMWV": 1,
+   "Civ_Civilian_2": 1,
+   "RU_Gornostrelki_rifle1": 2,
+   "US_Army_radio": 1,
+   "Chernye_Berety_rifle1": 1,
+   "US_ArmyScout_Rifle2": 1,
+   "US_RangerRRC_Rifle": 1,
+   "RU_Conscript_rifle": 1,
+   "Civ_Civilian_4": 1,
+   "Sarmat": 1,
+   "US_Army_officer": 1,
+   "Kurganets": 1,
+   "US_DELTA_FORCE": 1,
+   "MDM": 1,
+   "US_ScoutSniper_rifle": 1,
+   "Marine_Engineer_officer": 1,
+   "Chernye_Berety_rifle2": 1,
+   "Airborne_rifle2": 2,
+   "SSO_rifle2": 1,
+   "Airborne_Granade": 1,
+   "RU_Gornostrelki_rifle": 1,
+   "CIV_PoliceW": 1,
+   "Snaipery_rifle2": 1,
+   "PDSS_rifle1": 1,
+   "US_Arleigh_Burke": 1,
+   "Snaipery_rifle": 1,
+   "Spetsnaz_VMF_officer": 1,
+   "SSO_rifle4": 1,
+   "US_Ranger_Radio": 1,
+   "AMPV": 1,
+   "BTR": 1,
+   "Spetsnaz_VMF_rifle": 1,
+   "US_Ranger_hvy": 1,
+   "US_ForceRecon_officer": 1,
+   "US_ForceRecon_rifle": 1,
+   "Marine_Engineer_rifle1": 1,
+   "US_Pararescuemen_Rifle1": 1,
+   "GreenBerets_Rifle2": 2,
+   "Iskander": 1,
+   "ZOM_Walker_Office": 1,
+   "M113": 1,
+   "US_RangerRRC_Officer": 1,
+   "SSO_rifle1": 1,
+   "Army_Engineer_rifle2": 1,
+   "CIV_PoliceM": 1,
+   "Civ_Civilian_3": 1,
+   "US_Army": 2,
+   "M60": 1,
+   "US_Ranger_MG": 1,
+   "Spetsnaz_VMF_rifle1": 1,
+   "LCAC": 1,
+   "US_Army_Engineer": 1,
+   "Army_Engineer_officer": 1,
+   "Driver_Gunner": 1,
+   "ZOM_Smoker_1": 1,
+   "RU_VDVSpetsnaz_officer": 1,
+   "PT76": 1,
+   "US_Ranger": 1,
+   "MTV": 1,
+   "Snaipery_rifle3": 1,
+   "US_Army_MG": 1,
+   "US_Placeholder": 1,
+   "RU_Ingenery_sturmoviki_rifle1": 1,
+   "Sprut": 1
+  },
+  "components": {
+   "Transform": 705,
+   "SkinnedMeshRenderer": 653,
+   "MeshFilter": 52,
+   "MeshRenderer": 52
+  },
+  "examples": [
+   "US_HEMTT_M240",
+   "BALT_LatvianReserve",
+   "US_LAV_M_120"
+  ]
+ },
+ "lod_1": {
+  "count": 704,
+  "parents": {
+   "Pilot_Helicopter": 118,
+   "Wreek_tank": 2,
+   "GreenBerets_Rifle3": 4,
+   "Army_Gunner": 39,
+   "RU_VDV_driver": 20,
+   "RU_VDV_heavy": 4,
+   "Airborne_radio": 1,
+   "M109": 1,
+   "US_Army_granade": 68,
+   "US_Ranger_Driver": 12,
+   "RU_Motostrelki_Driver": 72,
+   "US_ScoutSniper_rifle": 1,
+   "GreenBerets_Rifle2": 2,
+   "US_ArmyScout_Rifle1": 2,
+   "Pilot_Plane": 84,
+   "RU_Razvedka_rifle": 1,
+   "Marine_rifle2": 16,
+   "BMD": 1,
+   "Morskaya_razvedka_granade": 1,
+   "GreenBerets_Rifle4": 1,
+   "ZSU23": 1,
+   "RU_Ingenery_sturmoviki_rifle2": 2,
+   "ZOM_Runner_Fit": 1,
+   "Marine_Driver": 8,
+   "US_Pararescuemen_Rifle2": 1,
+   "Airborne_rifle2": 2,
+   "RU_VDV_rifle": 2,
+   "ZOM_Walker_Office": 1,
+   "RU_Motostrelki_Officer": 1,
+   "T14": 1,
+   "US_RangerSniper": 1,
+   "Sarmat": 1,
+   "RU_VDV_rifle_2": 4,
+   "AAVP": 1,
+   "ZOM_Boomer_1": 2,
+   "RU_VDV_rifle_1": 3,
+   "Airborne_Driver": 1,
+   "HMMWV": 1,
+   "AMPV": 1,
+   "LCAC": 1,
+   "RU_Motostrelki_Granade": 1,
+   "US_MarineRaider_grenade": 2,
+   "US_ForceRecon": 1,
+   "Wheel_wreek": 1,
+   "Delta_Rifle1": 1,
+   "SSO_rifle3": 2,
+   "Delta_Rifle": 2,
+   "US_Army_Engineer": 1,
+   "Spetsnaz_VMF_officer": 1,
+   "US_Ranger_Rifle1": 3,
+   "Spetsnaz_VMF_rifle": 1,
+   "Marksmen_rifle1": 1,
+   "Civ_Civilian_2": 1,
+   "RU_VDV_MG": 2,
+   "Morskaya_razvedka_mg": 1,
+   "US_LHA6": 1,
+   "wreek_2": 2,
+   "RU_Motostrelki_rifle1": 2,
+   "Delta_MG": 1,
+   "SSO_rifle1": 1,
+   "RU_GRUSpetsnaz_rifle": 3,
+   "US_RangerRRC_Rifle1": 1,
+   "MTVR": 1,
+   "US_ArmyScout_Rifle2": 1,
+   "Morskaya_razvedka_rifle": 1,
+   "Civ_Civilian_3": 1,
+   "US_Ranger_Radio": 1,
+   "US_MarineRaider_radio": 1,
+   "Iskander": 1,
+   "M8": 1,
+   "RU_VDVRazvedka_granade": 2,
+   "RU_Ingenery_sturmoviki_rifle3": 1,
+   "US_ForceRecon_grenade": 1,
+   "2S1": 1,
+   "RU_Gornostrelki_Officer": 1,
+   "US_Ranger_Granade": 1,
+   "Marine_Gunner": 5,
+   "ZOM_Runner_Red": 1,
+   "US_ArmyScout_Officer": 1,
+   "US_Marine": 1,
+   "Naparnik": 1,
+   "ZOM_Walker_Hoody": 2,
+   "US_ForceRecon_rifle": 1,
+   "Airborne_Gunner": 3,
+   "US_ScoutSniper_rifle2": 1,
+   "US_RangerRRC_Officer": 1,
+   "RU_Morskaya_MG": 1,
+   "RU_Motostrelki_MG": 2,
+   "ZOM_Walker2": 1,
+   "Civ_Civilian_1": 1,
+   "Abrams": 4,
+   "RU_VDVSpetsnaz_MG": 2,
+   "RU_Conscript_MG": 1,
+   "US_Pararescuemen_Officer": 1,
+   "Snaipery_rifle2": 1,
+   "GreenBerets_Rifle1": 2,
+   "M113": 1,
+   "Chernye_Berety_rifle2": 1,
+   "US_Ranger_MG": 1,
+   "RU_VDVSpetsnaz_rifle": 1,
+   "BTRD": 1,
+   "BUKTOR": 1,
+   "Marksmen_rifle": 1,
+   "US_MarineRaider_rifle2": 1,
+   "RU_GRUSpetsnaz_grenade": 1,
+   "Delta_Officer": 1,
+   "US_Ranger_Rifle": 2,
+   "T15": 1,
+   "US_RangerRRC_MG": 2,
+   "ZOM_CorpseThrower": 1,
+   "Army_Engineer_officer": 1,
+   "US_DELTA_FORCE": 1,
+   "US_ArmySniper_Rifle1": 1,
+   "KamazVDV": 1,
+   "RU_VDV_officer": 2,
+   "Kurganets": 1,
+   "Marine_rifle1": 4,
+   "MTLB": 1,
+   "Chernye_Berety_granade": 2,
+   "US_MarineRaider_rifle": 1,
+   "PDSS_rifle1": 1,
+   "ZOM_Spitter": 2,
+   "US_Ranger_hvy": 1,
+   "RU_Motostrelki_rifle_heavy": 3,
+   "RU_VDV_grenade": 2,
+   "LAV": 1,
+   "Chernye_Berety_rifle1": 1,
+   "Chernye_Berety_MG": 1,
+   "Marine_granade": 1,
+   "PT76": 1,
+   "Snaipery_rifle3": 1,
+   "Bereg": 1,
+   "Chernye_Berety_rifle": 2,
+   "Marine_Engineer_rifle1": 1,
+   "US_Army_MG": 1,
+   "RU_Morskaya_grenade": 1,
+   "US_Ranger": 1,
+   "Airborne_Granade": 1,
+   "ZOM_Smoker_1": 1,
+   "US_Army": 2,
+   "US_RangerRRC": 1,
+   "RU_VDVRazvedka_officer": 1,
+   "MTLBU": 1,
+   "RU_Gornostrelki_Granade": 1,
+   "Airborne_rifle1": 2,
+   "US_Pararescuemen_Rifle1": 1,
+   "Marine_rifle3": 1,
+   "BMP3": 1,
+   "RU_Gornostrelki_rifle": 1,
+   "CIV_PoliceM": 1,
+   "US_ArmyScout_Radio": 1,
+   "Marine_Engineer_officer": 1,
+   "BT3": 1,
+   "US_ScoutSniper": 1,
+   "PDSS_rifle": 1,
+   "DT30": 1,
+   "US_Placeholder": 1,
+   "US_ArmySniper_Rifle2": 2,
+   "Bradley": 1,
+   "US_Pararescuemen_MG": 2,
+   "Marine_officer": 1,
+   "RU_VDVSpetsnaz_officer": 1,
+   "RU_Ingenery_sturmoviki_rifle1": 1,
+   "Miller": 1,
+   "RU_Morskaya_rifle": 2,
+   "M548": 1,
+   "Chernye_Berety_officer": 1,
+   "CIV_PoliceW": 1,
+   "Airborne_officer": 1,
+   "Civ_Civilian_4": 1,
+   "BRDM": 1,
+   "Army_Engineer_rifle2": 1,
+   "RU_Motostrelki_rifle_light": 2,
+   "Spetsnaz_VMF_marksmen": 1,
+   "Spetsnaz_VMF_rifle1": 1,
+   "RU_Gornostrelki_rifle1": 2,
+   "US_Army_rifle": 3,
+   "RU_Conscript_officer": 1,
+   "Army_Engineer_rifle1": 1,
+   "BMP": 1,
+   "US_RangerRRC_Rifle": 1,
+   "SSO_rifle4": 1,
+   "RU_Motostrelki_rifle": 1,
+   "RU_Razvedka_officer": 1,
+   "US_ForceRecon_officer": 1,
+   "Sprut": 1,
+   "RU_Razvedka_granade": 1,
+   "US_Army_radio": 1,
+   "US_PARARESCUEMEN": 1,
+   "BTR": 1,
+   "RU_GRUSpetsnaz_officer": 1,
+   "RU_Morskaya_officer": 1,
+   "Marine_radio": 1,
+   "M60": 1,
+   "wreek_3": 1,
+   "SSO_rifle2": 1,
+   "RU_Ingenery_sturmoviki_officer": 1,
+   "Marine_Engineer_rifle2": 1,
+   "RU_Gornostrelki_MG": 1,
+   "MDM": 1,
+   "US_MarineRaider_officer": 1,
+   "ZOM_Walker1": 1,
+   "wreek_1": 1,
+   "MTV": 1,
+   "Snaipery_rifle": 1,
+   "RU_Conscript_rifle": 1,
+   "ACV": 1,
+   "US_Ranger_Officer": 1,
+   "RU_VDVRazvedka_rifle": 1,
+   "US_Army_officer": 1,
+   "Driver_Gunner": 1,
+   "M270": 1,
+   "T72": 1
+  },
+  "components": {
+   "Transform": 704,
+   "SkinnedMeshRenderer": 652,
+   "MeshFilter": 52,
+   "MeshRenderer": 52
+  },
+  "examples": [
+   "RU_MI24K",
+   "Destroyed_Tank_1",
+   "GreenBerets_Rifle3"
+  ]
+ },
+ "lod_1x1x1": {
+  "count": 171,
+  "parents": {
+   "Chassis": 40,
+   "Destroyed_MTLB": 1,
+   "(POLY FEW)_LODS-DON'T-DELETE-MANUALLY": 86,
+   "Destroyed_M60": 1,
+   "Destroyed_M113": 1,
+   "Destroyed_BT3": 1,
+   "Destroyed_MTVR": 1,
+   "Destroyed_Abrams": 4,
+   "Destroyed_2S1": 1,
+   "Destroyed_MTV": 1,
+   "Destroyed_T15": 1,
+   "Destroyed_MDM": 1,
+   "Destroyed_AAVP": 1,
+   "Destroyed_LAV": 1,
+   "Destroyed_PT76": 1,
+   "Destroyed_BUKTOR": 1,
+   "Destroyed_T72": 1,
+   "Destroyed_AMPV": 1,
+   "Destroyed_T14": 1,
+   "Destroyed_M270": 1,
+   "Destroyed_MTLBU": 1,
+   "Destroyed_KamazVDV": 1,
+   "Destroyed_BTRD": 1,
+   "Destroyed_Iskander": 1,
+   "Destroyed_ZSU23": 1,
+   "Destroyed_ACV": 1,
+   "Destroyed_LCAC": 1,
+   "Destroyed_Bradley": 1,
+   "Destroyed_Sprut": 1,
+   "Destroyed_BRDM": 1,
+   "Destroyed_Sarmat": 1,
+   "Destroyed_M8": 1,
+   "Destroyed_DT30": 1,
+   "Destroyed_M109": 1,
+   "Destroyed_BTR": 1,
+   "Destroyed_Naparnik": 1,
+   "Destroyed_Bereg": 1,
+   "Destroyed_BMP3": 1,
+   "Destroyed_BMD": 1,
+   "Destroyed_Kurganets": 1,
+   "Destroyed_M548": 1,
+   "Destroyed_BMP": 1,
+   "Destroyed_HMMWV": 1,
+   "NPC_Leopard2_Traincart": 1
+  },
+  "components": {
+   "Transform": 171,
+   "MeshFilter": 171,
+   "MeshRenderer": 171
+  },
+  "examples": [
+   "RU_S300PM",
+   "Destroyed_MTLB",
+   "RU_URAL4320_Guntruck"
+  ]
+ },
+ "lod_1x1x1 (1)": {
+  "count": 2,
+  "parents": {
+   "Chassis": 1,
+   "NPC_Leopard2_Traincart": 1
+  },
+  "components": {
+   "Transform": 2,
+   "MeshFilter": 2,
+   "MeshRenderer": 2
+  },
+  "examples": [
+   "US_stryker_mc",
+   "NPC_Leopard2_Traincart"
+  ]
+ },
+ "lod_1x1x1 (2)": {
+  "count": 1,
+  "parents": {
+   "NPC_Leopard2_Traincart": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MeshFilter": 1,
+   "MeshRenderer": 1
+  },
+  "examples": [
+   "NPC_Leopard2_Traincart"
+  ]
+ },
+ "lod_2": {
+  "count": 660,
+  "parents": {
+   "Delta_Rifle": 2,
+   "Marine_Engineer_rifle2": 1,
+   "US_ArmyScout_Rifle1": 2,
+   "Pilot_Helicopter": 118,
+   "US_Ranger_Rifle1": 3,
+   "GreenBerets_Rifle1": 2,
+   "RU_Motostrelki_Driver": 72,
+   "Pilot_Plane": 84,
+   "Army_Gunner": 39,
+   "US_Army_granade": 68,
+   "Marine_officer": 1,
+   "US_DELTA_FORCE": 1,
+   "RU_Ingenery_sturmoviki_rifle1": 1,
+   "RU_VDV_rifle_1": 3,
+   "US_ScoutSniper_rifle": 1,
+   "US_ScoutSniper": 1,
+   "RU_Razvedka_granade": 1,
+   "RU_VDV_heavy": 4,
+   "US_Ranger_Rifle": 2,
+   "RU_VDV_driver": 20,
+   "US_Ranger_MG": 1,
+   "Morskaya_razvedka_rifle": 1,
+   "US_Ranger_hvy": 1,
+   "Spetsnaz_VMF_rifle": 1,
+   "Marksmen_rifle": 1,
+   "US_ForceRecon_rifle": 1,
+   "US_RangerRRC_Officer": 1,
+   "Airborne_Gunner": 3,
+   "RU_Motostrelki_rifle_heavy": 3,
+   "RU_VDV_rifle": 2,
+   "RU_GRUSpetsnaz_grenade": 1,
+   "Marine_Gunner": 5,
+   "US_Ranger_Driver": 12,
+   "RU_Morskaya_MG": 1,
+   "RU_VDV_rifle_2": 4,
+   "Civ_Civilian_2": 1,
+   "Snaipery_rifle2": 1,
+   "Marine_rifle1": 4,
+   "wreek_2": 2,
+   "RU_VDVRazvedka_granade": 2,
+   "RU_Morskaya_officer": 1,
+   "CIV_PoliceW": 1,
+   "RU_Morskaya_grenade": 1,
+   "GreenBerets_Rifle3": 4,
+   "US_Pararescuemen_Rifle1": 1,
+   "US_RangerRRC_Rifle1": 1,
+   "Marine_rifle2": 16,
+   "Civ_Civilian_4": 1,
+   "RU_Gornostrelki_rifle": 1,
+   "ZOM_Smoker_1": 1,
+   "US_ForceRecon": 1,
+   "GreenBerets_Rifle4": 1,
+   "Army_Engineer_rifle1": 1,
+   "Airborne_officer": 1,
+   "US_MarineRaider_grenade": 2,
+   "Driver_Gunner": 1,
+   "Marine_Driver": 8,
+   "RU_Ingenery_sturmoviki_rifle2": 2,
+   "US_ArmyScout_Rifle2": 1,
+   "US_Army_rifle": 3,
+   "ZOM_Boomer_1": 2,
+   "Chernye_Berety_rifle2": 1,
+   "wreek_1": 1,
+   "PDSS_rifle": 1,
+   "US_Army_Engineer": 1,
+   "Wreek_tank": 2,
+   "Airborne_rifle2": 2,
+   "Marine_granade": 1,
+   "US_Army_MG": 1,
+   "US_MarineRaider_rifle2": 1,
+   "RU_Gornostrelki_Granade": 1,
+   "US_ArmySniper_Rifle2": 2,
+   "RU_GRUSpetsnaz_rifle": 3,
+   "RU_VDV_grenade": 2,
+   "Airborne_rifle1": 2,
+   "US_Placeholder": 1,
+   "Chernye_Berety_rifle": 2,
+   "Civ_Civilian_3": 1,
+   "GreenBerets_Rifle2": 2,
+   "ZOM_Walker_Office": 1,
+   "US_MarineRaider_officer": 1,
+   "Marine_Engineer_officer": 1,
+   "Marine_radio": 1,
+   "Chernye_Berety_granade": 2,
+   "US_ScoutSniper_rifle2": 1,
+   "RU_Gornostrelki_rifle1": 2,
+   "US_MarineRaider_rifle": 1,
+   "Delta_MG": 1,
+   "RU_Gornostrelki_Officer": 1,
+   "ZOM_Spitter": 2,
+   "US_Ranger": 1,
+   "US_ArmyScout_Radio": 1,
+   "Airborne_Driver": 1,
+   "RU_VDVSpetsnaz_officer": 1,
+   "Marine_Engineer_rifle1": 1,
+   "RU_Morskaya_rifle": 2,
+   "RU_Motostrelki_rifle_light": 2,
+   "RU_Razvedka_officer": 1,
+   "Airborne_radio": 1,
+   "Spetsnaz_VMF_rifle1": 1,
+   "US_RangerRRC_MG": 2,
+   "RU_VDVRazvedka_officer": 1,
+   "US_RangerRRC": 1,
+   "Civ_Civilian_1": 1,
+   "US_Pararescuemen_MG": 2,
+   "RU_Motostrelki_rifle": 1,
+   "US_Pararescuemen_Officer": 1,
+   "US_Marine": 1,
+   "ZOM_CorpseThrower": 1,
+   "RU_Motostrelki_rifle1": 2,
+   "Spetsnaz_VMF_officer": 1,
+   "RU_Motostrelki_MG": 2,
+   "Chernye_Berety_rifle1": 1,
+   "RU_Motostrelki_Granade": 1,
+   "RU_Ingenery_sturmoviki_officer": 1,
+   "Morskaya_razvedka_mg": 1,
+   "RU_VDVRazvedka_rifle": 1,
+   "CIV_PoliceM": 1,
+   "ZOM_Walker1": 1,
+   "US_Army": 2,
+   "Delta_Rifle1": 1,
+   "Snaipery_rifle3": 1,
+   "RU_Conscript_MG": 1,
+   "Chernye_Berety_officer": 1,
+   "Wheel_wreek": 1,
+   "SSO_rifle4": 1,
+   "RU_VDVSpetsnaz_MG": 2,
+   "Army_Engineer_rifle2": 1,
+   "US_ForceRecon_grenade": 1,
+   "Airborne_Granade": 1,
+   "US_Army_radio": 1,
+   "US_LHA6": 1,
+   "RU_Razvedka_rifle": 1,
+   "Spetsnaz_VMF_marksmen": 1,
+   "Miller": 1,
+   "PDSS_rifle1": 1,
+   "US_Pararescuemen_Rifle2": 1,
+   "US_Ranger_Granade": 1,
+   "RU_Conscript_rifle": 1,
+   "Snaipery_rifle": 1,
+   "Marksmen_rifle1": 1,
+   "SSO_rifle1": 1,
+   "Army_Engineer_officer": 1,
+   "SSO_rifle2": 1,
+   "US_Ranger_Radio": 1,
+   "RU_Motostrelki_Officer": 1,
+   "RU_VDVSpetsnaz_rifle": 1,
+   "RU_Gornostrelki_MG": 1,
+   "ZOM_Walker_Hoody": 2,
+   "wreek_3": 1,
+   "US_Ranger_Officer": 1,
+   "Morskaya_razvedka_granade": 1,
+   "Marine_rifle3": 1,
+   "US_MarineRaider_radio": 1,
+   "US_ArmyScout_Officer": 1,
+   "US_Army_officer": 1,
+   "US_ArmySniper_Rifle1": 1,
+   "RU_VDV_officer": 2,
+   "US_PARARESCUEMEN": 1,
+   "US_RangerRRC_Rifle": 1,
+   "RU_GRUSpetsnaz_officer": 1,
+   "RU_VDV_MG": 2,
+   "Delta_Officer": 1,
+   "RU_Ingenery_sturmoviki_rifle3": 1,
+   "SSO_rifle3": 2,
+   "Chernye_Berety_MG": 1,
+   "US_ForceRecon_officer": 1,
+   "ZOM_Runner_Red": 1,
+   "ZOM_Runner_Fit": 1,
+   "ZOM_Walker2": 1,
+   "US_RangerSniper": 1,
+   "RU_Conscript_officer": 1
+  },
+  "components": {
+   "Transform": 660,
+   "SkinnedMeshRenderer": 652,
+   "MeshFilter": 8,
+   "MeshRenderer": 8
+  },
+  "examples": [
+   "US_Delta_Heavy",
+   "US_Marine_Engineer_rifle2",
+   "US_ArmyScout_Rifle1"
+  ]
+ },
+ "recoil": {
+  "count": 6,
+  "parents": {
+   "weapon_0": 4,
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "RU_ZSU_m3",
+   "RU_ZSU_m2",
+   "RU_KA52K"
+  ]
+ },
+ "recoil_0": {
+  "count": 66,
+  "parents": {
+   "weapon_0": 47,
+   "weapon_0_1_2": 3,
+   "weapon_0_1": 12,
+   "helper": 3,
+   "anim_weapon_0": 1
+  },
+  "components": {
+   "Transform": 66,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "RU_2S3M2",
+   "RU_NonaSVK",
+   "US_M2A2"
+  ]
+ },
+ "recoil_0_0": {
+  "count": 96,
+  "parents": {
+   "weapon_0_1_2": 36,
+   "weapon_0_1": 52,
+   "weapon_0": 7,
+   "weapon_0_1_2_3": 1
+  },
+  "components": {
+   "Transform": 96
+  },
+  "examples": [
+   "US_M2A3_APS",
+   "US_STRYKER_SHORAD_Fletcher",
+   "RU_MTLB_2A72"
+  ]
+ },
+ "recoil_0_1": {
+  "count": 1,
+  "parents": {
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_PT76_57"
+  ]
+ },
+ "recoil_1": {
+  "count": 1,
+  "parents": {
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_STRYKER_Dragoon"
+  ]
+ },
+ "recoil_1_0": {
+  "count": 6,
+  "parents": {
+   "weapon_0_1_2": 6
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "RU_BMP3",
+   "RU_BMP3FM",
+   "RU_BTR90_Bakhcha"
+  ]
+ },
+ "recoil_L": {
+  "count": 9,
+  "parents": {
+   "weapon": 5,
+   "weapon_0": 3,
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23",
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_MTLB_SPAAG_ZU23"
+  ]
+ },
+ "recoil_R": {
+  "count": 9,
+  "parents": {
+   "weapon": 5,
+   "weapon_0_1": 1,
+   "weapon_0": 3
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23M",
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_BTR_MDM_ZU23IGLA"
+  ]
+ },
+ "root": {
+  "count": 676,
+  "parents": {
+   "RU_T90Razv_Kord": 1,
+   "RU_BTR82A": 1,
+   "RU_T15": 1,
+   "RU_BRM3K": 1,
+   "US_AC_130_Ghostrider": 1,
+   "US_STRYKER_Dragoon": 1,
+   "US_MATV_IsAGoodJob": 1,
+   "US_M3A2": 1,
+   "US_PATRIOT_Front_MK19_PAC2": 1,
+   "RU_SU57": 1,
+   "RU_2S7M_Malka": 1,
+   "US_CH-53K_HMG": 1,
+   "RU_s350": 1,
+   "RU_Tunguska": 1,
+   "US_STRYKER_RV": 1,
+   "RU_BTR82": 1,
+   "RU_KamAZ43501": 1,
+   "US_ACV": 1,
+   "RU_BRDM_ATGM": 1,
+   "US_AC_130_Spooky": 1,
+   "URAL4320_ZU23": 1,
+   "US_LHA_Damage": 1,
+   "US_HEMTT_MK19": 1,
+   "US_M270_A2": 1,
+   "US_AC_130_SimpleRamp": 1,
+   "US_LMTV_Warpig_m240": 1,
+   "US_CV-22_b_closed": 1,
+   "US_EA6B_Prowler": 1,
+   "M548A3_m2": 1,
+   "US_M901A3": 2,
+   "RU_MTLB_2A72": 1,
+   "root": 3,
+   "BALT_IFAV": 1,
+   "US_M1301_ISV_Empty": 1,
+   "US_TrickMI24": 1,
+   "RU_BRDM_KPVT": 1,
+   "US_HEMTT_Empty": 1,
+   "NPC_IL76MD": 1,
+   "RU_UR77": 1,
+   "US_M985_Front_M2": 1,
+   "RU_BRDM_9P148": 1,
+   "RU_BRDM_KPVB": 1,
+   "US_HMMWV_GMV_M134": 1,
+   "US_Ch47_M240": 1,
+   "US_M60_A1": 1,
+   "RU_BTR_D_SkrezhetM_Igla": 1,
+   "US_RSOV": 1,
+   "US_MH47_M240_Rear": 1,
+   "RU_B19": 1,
+   "BALT_FV107": 1,
+   "US_LAV_AD_Stinger": 1,
+   "US_ACV_M2": 1,
+   "US_HMMWV_gmv": 1,
+   "US_CH53": 1,
+   "RU_BMP2": 1,
+   "RU_NonaSVK": 1,
+   "US_STRYKER_ESV_MK19": 1,
+   "US_AV8B_NightAttack": 1,
+   "BT3_Kord": 1,
+   "US_M10_50": 1,
+   "US_PATRIOT_Front_M2_PAC2": 1,
+   "RU_URAL4320_Guntruck": 1,
+   "RU_MT-LB_cornflower": 1,
+   "RU_BUKM3": 1,
+   "US_HMMWV_LRAS3": 1,
+   "US_M3A3_APS": 1,
+   "US_AV8B_Plus_container_1": 1,
+   "BALT_Leopard2A7 (2)": 1,
+   "RU_BT3F": 1,
+   "RU_BRM3K57": 1,
+   "US_STRYKER_SHORAD_Hellfire": 1,
+   "KC-130_DOOR2": 1,
+   "RU_TOS1": 1,
+   "US_M985_Middle_M2": 1,
+   "RU_ZU-23-2": 1,
+   "US_stryker_mgs": 1,
+   "RU_ZU23_2M_IGLA_common": 2,
+   "RU_BTR90": 1,
+   "US_HIMARS": 1,
+   "RU_T90": 2,
+   "RU_ZU23_2_common": 1,
+   "RU_SU24M2": 1,
+   "US_M10_105": 1,
+   "RU_PTS4": 1,
+   "RU_MTLB_Mortar": 1,
+   "US_HMMWV_GMV_M240": 1,
+   "RU_BTR_D_PKT": 1,
+   "US_IFAV_RBS70_Imitator": 1,
+   "RU_BTR_D_SkrezhetM": 1,
+   "US_F15C": 1,
+   "US_M109_IRONTHUNDER": 1,
+   "US_HMMWV_Hawkeye": 1,
+   "RU_BMPT2": 1,
+   "BALT_IFAV_RBS70": 1,
+   "US_M1297_mk19": 1,
+   "US_STRYKER_SHORAD_M2": 1,
+   "US_HMMWV_M240": 1,
+   "RU_DT30_Magnolia": 1,
+   "US_M113A3_MK19": 1,
+   "US_FA18D": 1,
+   "RU_SU27SM": 1,
+   "RU_Mi24PN": 1,
+   "RU_2S1": 1,
+   "RU_MTLB_STRELA10MN": 1,
+   "US_LMTV_Warpig_Fletcher": 1,
+   "US_CH53K": 1,
+   "US_RAH66": 1,
+   "US_STRYKER_SHORAD_Stinger": 1,
+   "BALT_Leopard2A7": 2,
+   "US_AC_130_Griffin": 1,
+   "US_Rangers": 1,
+   "US_M985_Front_MK19": 1,
+   "US_PATRIOT_PAC3MSE_8": 1,
+   "US_AH6": 1,
+   "BALT_M1064": 1,
+   "US_B52H": 1,
+   "Iskander_Klub": 1,
+   "M548A3_mk19": 1,
+   "US_M8Thunderbolt": 1,
+   "US_M109A7_AGL": 1,
+   "BALT_Leopard2A7 (1)": 1,
+   "RU_BMP2M": 1,
+   "RU_BMP1P": 1,
+   "RU_Orion": 1,
+   "US_PATRIOT_PAC3MSE": 1,
+   "US_M985_Rear_M2": 1,
+   "!DEPREC! US_m1288_light": 1,
+   "US_RSOV_Mk47": 1,
+   "BALT_Vilkas": 1,
+   "RU_Toros_2A42": 1,
+   "RU_T90M": 1,
+   "US_STRYKER_RV_M240": 1,
+   "US_MTV": 1,
+   "RU_T90M_Kord": 1,
+   "US_LCAL": 1,
+   "RU_DT30_TOR": 1,
+   "US_LAV_M": 1,
+   "US_F35B": 1,
+   "US_PLS_M2": 1,
+   "RU_BMP3": 1,
+   "US_M985_Battleship": 2,
+   "US_LAV_AD": 1,
+   "US_MH6": 1,
+   "RU_MI35": 1,
+   "US_HMMWV_RWS_MK19": 1,
+   "RU_MTLB_Luchnik": 1,
+   "RU_2s4": 1,
+   "US_PLS_Empty": 1,
+   "NPC_SU24M2_takeoff": 1,
+   "US_LMTV": 1,
+   "BALT_CR9037": 1,
+   "RU_SU35": 1,
+   "RU_PT76": 1,
+   "RU_BMP1": 2,
+   "RU_MTLB_KPVT": 1,
+   "RU_PT76B": 1,
+   "US_MH47_M134": 1,
+   "RU_PT76_57": 1,
+   "US_AAVP_Arty": 1,
+   "RU_BTR_MDM_ZU23IGLA": 1,
+   "SU-34Fix": 1,
+   "US_STRYKER_ESV": 1,
+   "RU_BRM3K_PRP5": 1,
+   "RU_MT-LB_dilemma": 1,
+   "RU_BTR_D_Robot": 1,
+   "NPC_SU24M2": 1,
+   "US_AMPV_MCV_M240": 1,
+   "Iskander_rocket": 1,
+   "BALT_HMMWV_M2": 1,
+   "US_Trick_BTR80": 1,
+   "US_LMTV_M2": 1,
+   "US_M8XM291": 1,
+   "RU_SPRUT": 1,
+   "RU_ZUBR": 1,
+   "US_F16block52": 1,
+   "RU_ZU23_2M_common": 2,
+   "RU_BTR90_Base": 1,
+   "US_m981_fist_turret": 1,
+   "RU_2S3M1": 1,
+   "US_LCAC": 1,
+   "RU_URAL532301": 1,
+   "US_HMMWV_GMV_MK19": 1,
+   "RU_AN72P": 1,
+   "US_STRYKER_30": 1,
+   "US_LVSR_Back": 1,
+   "US_M1A1HC": 1,
+   "RU_9K58_Smerch": 1,
+   "US_M1A2SEP": 1,
+   "RU_SPRUT_SD": 1,
+   "US_MV-22_b_open": 1,
+   "RU_Reostat": 1,
+   "BALT_IFAV_browning": 1,
+   "US_PATRIOT_PAC3": 1,
+   "US_M1200_MK19": 1,
+   "US_MV-22_b_closed": 1,
+   "US_UH60M_M134": 1,
+   "BALT_IFAV_mk19": 1,
+   "US_M2A3_ERA": 1,
+   "RU_BTR80": 2,
+   "US_LMTV_MK19": 1,
+   "US_HMMWV_RWS_M134": 1,
+   "RU_MTLB_shturm": 1,
+   "RU_S300PM": 1,
+   "RU_BMD2_M": 1,
+   "US_MTVR_m2": 1,
+   "RU_BMP_ATGM": 1,
+   "US_PATRIOT_Front_M240_PAC2": 1,
+   "RU_MTLB_RPO": 1,
+   "RU_T90M_PKT": 1,
+   "RU_BTR80A": 1,
+   "US_RQ7": 1,
+   "RU_MTLB_SAM": 1,
+   "RU_BMPT": 1,
+   "HMMWV_LRAS3_MK19": 1,
+   "RU_Bumerang12mm": 1,
+   "US_M1301_ISV": 1,
+   "av8b conteiner": 1,
+   "URAL4320_ZU23IGLA": 1,
+   "RU_T90A": 2,
+   "RU_Naparnik_Drok": 1,
+   "!DEPREC! US_LMVT": 1,
+   "Chassis": 1,
+   "US_ACV_RT20": 1,
+   "US_AAVP7A1": 1,
+   "RU_Tochka_U": 1,
+   "RU_MTLB_2A42_AGS": 1,
+   "US_Ch47": 1,
+   "RU_URAL_5323_Helper": 1,
+   "RU_MSTA": 1,
+   "US_CRAM_SeaRAM": 1,
+   "RU_BUKM2": 1,
+   "US_M1A1FEP": 1,
+   "US_PLS_M240": 1,
+   "US_UH60M": 1,
+   "RU_MTLB_Kord": 1,
+   "Iskander_tube": 1,
+   "RU_ZSU_m2": 1,
+   "US_M7_BFIST_ERA": 1,
+   "US_HMMWV_TOW": 1,
+   "Naparnik_VDV": 1,
+   "RU_MiG29K": 1,
+   "RU_T_14": 1,
+   "US_AV8B_Plus_container_2": 1,
+   "US_MTV_M240": 1,
+   "US_M1288_GAU19": 1,
+   "US_STRYKER_MGS_M2": 1,
+   "RU_Tunguska_SV": 1,
+   "US_PATRIOT_PAC2": 1,
+   "US_AH-1W Super_Cobra": 1,
+   "RU_PRP4": 1,
+   "RU_MI38T": 1,
+   "S-300V4_4PU": 1,
+   "US_MH47_GAU21_Rear": 1,
+   "!DEPREC! US_LAV_AD": 1,
+   "BT3_23": 1,
+   "US_STRYKER_ICV_M2": 1,
+   "US_Trick_T14": 1,
+   "US_STRYKER_ESV_M2": 1,
+   "US_STRYKER_ICV_MK19": 1,
+   "US_M1301_ISV_M240": 1,
+   "M548A3_m240": 1,
+   "US_STRYKER_RV_M2": 1,
+   "RU_TU160": 1,
+   "US_C17_GLOBEMASTER": 1,
+   "RU_TU22M3": 1,
+   "US_PATRIOT_Front_Empty": 1,
+   "US_M6_Linebacker_A3": 1,
+   "RU_MI24P": 1,
+   "US_CH53_M134": 1,
+   "RU_Derivatsiya": 1,
+   "US_M1117_AAVP": 1,
+   "US_F15EX": 2,
+   "US_M60_CEV2": 1,
+   "US_STRYKER_MGS_MK19": 1,
+   "RU_T80UM": 1,
+   "RU_T14": 1,
+   "US_Arleigh_Burke": 1,
+   "US_HMMWV_RWS_M2": 1,
+   "RU_Iskander": 1,
+   "RU_MI24K": 1,
+   "US_IFAV_TOW": 1,
+   "RU_TU142": 1,
+   "US_M3A3": 1,
+   "US_KC130_HarvestHawk": 1,
+   "US_C130_SuperHercules": 1,
+   "BALT_HMMWV_BASE": 1,
+   "US_CH53_M240": 1,
+   "RU_MTLB_SPAAG": 1,
+   "US_M8XM35": 1,
+   "US_LAV_M_120": 1,
+   "US_MTV_EMPTY_TURRET": 1,
+   "RU_BMD4": 1,
+   "RU_Forpost": 1,
+   "RU_ZSU-2-4": 1,
+   "RU_BTR82AT": 1,
+   "RU_BMP1PG": 1,
+   "RU_BTR_MDM": 1,
+   "RU_Mi8Cargo": 1,
+   "Sarmat_Metis": 1,
+   "RU_BRDM3_PRP5": 1,
+   "RU_BRM3K57_ataka": 1,
+   "US_M1_ABV": 1,
+   "US_HMMWV_Avenger": 1,
+   "US_F16CJ": 1,
+   "US_LAV_L_MK19": 1,
+   "US_LVSR_MK19": 1,
+   "RU_BMD_KornetD_4": 1,
+   "BALT_PZH2000": 1,
+   "US_MQ1B": 1,
+   "RU_BRM1K1970": 1,
+   "US_UH-1Y_minigun": 1,
+   "US_M985_Middle_MK19": 1,
+   "US_PATRIOT_Front_M2": 1,
+   "US_MQ9": 1,
+   "US_M6_Linebacker_A4": 1,
+   "US_CH-53K_MMG": 1,
+   "RU_Korsar": 1,
+   "US_UH-1Y_GAU21": 1,
+   "RU_BMD_KornetD_8": 1,
+   "RU_MSTA_M1": 1,
+   "US_UH60M_M240": 1,
+   "US_M1064A3": 1,
+   "US_MH-60X": 1,
+   "RU_BMPT1": 1,
+   "RU_Kurganets": 1,
+   "US_m981_fist": 1,
+   "RU_T72BA": 1,
+   "US_M1A2SEP2": 1,
+   "US_M985_Front_M240": 1,
+   "US_PATRIOT_Front_MK19_PAC3MSE": 1,
+   "RU_Sarmat": 1,
+   "RU_MI8_MTV5": 1,
+   "RU_UAZ469_ATGM": 1,
+   "RU_TyphoonVDV": 1,
+   "RU_T90Razv": 1,
+   "RU_MashinaS_MRU": 1,
+   "RU_2S_HOSTA": 1,
+   "US_STRYKER_ICV": 1,
+   "RU_SU25T": 1,
+   "RU_NonaSM": 1,
+   "US_MTVR_m240": 1,
+   "RU_BMP3F": 2,
+   "US_AMPV_MK19": 1,
+   "NPC_C17_GLOBEMASTER": 1,
+   "US_AAVP_Miclic": 1,
+   "US_B1B": 1,
+   "US_STRYKER_ESV_M2_Jav": 1,
+   "RU_MTSM": 1,
+   "US_M1117_MK19": 1,
+   "RU_S300PM_4": 1,
+   "RU_BTR_D": 1,
+   "US_CH-53K_Minigun": 1,
+   "US_PATRIOT_Front_Empty_PAC2": 1,
+   "RU_T1530mm": 1,
+   "US_F35A": 1,
+   "US_MTV_M2": 1,
+   "US_M6_Linebacker": 1,
+   "US_AC130_Base": 1,
+   "RU_YAK38M": 1,
+   "NPC_SUV": 1,
+   "US_M1064A3_Empty": 1,
+   "US_LMTV_SLAMRAAM": 1,
+   "RU_UAZ469_KPVT": 1,
+   "US_HMMWV_MK19": 1,
+   "US_M109A7_HMG": 1,
+   "RU_BMP2_NoATGM": 1,
+   "US_MTVR": 1,
+   "RU_BMD2_base": 1,
+   "US_M270_A1": 1,
+   "RU_SPRUT_SDM": 1,
+   "US_M1A2": 1,
+   "US_UH-1Y": 1,
+   "US_STRYKER_ESV_MK19_Jav": 1,
+   "US_AC130J": 1,
+   "NPC_SU57": 1,
+   "US_M2A3_BEV_APS": 1,
+   "US_F22": 1,
+   "US_M113A3_M2": 1,
+   "RU_UAZ469": 1,
+   "US_AV8B_Plus": 1,
+   "US_M548A3": 1,
+   "RU_TOS1A": 1,
+   "NPC_Leopard2_Traincart_Destroyed": 1,
+   "US_MTV_Mk19": 1,
+   "BALT_XA180": 1,
+   "US_RQ170": 1,
+   "US_LAV_L_M240": 1,
+   "RU_KA29": 1,
+   "Sarmat_GShG": 1,
+   "HMMWV_LRAS3_M240": 1,
+   "US_AH-1Z Viper": 1,
+   "US_IFAV": 1,
+   "RU_Koalitsiya": 1,
+   "US_STRYKER_SHORAD_Fletcher": 1,
+   "US_LVSR_Empty": 1,
+   "RU_URAL4320_Federal": 1,
+   "US_MATV_M2": 1,
+   "RU_ZSU_m3": 1,
+   "US_STRYKER_SPH": 1,
+   "US_AMPV_MCV_Empty": 1,
+   "RU_BMOT": 1,
+   "US_PATRIOT_Front_MK19": 1,
+   "US_OH58Kiowa": 1,
+   "RU_MTLB_STRELA10M3": 1,
+   "US_FA18C": 1,
+   "RU_Toros_2A72": 1,
+   "S-300V4_2PU": 1,
+   "US_M1_ABV_MK19": 1,
+   "US_M10": 1,
+   "US_LHA": 1,
+   "RU_SU30SM": 1,
+   "US_LAV_L": 1,
+   "US_M6_Linebacker_Base": 1,
+   "RU_Derivatsiya_PVO": 1,
+   "RU_BMP1AM": 1,
+   "RU_TOR": 1,
+   "US_LAV25": 1,
+   "RU_BTR_D_NSV": 1,
+   "RU_KA52K": 1,
+   "US_AMPV": 1,
+   "RU_T72B": 1,
+   "US_A10": 1,
+   "US_MATV_MK19_Jav": 1,
+   "US_PATRIOT_Front_Empty_PAC3MSE": 1,
+   "US_M2A3_BEV_ERA": 1,
+   "RU_BMD2_konkurs": 1,
+   "RU_A222_Bereg": 1,
+   "RU_DT30_PANTSIR": 1,
+   "RU_BRDM3_80A": 1,
+   "RU_Mi8_AMTSh": 1,
+   "US_STRYKER_ICV_M2_Jav": 1,
+   "RU_BRDM_Kord": 1,
+   "US_PATRIOT_PAC3MSE_12": 1,
+   "US_HEMTT": 1,
+   "US_AC130U": 1,
+   "US_M1200_M2": 1,
+   "US_MH60M_IDAP": 1,
+   "RU_BTR80AM": 1,
+   "RU_BTR_D_Skrezhet": 1,
+   "US_PLS_MK19": 1,
+   "RU_MIG35": 1,
+   "RU_NonaS": 2,
+   "RU_T80U": 2,
+   "US_STRYKER_ICV_MK19_Jav": 1,
+   "US_B2": 1,
+   "Naparnik_PVO": 1,
+   "US_AV8B_NightAttack_ECM": 1,
+   "US_M985_Middle_M240": 1,
+   "US_MV-22_b": 1,
+   "BT3_PKT": 1,
+   "US_PATRIOT_PAC3_8": 1,
+   "US_M3A3_ERA": 1,
+   "US_STRYKER_SHORAD": 1,
+   "US_M7_BFIST_APS": 1,
+   "RU_BTR90_Rostok": 1,
+   "US_M109a7": 1,
+   "RU_BRDM3_82A": 1,
+   "RU_SU25": 1,
+   "US_M1288_mk19": 1,
+   "US_M1301_ISV_MK19": 1,
+   "US_M1064A3_M2": 1,
+   "US_IFAV_mk19": 1,
+   "RU_MI24VP": 1,
+   "US_PATRIOT_PAC2_4": 1,
+   "US_HEMTT_M240": 1,
+   "RU_MI24V_VP": 1,
+   "RU_T72B_Base": 1,
+   "US_UH-1Y_M240": 1,
+   "Ka29 gun": 1,
+   "US_LMTV_Warpig_mk47": 1,
+   "US_M163_PIVADS": 1,
+   "RU_TOR_M2": 1,
+   "RU_BMD_KornetD": 1,
+   "RU_T80UA": 1,
+   "US_M1301_ISV_M2": 1,
+   "US_PATRIOT_Front_M240_PAC3MSE": 1,
+   "RU_PT76_30": 1,
+   "RU_BRDM_Kvartet": 1,
+   "US_LVSR_M240": 1,
+   "US_M2A3_BEV": 1,
+   "RU_BMP3FM": 1,
+   "US_MQ1C": 1,
+   "US_MH60M_SOAR": 1,
+   "RU_Bumerang": 1,
+   "US_M1297_m2": 1,
+   "RU_KORNET": 1,
+   "US_RQ4B": 1,
+   "US_M2A2": 1,
+   "RU_DT30PM": 1,
+   "US_AMPV_MCV": 1,
+   "RU_BM_21_Grad": 1,
+   "RU_Derivatsiya_57mm": 1,
+   "RU_MTLB_SPAAG_ZU23": 1,
+   "RU_Toros_Rapira": 1,
+   "RU_MIG29SMT": 1,
+   "US_M1297_m240": 1,
+   "US_STRYKER_ATGM": 1,
+   "RU_TOR_M1": 1,
+   "US_AMPV_MCV_MK19": 1,
+   "RU_SU33": 1,
+   "US_LAV_M_81": 1,
+   "RU_BTR_MDM_ZU23": 1,
+   "US_CRAM_Phalanx": 1,
+   "RU_BMP2G": 1,
+   "US_AMPV_R800": 1,
+   "US_M551A1": 1,
+   "RU_ZSU_m4": 1,
+   "US_AH64D": 1,
+   "US_PATRIOT_Front_M2_PAC3MSE": 1,
+   "Sarmat_HMG": 1,
+   "US_LMTV_Warpig": 1,
+   "RU_IL76MD": 1,
+   "US_PATRIOT_Front_M240": 1,
+   "US_M1_ABV_M2": 1,
+   "US_MH47_M134_Rear": 1,
+   "RU_2S5": 1,
+   "RU_BRDM": 1,
+   "US_IFAV_browning": 1,
+   "RU_BMP3_base": 1,
+   "US_M1064A3_M240": 1,
+   "US_LMTV_Empty": 1,
+   "US_HEMTT_M2": 1,
+   "US_MH47_GAU21": 1,
+   "RU_Tunguska_M1": 1,
+   "US_M109A6": 1,
+   "US_LVSR": 1,
+   "US_LMTV_SLAMRAAM_4_2": 1,
+   "US_LAV_AD_Hydra": 1,
+   "RU_BMP2M_base": 1,
+   "US_M113A3": 1,
+   "US_LAV_AT": 2,
+   "US_M60": 1,
+   "URAL4320_С60": 1,
+   "US_AbramsTUA": 1,
+   "US_M2A3": 1,
+   "US_M2A3_APS": 1,
+   "RU_Toros_S60": 1,
+   "RU_BRDM3": 1,
+   "RU_CHRIZANTEMA": 1,
+   "!DEPREC! US_LAV_M": 1,
+   "US_MC130H": 1,
+   "US_M7_BFIST": 1,
+   "US_M2A2_BEV": 1,
+   "US_HMMWV_Empty": 1,
+   "RU_T72B3": 1,
+   "US_RSOV_M2": 1,
+   "RU_MTLB_IFV": 1,
+   "RU_MTLB_PKT": 1,
+   "US_LMTV_SLAMRAAM_4": 1,
+   "US_Ch47_GAU21": 1,
+   "US_CV-22_b_open": 1,
+   "US_M985_Rear_M240": 1,
+   "US_LAV_AT-M_body": 1,
+   "US_ACV_MK19": 1,
+   "US_HMMWV_Avenger_8": 1,
+   "RU_BMP3M": 1,
+   "US_PATRIOT_PAC3MSE_4": 1,
+   "US_LMTV_Brutus": 1,
+   "RU_BTR90_Berezhok": 1,
+   "RU_BTR_MDM_ZU23M": 1,
+   "US_HMMWV_Avenger_4": 1,
+   "US_HMMWV_BASE": 1,
+   "US_MATV": 1,
+   "US_STRYKER_RV_MK19": 1,
+   "RU_MI26": 1,
+   "US_PLS_Back": 1,
+   "US_LMTV_SLAMRAAM_6": 1,
+   "US_UH60M_HMG": 1,
+   "RU_2S3M2": 1,
+   "US_M1288_m2": 1,
+   "RU_TOS": 1,
+   "US_AH64L": 1,
+   "RU_T80": 1,
+   "RU_KA52": 1,
+   "RU_2S31_Vena": 1,
+   "US_Ch47_M134": 1,
+   "Sarmat_AGS": 1,
+   "NPC_Balloon": 1,
+   "RU_2S_Gvozdika": 1,
+   "US_LAV_L_M2": 1,
+   "RU_BMO1": 1,
+   "RU_MI28MN": 1,
+   "US_STRYKER_30_Jav": 1,
+   "US_MH47": 1,
+   "RU_Tunguska_M2": 1,
+   "RU_UAZ469_SPG": 1,
+   "RU_MSTA_M2": 1,
+   "BALT_Unimog": 1,
+   "US_MATV_M2_Jav": 1,
+   "RU_MT-LB_Virgo": 1,
+   "US_m1288_M230": 1,
+   "RU_MTLB_Sosna": 1,
+   "RU_DT30_AA": 1,
+   "US_M985_Rear_TOW": 1,
+   "NPC_Leopard2_Traincart": 1,
+   "KC-130_DOOR1": 1,
+   "RU_PRP4A": 1,
+   "PLACEHOLDER5": 1,
+   "US_F15E": 1,
+   "US_LMTV_M240": 1,
+   "BALT_IFAV_ATGM": 1,
+   "BALT_HMMWV_ATGM": 1,
+   "RU_MI8MTV2": 1,
+   "US_HMMWV_M2": 1,
+   "RU_S300V4": 1,
+   "US_AMPV_MCV_M2": 1,
+   "US_PATRIOT_PAC3_16": 1,
+   "HMMWV_LRAS3_M2": 1,
+   "US_M1A2C": 1,
+   "US_AMPV_R800_Jav": 1,
+   "US_AAVP_CATFAE": 1,
+   "US_HEMTT_Back": 1,
+   "US_MATV_MK19": 1,
+   "RU_T1557mm": 1,
+   "US_M1117_M2": 1,
+   "US_PLS": 1,
+   "US_F16block70": 1,
+   "US_M1064A3_MK19": 1,
+   "RU_BTR90_Bakhcha": 1,
+   "US_m1288_base": 1,
+   "US_stryker_mc": 1,
+   "US_CRAM": 1,
+   "US_F117": 1,
+   "RU_MashinaS": 1,
+   "RU_Bumerang30mm": 1,
+   "US_CH53_GAU21": 1,
+   "US_AMPV_M2": 1,
+   "US_M1117_M1200": 1,
+   "US_CV-22_b": 1,
+   "RU_2S3": 1,
+   "RU_Toros": 1,
+   "US_LVSR_M2": 1,
+   "RU_MI24V": 1,
+   "RU_BRM3KBase": 1,
+   "RU_MashinaS_V14": 1,
+   "RU_T90Razv_PKT": 1,
+   "US_LMTV_Warpig_M2": 1,
+   "RU_BRM1K2022": 1,
+   "US_PATRIOT_PAC2_2": 1,
+   "US_LMTV_Warpig_TOW": 1,
+   "US_HMMWV_GMV_M2": 1,
+   "US_AV8B_Plus_container_3": 1,
+   "RU_T72B3A": 1,
+   "US_LAV_ATM": 1,
+   "RU_MTLB_6MB5": 1,
+   "US_MH47_M240": 1,
+   "RU_Kurganets30mm": 1,
+   "US_HMMWV_TOW_M41": 1,
+   "RU_SU24MP": 1,
+   "RU_Kurganets57mm": 1,
+   "US_M985_Middle_TOW": 1,
+   "US_HMMWV_TOW_M220": 1,
+   "RU_BMD2": 1,
+   "RU_MI28N": 1,
+   "US_LMTV_MML": 1,
+   "RU_Kurganets12mm": 1,
+   "US_MTVR_mk19": 1,
+   "US_AH64E": 1,
+   "RU_AKM_OSA": 1,
+   "US_M985_Rear_MK19": 1
+  },
+  "components": {
+   "Transform": 676,
+   "BoxCollider": 5
+  },
+  "examples": [
+   "RU_T90Razv_Kord",
+   "RU_BTR82A",
+   "RU_T15"
+  ]
+ },
+ "root_helper": {
+  "count": 1,
+  "parents": {
+   "root": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_SPAAG_ZU23"
+  ]
+ },
+ "root_scale": {
+  "count": 7,
+  "parents": {
+   "root": 7
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_M1A2",
+   "US_M1A2C",
+   "US_M1A1FEP"
+  ]
+ },
+ "rotor": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_MQ9"
+  ]
+ },
+ "rotor_end": {
+  "count": 1,
+  "parents": {
+   "rotor": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_MQ9"
+  ]
+ },
+ "scope": {
+  "count": 44,
+  "parents": {
+   "turret_0": 35,
+   "body": 5,
+   "anim_turret": 1,
+   "anim_weapon_0": 1,
+   "specialScopeRotation": 1,
+   "turret_0_0": 1
+  },
+  "components": {
+   "Transform": 44,
+   "RotationConstraint": 10
+  },
+  "examples": [
+   "RU_BMPT2",
+   "RU_KA52K",
+   "RU_Forpost"
+  ]
+ },
+ "scope m220": {
+  "count": 6,
+  "parents": {
+   "TOW": 6
+  },
+  "components": {
+   "Transform": 6,
+   "MeshFilter": 6,
+   "MeshRenderer": 6
+  },
+  "examples": [
+   "BALT_IFAV_ATGM",
+   "TOW_T",
+   "US_LMTV_Warpig_TOW"
+  ]
+ },
+ "scope m41": {
+  "count": 4,
+  "parents": {
+   "TOW": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MeshFilter": 4,
+   "MeshRenderer": 4
+  },
+  "examples": [
+   "US_M985_Rear_TOW",
+   "US_M985_Middle_TOW",
+   "US_LMTV_Warpig_TOW"
+  ]
+ },
+ "scope00": {
+  "count": 10,
+  "parents": {
+   "turret_0": 10
+  },
+  "components": {
+   "Transform": 10
+  },
+  "examples": [
+   "US_M6_Linebacker_A3",
+   "US_M3A3_APS",
+   "US_M3A3_ERA"
+  ]
+ },
+ "scope01": {
+  "count": 10,
+  "parents": {
+   "scope00": 10
+  },
+  "components": {
+   "Transform": 10
+  },
+  "examples": [
+   "US_M6_Linebacker_A3",
+   "US_M7_BFIST_APS",
+   "US_M2A3_ERA"
+  ]
+ },
+ "scope_0": {
+  "count": 16,
+  "parents": {
+   "special_anim": 1,
+   "turret_0": 14,
+   "turret_0_0": 1
+  },
+  "components": {
+   "Transform": 16,
+   "RotationConstraint": 4
+  },
+  "examples": [
+   "US_STRYKER_ATGM",
+   "NPC_Leopard2_Traincart",
+   "RU_Derivatsiya_57mm"
+  ]
+ },
+ "scope_00": {
+  "count": 9,
+  "parents": {
+   "body": 4,
+   "turret_0": 3,
+   "weapon_0_1": 2
+  },
+  "components": {
+   "Transform": 9,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "RU_CHRIZANTEMA",
+   "RU_BUKM3",
+   "US_STRYKER_MGS_MK19"
+  ]
+ },
+ "scope_00.001": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BUKM2"
+  ]
+ },
+ "scope_01": {
+  "count": 24,
+  "parents": {
+   "scope": 7,
+   "scope_0": 8,
+   "scope_00": 6,
+   "turret_0": 3
+  },
+  "components": {
+   "Transform": 24,
+   "RotationConstraint": 9
+  },
+  "examples": [
+   "US_M1_ABV_MK19",
+   "US_STRYKER_SHORAD_Stinger",
+   "US_M10_105"
+  ]
+ },
+ "scope_01.001": {
+  "count": 1,
+  "parents": {
+   "scope_00.001": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_BUKM2"
+  ]
+ },
+ "scope_02": {
+  "count": 3,
+  "parents": {
+   "turret_0": 3
+  },
+  "components": {
+   "Transform": 3,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_BRM3K57",
+   "RU_T1557mm",
+   "RU_BRM3K57_ataka"
+  ]
+ },
+ "scope_03": {
+  "count": 3,
+  "parents": {
+   "turret_0": 1,
+   "scope_02": 2
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_PRP4",
+   "RU_BRM3K57",
+   "RU_BRM3K57_ataka"
+  ]
+ },
+ "scope_04": {
+  "count": 1,
+  "parents": {
+   "shtanga_01": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRM3K_PRP5"
+  ]
+ },
+ "scope_05": {
+  "count": 1,
+  "parents": {
+   "scope_04": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRM3K_PRP5"
+  ]
+ },
+ "scope_0_1": {
+  "count": 2,
+  "parents": {
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_Bumerang30mm",
+   "RU_Kurganets30mm"
+  ]
+ },
+ "scope_add": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "US_ACV_RT20"
+  ]
+ },
+ "scope_default": {
+  "count": 4,
+  "parents": {
+   "turret": 1,
+   "turret_0": 2,
+   "turret_2": 1
+  },
+  "components": {
+   "Transform": 4,
+   "RotationConstraint": 4
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23",
+   "URAL4320_ZU23",
+   "RU_MTLB_SPAAG_ZU23"
+  ]
+ },
+ "scope_default_helper_1": {
+  "count": 4,
+  "parents": {
+   "turret": 1,
+   "turret_0": 2,
+   "turret_2": 1
+  },
+  "components": {
+   "Transform": 4,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23",
+   "RU_MTLB_SPAAG_ZU23",
+   "URAL4320_ZU23"
+  ]
+ },
+ "scope_default_helper_2": {
+  "count": 4,
+  "parents": {
+   "scope_default": 4
+  },
+  "components": {
+   "Transform": 4,
+   "AimConstraint": 4
+  },
+  "examples": [
+   "URAL4320_ZU23",
+   "RU_BTR_D_Skrezhet",
+   "RU_BTR_MDM_ZU23"
+  ]
+ },
+ "scope_modern_aim": {
+  "count": 8,
+  "parents": {
+   "turret_0": 3,
+   "turret": 5
+  },
+  "components": {
+   "Transform": 8
+  },
+  "examples": [
+   "URAL4320_ZU23IGLA",
+   "RU_MTLB_SPAAG_ZU23",
+   "RU_BTR_D_SkrezhetM"
+  ]
+ },
+ "scope_modernized": {
+  "count": 5,
+  "parents": {
+   "turret": 4,
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 5,
+   "RotationConstraint": 5
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23IGLA",
+   "URAL4320_ZU23IGLA",
+   "RU_BTR_D_SkrezhetM"
+  ]
+ },
+ "scope_modernized_helper_1": {
+  "count": 5,
+  "parents": {
+   "scope_modernized": 5
+  },
+  "components": {
+   "Transform": 5,
+   "AimConstraint": 5
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23M",
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_BTR_MDM_ZU23IGLA"
+  ]
+ },
+ "scope_modernized_helper_2": {
+  "count": 5,
+  "parents": {
+   "weapon_0": 1,
+   "weapon": 3,
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 5,
+   "AimConstraint": 5
+  },
+  "examples": [
+   "URAL4320_ZU23IGLA",
+   "RU_BTR_D_SkrezhetM",
+   "RU_BTR_MDM_ZU23IGLA"
+  ]
+ },
+ "scope_privod": {
+  "count": 1,
+  "parents": {
+   "scope": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_M163_PIVADS"
+  ]
+ },
+ "shell_spawn_0": {
+  "count": 1083,
+  "parents": {
+   "weapon_0": 925,
+   "Zuni_2": 2,
+   "weapon_2": 8,
+   "GAU21_Handles": 13,
+   "ATAS (1)": 1,
+   "weapon_1": 26,
+   "weapon_0_1": 8,
+   "BGM71D_2": 1,
+   "weapon": 11,
+   "weaponF_2": 2,
+   "shturm_b_2_igla": 1,
+   "NC621_GUNPOD": 1,
+   "KH31P": 1,
+   "Kornet_1": 1,
+   "B8M1_NoRack": 1,
+   "ATAS_RAH66": 1,
+   "weapon_MG": 3,
+   "weaponR_2": 2,
+   "ATAKA_V_4": 1,
+   "shturm_b_8": 1,
+   "M260_2_vertical": 2,
+   "ATAKA_1": 1,
+   "shturm_b_2_igla_helper": 1,
+   "DAGR_4": 1,
+   "shturm_b_2": 1,
+   "M260_3": 3,
+   "weaponR_1": 2,
+   "turret_0_0": 2,
+   "Strelets4": 1,
+   "Zuni_3": 3,
+   "KH38ML": 1,
+   "vikhr25T": 1,
+   "B13L1": 1,
+   "Hydra_3": 1,
+   "m134_AH6": 1,
+   "weaponF_1": 3,
+   "BGM71D_4": 1,
+   "ATAS": 2,
+   "vikhr": 1,
+   "weaponF_0": 3,
+   "M197": 1,
+   "DAGR": 1,
+   "B8M1_2": 1,
+   "UPK23_250": 1,
+   "S25_2": 1,
+   "Zuni_2_Vertical": 2,
+   "shturm_b_4": 1,
+   "loader": 2,
+   "S25_NoRack": 1,
+   "AGM176_Griffin_2": 1,
+   "HERMES_A": 1,
+   "Hydra": 1,
+   "S24B": 1,
+   "weaponR_0": 3,
+   "KH29ML": 1,
+   "Konkurs_1": 1,
+   "Zuni": 1,
+   "B8M1": 1,
+   "m240_vech": 1,
+   "GAU21_Kiowa": 1,
+   "B8V20": 1,
+   "Strelets2": 1,
+   "shturm_b_2_tall": 1,
+   "Vikhr_1": 1,
+   "shell_spawn_0": 1,
+   "DAGR_8": 1,
+   "turret_0": 1,
+   "M230_IDAP": 1,
+   "Hydra_2": 1,
+   "weapon_0_0": 1,
+   "US_AV8B_NightAttack_gun": 1,
+   "M260": 1,
+   "gau19_ah6": 1,
+   "anim_weapon_0": 1,
+   "S25": 1,
+   "body": 1,
+   "KH25ML": 1
+  },
+  "components": {
+   "Transform": 1083,
+   "MonoBehaviour": 47,
+   "ParentConstraint": 6
+  },
+  "examples": [
+   "PLACEHOLDER5",
+   "NPC_SU24M2_takeoff",
+   "US_HMMWV_GMV_M2"
+  ]
+ },
+ "shell_spawn_0 (1)": {
+  "count": 51,
+  "parents": {
+   "shell_spawn_0": 13,
+   "weapon_0": 8,
+   "Hydra_2": 1,
+   "shturm_b_2_tall": 1,
+   "shturm_b_8": 1,
+   "ATAS": 2,
+   "Hydra_3": 1,
+   "shell_spawn_0 (1)": 7,
+   "Strelets4": 1,
+   "DAGR_8": 1,
+   "BGM71D_2": 1,
+   "BGM71D_4": 1,
+   "vikhr25T": 1,
+   "ATAS_RAH66": 1,
+   "Strelets2": 1,
+   "shturm_b_2_igla": 1,
+   "B8M1_2": 1,
+   "shturm_b_2": 1,
+   "S25_2": 1,
+   "AGM176_Griffin_2": 1,
+   "ATAKA_V_4": 1,
+   "ATAS (1)": 1,
+   "HERMES_A": 1,
+   "shturm_b_4": 1,
+   "DAGR": 1
+  },
+  "components": {
+   "Transform": 51,
+   "MonoBehaviour": 7
+  },
+  "examples": [
+   "Iskander_tube",
+   "RU_AKM_OSA",
+   "US_PATRIOT_PAC3_8"
+  ]
+ },
+ "shell_spawn_0 (2)": {
+  "count": 23,
+  "parents": {
+   "Strelets4": 1,
+   "shturm_b_4": 1,
+   "shell_spawn_0": 10,
+   "ATAKA_V_4": 1,
+   "shell_spawn_0 (1)": 4,
+   "ATAKA_V_8": 1,
+   "ATAKA_V_6": 1,
+   "Hydra_3": 1,
+   "DAGR": 1,
+   "BGM71D_4": 1,
+   "HERMES_A": 1
+  },
+  "components": {
+   "Transform": 23
+  },
+  "examples": [
+   "Strelets4",
+   "shturm_b_4",
+   "Iskander_Klub"
+  ]
+ },
+ "shell_spawn_0 (3)": {
+  "count": 21,
+  "parents": {
+   "shell_spawn_0 (1)": 4,
+   "shell_spawn_0": 9,
+   "Strelets4": 1,
+   "BGM71D_4": 1,
+   "shturm_b_4": 1,
+   "ATAKA_V_4": 1,
+   "ATAKA_V_8": 1,
+   "HERMES_A": 1,
+   "ATAKA_V_6": 1,
+   "DAGR": 1
+  },
+  "components": {
+   "Transform": 21
+  },
+  "examples": [
+   "US_PATRIOT_PAC3MSE_8",
+   "US_LMTV_SLAMRAAM_4",
+   "US_LMTV_SLAMRAAM_6"
+  ]
+ },
+ "shell_spawn_0 (4)": {
+  "count": 8,
+  "parents": {
+   "shell_spawn_0": 6,
+   "shell_spawn_0 (1)": 1,
+   "ATAKA_V_6": 1
+  },
+  "components": {
+   "Transform": 8
+  },
+  "examples": [
+   "Iskander_Klub",
+   "US_LMTV_SLAMRAAM_6",
+   "US_PATRIOT_PAC3MSE_12"
+  ]
+ },
+ "shell_spawn_0 (5)": {
+  "count": 5,
+  "parents": {
+   "ATAKA_V_6": 1,
+   "shell_spawn_0": 3,
+   "shell_spawn_0 (1)": 1
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "ATAKA_V_6",
+   "US_LMTV_SLAMRAAM_6",
+   "RU_BUKM3"
+  ]
+ },
+ "shell_spawn_0 (6)": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 1,
+   "ATAKA_V_6": 1
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_6",
+   "ATAKA_V_6"
+  ]
+ },
+ "shell_spawn_0 (7)": {
+  "count": 1,
+  "parents": {
+   "ATAKA_V_6": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "ATAKA_V_6"
+  ]
+ },
+ "shell_spawn_0_0": {
+  "count": 131,
+  "parents": {
+   "weapon_0_1": 77,
+   "weapon_0": 10,
+   "weapon_0_1_2": 40,
+   "weapon": 1,
+   "weapon_0_1_2_3": 2,
+   "weapon_0_1_2_3_4": 1
+  },
+  "components": {
+   "Transform": 131,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "RU_T80UA",
+   "URAL4320_ZU23IGLA",
+   "US_STRYKER_Dragoon"
+  ]
+ },
+ "shell_spawn_0_0 (1)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "shell_spawn_0_0 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "shell_spawn_0_0 (3)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "shell_spawn_0_0 (4)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "shell_spawn_0_1": {
+  "count": 7,
+  "parents": {
+   "shell_spawn_0": 5,
+   "weapon_0_1_2_3": 1,
+   "shell_spawn_0_0": 1
+  },
+  "components": {
+   "Transform": 7,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A",
+   "RU_MTLB_STRELA10M3"
+  ]
+ },
+ "shell_spawn_0_10": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_10a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_11": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_11a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_12": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_12a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_13": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_13a": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_14": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_14a": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_15": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_15a": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_1a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_2": {
+  "count": 3,
+  "parents": {
+   "weapon_0_1_2_3": 1,
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_MTLB_STRELA10M3",
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_2a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_3": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 2,
+   "weapon_0_1_2_3": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_MTLB_STRELA10M3",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_3a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_4": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_4a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_5": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_5a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_6": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_6a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_7": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_7a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_8": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_0_8a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_9": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1A",
+   "RU_TOS1"
+  ]
+ },
+ "shell_spawn_0_9a": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOS1",
+   "RU_TOS1A"
+  ]
+ },
+ "shell_spawn_1": {
+  "count": 28,
+  "parents": {
+   "shell_spawn_0": 28
+  },
+  "components": {
+   "Transform": 28
+  },
+  "examples": [
+   "RU_TOR_M1",
+   "US_LHA",
+   "US_M270_A1"
+  ]
+ },
+ "shell_spawn_1 (1)": {
+  "count": 4,
+  "parents": {
+   "shell_spawn_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_TOR_M1",
+   "US_M270_A2",
+   "US_M270_A1"
+  ]
+ },
+ "shell_spawn_1 (2)": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TOR_M1",
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_1 (3)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOR_M1"
+  ]
+ },
+ "shell_spawn_1 (4)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOR_M1"
+  ]
+ },
+ "shell_spawn_1 (5)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOR_M1"
+  ]
+ },
+ "shell_spawn_1 (6)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOR_M1"
+  ]
+ },
+ "shell_spawn_1 (7)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_TOR_M1"
+  ]
+ },
+ "shell_spawn_10": {
+  "count": 6,
+  "parents": {
+   "shell_spawn_0": 6
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "RU_BM_21_Grad",
+   "RU_ZUBR",
+   "RU_9K58_Smerch"
+  ]
+ },
+ "shell_spawn_11": {
+  "count": 5,
+  "parents": {
+   "shell_spawn_0": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_9K58_Smerch",
+   "RU_BM_21_Grad",
+   "US_LMTV_MML"
+  ]
+ },
+ "shell_spawn_12": {
+  "count": 4,
+  "parents": {
+   "shell_spawn_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_BM_21_Grad",
+   "US_LMTV_MML",
+   "RU_ZUBR"
+  ]
+ },
+ "shell_spawn_13": {
+  "count": 4,
+  "parents": {
+   "shell_spawn_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad",
+   "US_LMTV_MML"
+  ]
+ },
+ "shell_spawn_14": {
+  "count": 4,
+  "parents": {
+   "shell_spawn_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_ZUBR",
+   "US_LMTV_MML",
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_15": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_16": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_BM_21_Grad",
+   "RU_ZUBR"
+  ]
+ },
+ "shell_spawn_17": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_18": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_19": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_1_0": {
+  "count": 129,
+  "parents": {
+   "weapon_0_1_2": 40,
+   "weapon_0_1": 75,
+   "weapon_1": 9,
+   "weapon_0_1_2_3": 1,
+   "weapon_0": 2,
+   "weapon": 1,
+   "weapon_0_1_2_3_4": 1
+  },
+  "components": {
+   "Transform": 129,
+   "PositionConstraint": 10,
+   "MonoBehaviour": 6,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "US_M2A3_ERA",
+   "RU_T90Razv_PKT",
+   "RU_T1557mm"
+  ]
+ },
+ "shell_spawn_1_0 (1)": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_1_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23IGLA",
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "shell_spawn_1_0 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_1_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "shell_spawn_1_1": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_1_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_BRDM_Kvartet",
+   "US_LAV_AD_Stinger"
+  ]
+ },
+ "shell_spawn_1_2": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_1_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM_Kvartet"
+  ]
+ },
+ "shell_spawn_1_3": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_1_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM_Kvartet"
+  ]
+ },
+ "shell_spawn_2": {
+  "count": 18,
+  "parents": {
+   "shell_spawn_0": 18
+  },
+  "components": {
+   "Transform": 18
+  },
+  "examples": [
+   "RU_BRDM_9P148",
+   "US_M270_A2",
+   "US_LHA_Damage"
+  ]
+ },
+ "shell_spawn_2 (1)": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_M270_A2",
+   "US_AAVP_CATFAE",
+   "US_M270_A1"
+  ]
+ },
+ "shell_spawn_2 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_20": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_21": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_BM_21_Grad",
+   "RU_ZUBR"
+  ]
+ },
+ "shell_spawn_22": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_23": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_24": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_25": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_26": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_27": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_28": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_29": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_2_0": {
+  "count": 51,
+  "parents": {
+   "weapon_0_1_2": 38,
+   "weapon_2": 2,
+   "weapon_0_1": 4,
+   "shell_spawn_1_0": 1,
+   "weapon_0_1_2_3_4": 1,
+   "weapon_0_1_2_3": 1,
+   "weapon_1": 4
+  },
+  "components": {
+   "Transform": 51,
+   "PositionConstraint": 23,
+   "MonoBehaviour": 2,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_MTLB_6MB5",
+   "RU_PT76_30",
+   "US_LAV_AD_Hydra"
+  ]
+ },
+ "shell_spawn_2_1": {
+  "count": 2,
+  "parents": {
+   "shell_spawn_2_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BMD2_M",
+   "RU_BTR82AT"
+  ]
+ },
+ "shell_spawn_3": {
+  "count": 14,
+  "parents": {
+   "shell_spawn_0": 14
+  },
+  "components": {
+   "Transform": 14
+  },
+  "examples": [
+   "US_AAVP_CATFAE",
+   "US_CRAM_SeaRAM",
+   "RU_9K58_Smerch"
+  ]
+ },
+ "shell_spawn_3 (1)": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_M270_A1",
+   "US_M270_A2",
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_3 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_30": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_31": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_32": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_33": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_34": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_35": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_36": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_37": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_38": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_39": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_3_0": {
+  "count": 5,
+  "parents": {
+   "weapon_0_1_2": 2,
+   "weapon_2": 1,
+   "weapon_0_1_2_3": 1,
+   "weapon_0_1_2_3_4": 1
+  },
+  "components": {
+   "Transform": 5,
+   "PositionConstraint": 4
+  },
+  "examples": [
+   "RU_BMP2M",
+   "RU_BMP2G",
+   "RU_B19"
+  ]
+ },
+ "shell_spawn_4": {
+  "count": 11,
+  "parents": {
+   "shell_spawn_0": 11
+  },
+  "components": {
+   "Transform": 11
+  },
+  "examples": [
+   "US_M270_A2",
+   "RU_9K58_Smerch",
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_4 (1)": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_M270_A1",
+   "US_AAVP_CATFAE",
+   "US_M270_A2"
+  ]
+ },
+ "shell_spawn_4 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_40": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BM_21_Grad"
+  ]
+ },
+ "shell_spawn_4_0": {
+  "count": 1,
+  "parents": {
+   "weapon_0_1_2_3_4": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "PLACEHOLDER5"
+  ]
+ },
+ "shell_spawn_5": {
+  "count": 10,
+  "parents": {
+   "shell_spawn_0": 10
+  },
+  "components": {
+   "Transform": 10
+  },
+  "examples": [
+   "RU_9K58_Smerch",
+   "US_M270_A2",
+   "US_LMTV_MML"
+  ]
+ },
+ "shell_spawn_5 (1)": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_AAVP_CATFAE",
+   "US_M270_A2",
+   "US_M270_A1"
+  ]
+ },
+ "shell_spawn_5 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_6": {
+  "count": 10,
+  "parents": {
+   "shell_spawn_0": 10
+  },
+  "components": {
+   "Transform": 10
+  },
+  "examples": [
+   "US_M270_A2",
+   "US_AAVP_CATFAE",
+   "US_CRAM_SeaRAM"
+  ]
+ },
+ "shell_spawn_6 (1)": {
+  "count": 3,
+  "parents": {
+   "shell_spawn_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_M270_A2",
+   "US_M270_A1",
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_6 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_7": {
+  "count": 7,
+  "parents": {
+   "shell_spawn_0": 7
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "RU_ZUBR",
+   "US_AAVP_CATFAE",
+   "US_LMTV_MML"
+  ]
+ },
+ "shell_spawn_7 (1)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_7 (2)": {
+  "count": 1,
+  "parents": {
+   "shell_spawn_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_AAVP_CATFAE"
+  ]
+ },
+ "shell_spawn_8": {
+  "count": 6,
+  "parents": {
+   "shell_spawn_0": 6
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "US_LMTV_MML",
+   "RU_BM_21_Grad",
+   "US_CRAM_SeaRAM"
+  ]
+ },
+ "shell_spawn_9": {
+  "count": 6,
+  "parents": {
+   "shell_spawn_0": 6
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "RU_ZUBR",
+   "RU_BM_21_Grad",
+   "US_CRAM_SeaRAM"
+  ]
+ },
+ "shell_spawn__0": {
+  "count": 1,
+  "parents": {
+   "weapon_1": 1
+  },
+  "components": {
+   "Transform": 1,
+   "PositionConstraint": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "RU_MTLB_RPO"
+  ]
+ },
+ "shell_spawn__1": {
+  "count": 1,
+  "parents": {
+   "shell_spawn__0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_RPO"
+  ]
+ },
+ "shell_spawn__2": {
+  "count": 1,
+  "parents": {
+   "shell_spawn__0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_RPO"
+  ]
+ },
+ "shell_spawn__3": {
+  "count": 1,
+  "parents": {
+   "shell_spawn__0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MTLB_RPO"
+  ]
+ },
+ "smoke": {
+  "count": 3,
+  "parents": {
+   "RU_Tunguska_M1": 1,
+   "RU_Tunguska_M2": 1,
+   "RU_Tunguska_SV": 1
+  },
+  "components": {
+   "Transform": 3,
+   "MeshRenderer": 2,
+   "MeshFilter": 2,
+   "ParentConstraint": 2,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_Tunguska_M1",
+   "RU_Tunguska_M2",
+   "RU_Tunguska_SV"
+  ]
+ },
+ "special": {
+  "count": 47,
+  "parents": {
+   "body": 22,
+   "turret_0": 19,
+   "anim_weapon_0": 1,
+   "special_00": 1,
+   "weapon_0": 3,
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 47,
+   "AimConstraint": 1,
+   "LookAtConstraint": 1
+  },
+  "examples": [
+   "US_LAV_M_81",
+   "RU_BMD2",
+   "BALT_FV107"
+  ]
+ },
+ "special001": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BRDM3_80A",
+   "RU_BRDM3_82A"
+  ]
+ },
+ "special1": {
+  "count": 7,
+  "parents": {
+   "special": 1,
+   "Aim2": 1,
+   "turret_0": 3,
+   "body": 2
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_MH47",
+   "RU_MT-LB_dilemma",
+   "RU_2S_Gvozdika"
+  ]
+ },
+ "special2": {
+  "count": 12,
+  "parents": {
+   "hatch2": 3,
+   "hatch1": 3,
+   "body": 4,
+   "special": 1,
+   "Aim2": 1
+  },
+  "components": {
+   "Transform": 12
+  },
+  "examples": [
+   "Iskander_Klub",
+   "Iskander_tube",
+   "RU_Mi8Cargo"
+  ]
+ },
+ "special22": {
+  "count": 6,
+  "parents": {
+   "door1": 3,
+   "door2": 3
+  },
+  "components": {
+   "Transform": 6
+  },
+  "examples": [
+   "Iskander_tube",
+   "Iskander_rocket",
+   "Iskander_Klub"
+  ]
+ },
+ "special3": {
+  "count": 3,
+  "parents": {
+   "body": 2,
+   "special4": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_Mi8Cargo",
+   "RU_DT30_Magnolia",
+   "RU_PTS4"
+  ]
+ },
+ "special4": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_PTS4",
+   "RU_DT30_Magnolia"
+  ]
+ },
+ "special4_Aim2": {
+  "count": 1,
+  "parents": {
+   "anim_turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_MT-LB_Virgo"
+  ]
+ },
+ "special5": {
+  "count": 2,
+  "parents": {
+   "body": 1,
+   "special": 1
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_DT30_Magnolia",
+   "RU_PTS4"
+  ]
+ },
+ "special7": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_PTS4"
+  ]
+ },
+ "special8": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_PTS4"
+  ]
+ },
+ "specialMG": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_T14"
+  ]
+ },
+ "specialScopeRotation": {
+  "count": 1,
+  "parents": {
+   "specialTurret": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM3_PRP5"
+  ]
+ },
+ "specialTurret": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM3_PRP5"
+  ]
+ },
+ "special_0": {
+  "count": 31,
+  "parents": {
+   "body": 12,
+   "weapon_0_1": 2,
+   "anim_turret": 2,
+   "turret_0": 10,
+   "weapon_0": 5
+  },
+  "components": {
+   "Transform": 31,
+   "RotationConstraint": 3
+  },
+  "examples": [
+   "US_HEMTT_Back",
+   "RU_MI28MN",
+   "!DEPREC! US_LAV_M"
+  ]
+ },
+ "special_00": {
+  "count": 10,
+  "parents": {
+   "turret_0": 6,
+   "body": 2,
+   "weapon_0": 1,
+   "special_01": 1
+  },
+  "components": {
+   "Transform": 10,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "US_M1A2SEP2",
+   "RU_T90A",
+   "RU_T90"
+  ]
+ },
+ "special_01": {
+  "count": 17,
+  "parents": {
+   "body": 8,
+   "turret_0_0": 1,
+   "aniim_turret_0": 1,
+   "turret_0": 7
+  },
+  "components": {
+   "Transform": 17,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_BMOT",
+   "RU_T80",
+   "RU_T80U"
+  ]
+ },
+ "special_02": {
+  "count": 7,
+  "parents": {
+   "body": 6,
+   "turret_0_0": 1
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "RU_T80",
+   "RU_BMOT",
+   "RU_MSTA_M2"
+  ]
+ },
+ "special_1": {
+  "count": 15,
+  "parents": {
+   "weapon_0": 1,
+   "turret_0": 7,
+   "special_0": 2,
+   "special_01": 1,
+   "body": 2,
+   "weapon_0_1": 2
+  },
+  "components": {
+   "Transform": 15,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_Toros_Rapira",
+   "US_M109A6",
+   "!DEPREC! US_LAV_M"
+  ]
+ },
+ "special_11": {
+  "count": 1,
+  "parents": {
+   "special_01": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_STRYKER_SPH"
+  ]
+ },
+ "special_1_1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_PTS4",
+   "!DEPREC! US_LAV_M"
+  ]
+ },
+ "special_1_2": {
+  "count": 1,
+  "parents": {
+   "special_1_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "!DEPREC! US_LAV_M"
+  ]
+ },
+ "special_2": {
+  "count": 3,
+  "parents": {
+   "body": 1,
+   "special_optic": 1,
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_AKM_OSA",
+   "RU_MI35",
+   "RU_Tunguska_M1"
+  ]
+ },
+ "special_22": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BTR90_Berezhok"
+  ]
+ },
+ "special_2_2": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_PTS4"
+  ]
+ },
+ "special_2antena": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "S-300V4_2PU"
+  ]
+ },
+ "special_3": {
+  "count": 1,
+  "parents": {
+   "special_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tunguska_SV"
+  ]
+ },
+ "special_4": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tunguska_M1"
+  ]
+ },
+ "special_4antena": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "S-300V4_4PU"
+  ]
+ },
+ "special_5": {
+  "count": 1,
+  "parents": {
+   "special_1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tunguska_M2"
+  ]
+ },
+ "special_6": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tunguska_M2"
+  ]
+ },
+ "special_Aim1": {
+  "count": 1,
+  "parents": {
+   "anim_weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_MT-LB_Virgo"
+  ]
+ },
+ "special_L": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_AbramsTUA",
+   "RU_T15",
+   "BALT_CR9037"
+  ]
+ },
+ "special_R": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "BALT_CR9037",
+   "RU_T15",
+   "US_AbramsTUA"
+  ]
+ },
+ "special_RADAR": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "S-300V4_4PU"
+  ]
+ },
+ "special_RADAR_AIM": {
+  "count": 1,
+  "parents": {
+   "special_RADAR": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "S-300V4_4PU"
+  ]
+ },
+ "special_RADAR_AIM1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "S-300V4_4PU"
+  ]
+ },
+ "special_Tube_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_L1": {
+  "count": 1,
+  "parents": {
+   "special_Tube_L": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_L2": {
+  "count": 1,
+  "parents": {
+   "special_Tube_L1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_L_back": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_R1": {
+  "count": 1,
+  "parents": {
+   "special_Tube_R": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_R2": {
+  "count": 1,
+  "parents": {
+   "special_Tube_R1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_Tube_R_back": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_MML"
+  ]
+ },
+ "special_anim": {
+  "count": 14,
+  "parents": {
+   "body": 9,
+   "weapon_0": 2,
+   "Rotorangle_0": 1,
+   "anim_turret": 1,
+   "special_anim1": 1
+  },
+  "components": {
+   "Transform": 14
+  },
+  "examples": [
+   "US_AH-1W Super_Cobra",
+   "US_AH64D",
+   "US_LAV_ATM"
+  ]
+ },
+ "special_anim0": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_MI38T",
+   "RU_MI26"
+  ]
+ },
+ "special_anim1": {
+  "count": 7,
+  "parents": {
+   "body": 5,
+   "special_anim": 1,
+   "special_anim0": 1
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "RU_Naparnik_Drok",
+   "US_CH53K",
+   "US_UH-1Y"
+  ]
+ },
+ "special_anim2": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_s350",
+   "RU_MI8MTV2",
+   "RU_MI26"
+  ]
+ },
+ "special_anim3": {
+  "count": 3,
+  "parents": {
+   "special_anim": 1,
+   "body": 2
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_UH-1Y",
+   "RU_MI8_MTV5",
+   "RU_MI8MTV2"
+  ]
+ },
+ "special_anim4": {
+  "count": 2,
+  "parents": {
+   "special_anim3": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_MI8_MTV5",
+   "RU_MI8MTV2"
+  ]
+ },
+ "special_anim5": {
+  "count": 2,
+  "parents": {
+   "special_anim2": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_MI8_MTV5",
+   "RU_MI8MTV2"
+  ]
+ },
+ "special_anim6": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_MI8_MTV5",
+   "RU_MI8MTV2"
+  ]
+ },
+ "special_anim_0": {
+  "count": 9,
+  "parents": {
+   "body": 5,
+   "turret_0": 4
+  },
+  "components": {
+   "Transform": 9
+  },
+  "examples": [
+   "US_MH60M_IDAP",
+   "RU_KA29",
+   "US_MH60M_SOAR"
+  ]
+ },
+ "special_anim_1": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_UH60M",
+   "US_MH60M_SOAR",
+   "US_MH60M_IDAP"
+  ]
+ },
+ "special_anim_13": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_MH60M_IDAP"
+  ]
+ },
+ "special_anim_2": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "Naparnik_PVO"
+  ]
+ },
+ "special_anim_3": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "Naparnik_PVO"
+  ]
+ },
+ "special_anim_4": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "Naparnik_PVO"
+  ]
+ },
+ "special_antena": {
+  "count": 4,
+  "parents": {
+   "turret_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_Tunguska_M2",
+   "RU_Tunguska_M1",
+   "RU_2S_Gvozdika"
+  ]
+ },
+ "special_antena1": {
+  "count": 4,
+  "parents": {
+   "turret_0": 1,
+   "special_antena": 3
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_2S_HOSTA",
+   "RU_Tunguska_M1",
+   "RU_Tunguska_M2"
+  ]
+ },
+ "special_antena_L": {
+  "count": 3,
+  "parents": {
+   "anim_turret_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_6",
+   "US_LMTV_SLAMRAAM_4",
+   "US_LMTV_SLAMRAAM_4_2"
+  ]
+ },
+ "special_antena_R": {
+  "count": 3,
+  "parents": {
+   "anim_turret_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4",
+   "US_LMTV_SLAMRAAM_4_2",
+   "US_LMTV_SLAMRAAM_6"
+  ]
+ },
+ "special_antena_middle": {
+  "count": 3,
+  "parents": {
+   "anim_weapon_0": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2",
+   "US_LMTV_SLAMRAAM_4",
+   "US_LMTV_SLAMRAAM_6"
+  ]
+ },
+ "special_antena_middle_1": {
+  "count": 3,
+  "parents": {
+   "special_antena_middle": 3
+  },
+  "components": {
+   "Transform": 3,
+   "LookAtConstraint": 3
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_4_2",
+   "US_LMTV_SLAMRAAM_6",
+   "US_LMTV_SLAMRAAM_4"
+  ]
+ },
+ "special_back1_L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_back1_R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_back2_L": {
+  "count": 1,
+  "parents": {
+   "special_back1_L": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_back2_R": {
+  "count": 1,
+  "parents": {
+   "special_back1_R": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_body": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tunguska"
+  ]
+ },
+ "special_doors": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tochka_U"
+  ]
+ },
+ "special_doors1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_Tochka_U"
+  ]
+ },
+ "special_engine_1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_AV8B_NightAttack",
+   "US_AV8B_Plus"
+  ]
+ },
+ "special_engine_2": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_AV8B_NightAttack",
+   "US_AV8B_Plus"
+  ]
+ },
+ "special_front1_L1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_front1_R1": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_front2_L": {
+  "count": 1,
+  "parents": {
+   "special_front1_L1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_front2_R": {
+  "count": 1,
+  "parents": {
+   "special_front1_R1": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "special_helper": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_M10_105"
+  ]
+ },
+ "special_legs": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM"
+  ]
+ },
+ "special_optic": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_MI35"
+  ]
+ },
+ "special_radar": {
+  "count": 2,
+  "parents": {
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_Tunguska_M1",
+   "RU_Tunguska_M2"
+  ]
+ },
+ "special_radar1": {
+  "count": 2,
+  "parents": {
+   "special_radar": 2
+  },
+  "components": {
+   "Transform": 2,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "RU_Tunguska_M1",
+   "RU_Tunguska_M2"
+  ]
+ },
+ "special_reload": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_BRDM_9P148"
+  ]
+ },
+ "special_rot": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_RAH66"
+  ]
+ },
+ "special_shield": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "BALT_XA180",
+   "RU_BTR90"
+  ]
+ },
+ "special_shield01": {
+  "count": 4,
+  "parents": {
+   "special_shield02": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_NonaSVK",
+   "RU_BTR82A",
+   "RU_BRDM3"
+  ]
+ },
+ "special_shield02": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "RU_NonaSVK",
+   "RU_BRDM3",
+   "RU_BTR82A"
+  ]
+ },
+ "special_shield_01": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "BALT_XA180"
+  ]
+ },
+ "special_tent": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_PTS4"
+  ]
+ },
+ "special_turret": {
+  "count": 2,
+  "parents": {
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BMP3M",
+   "RU_BMP3"
+  ]
+ },
+ "special_weapon": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_PTS4"
+  ]
+ },
+ "specialshield": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_PT76B"
+  ]
+ },
+ "track_L": {
+  "count": 8,
+  "parents": {
+   "Chassis": 8
+  },
+  "components": {
+   "Transform": 8,
+   "SkinnedMeshRenderer": 8
+  },
+  "examples": [
+   "BALT_CR9037",
+   "RU_Kurganets",
+   "RU_BMO1"
+  ]
+ },
+ "track_R": {
+  "count": 8,
+  "parents": {
+   "Chassis": 8
+  },
+  "components": {
+   "Transform": 8,
+   "SkinnedMeshRenderer": 8
+  },
+  "examples": [
+   "RU_BMO1",
+   "RU_Kurganets",
+   "RU_T_14"
+  ]
+ },
+ "turret": {
+  "count": 73,
+  "parents": {
+   "RU_T80U": 1,
+   "M548A3_m240": 1,
+   "body": 8,
+   "Chassis": 14,
+   "M548A3_mk19": 1,
+   "US_MATV_M2_Jav": 1,
+   "RU_T90Razv_Kord": 1,
+   "RU_BMP3F": 1,
+   "RU_T80UM": 1,
+   "RU_T90M_PKT": 1,
+   "US_CH53_M240": 1,
+   "US_M985_Rear_MK19": 1,
+   "US_CH53_GAU21": 1,
+   "US_M985_Middle_MK19": 1,
+   "RU_T90A": 1,
+   "RU_BMP3FM": 1,
+   "US_CH-53K_MMG": 1,
+   "RU_T80UA": 1,
+   "RU_T90": 1,
+   "US_MATV_MK19": 1,
+   "US_M985_Front_MK19": 1,
+   "US_LMTV_SLAMRAAM_4": 1,
+   "RU_BRDM3_82A": 1,
+   "M548A3_m2": 1,
+   "US_RSOV_Mk47": 1,
+   "RU_BMP3M": 1,
+   "RU_T72B": 1,
+   "RU_CHRIZANTEMA": 1,
+   "US_LMTV_SLAMRAAM_6": 1,
+   "RU_T90Razv_PKT": 1,
+   "US_RSOV_M2": 1,
+   "US_CH-53K_Minigun": 1,
+   "US_MATV_M2": 1,
+   "RU_T1530mm": 1,
+   "US_MATV_MK19_Jav": 1,
+   "US_M985_Front_M240": 1,
+   "RU_T72BA": 1,
+   "RU_BRDM3_PRP5": 1,
+   "RU_T1557mm": 1,
+   "US_LMTV_SLAMRAAM_4_2": 1,
+   "US_M985_Middle_M2": 1,
+   "US_M985_Front_M2": 1,
+   "US_CH-53K_HMG": 1,
+   "US_M985_Middle_M240": 1,
+   "RU_B19": 1,
+   "RU_BMP3": 1,
+   "RU_BRDM3_80A": 1,
+   "RU_T90M_Kord": 1,
+   "US_CH53_M134": 1,
+   "RU_KORNET": 1,
+   "US_M985_Rear_M2": 1,
+   "US_M985_Rear_M240": 1,
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 73,
+   "SkinnedMeshRenderer": 64,
+   "MonoBehaviour": 7
+  },
+  "examples": [
+   "RU_T80U",
+   "M548A3_m240",
+   "RU_BTR_MDM_ZU23"
+  ]
+ },
+ "turret constraint": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1,
+   "MonoBehaviour": 1
+  },
+  "examples": [
+   "RU_2S7M_Malka"
+  ]
+ },
+ "turret1": {
+  "count": 4,
+  "parents": {
+   "US_MH47_GAU21": 1,
+   "US_MH47_M240": 1,
+   "US_Ch47_M240": 1,
+   "US_Ch47_GAU21": 1
+  },
+  "components": {
+   "Transform": 4,
+   "SkinnedMeshRenderer": 4
+  },
+  "examples": [
+   "US_MH47_GAU21",
+   "US_MH47_M240",
+   "US_Ch47_M240"
+  ]
+ },
+ "turret12_7": {
+  "count": 1,
+  "parents": {
+   "RU_MTLB_Kord": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MTLB_Kord"
+  ]
+ },
+ "turret12mm": {
+  "count": 2,
+  "parents": {
+   "RU_Bumerang12mm": 1,
+   "RU_Kurganets12mm": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "RU_Bumerang12mm",
+   "RU_Kurganets12mm"
+  ]
+ },
+ "turret12mm_L": {
+  "count": 1,
+  "parents": {
+   "RU_Kurganets12mm": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_Kurganets12mm"
+  ]
+ },
+ "turret1_low": {
+  "count": 2,
+  "parents": {
+   "US_M1288_GAU19": 1,
+   "US_M1288_m2": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_M1288_GAU19",
+   "US_M1288_m2"
+  ]
+ },
+ "turret2": {
+  "count": 4,
+  "parents": {
+   "US_Ch47_M134": 1,
+   "HMMWV_LRAS3_MK19": 1,
+   "US_MH47_M134": 1,
+   "HMMWV_LRAS3_M2": 1
+  },
+  "components": {
+   "Transform": 4,
+   "SkinnedMeshRenderer": 4
+  },
+  "examples": [
+   "US_Ch47_M134",
+   "HMMWV_LRAS3_MK19",
+   "US_MH47_M134"
+  ]
+ },
+ "turret2 (1)": {
+  "count": 1,
+  "parents": {
+   "l1": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "HMMWV_LRAS3_MK19"
+  ]
+ },
+ "turret3": {
+  "count": 2,
+  "parents": {
+   "US_MH47_M240_Rear": 1,
+   "US_MH47_GAU21_Rear": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_MH47_M240_Rear",
+   "US_MH47_GAU21_Rear"
+  ]
+ },
+ "turret30mm": {
+  "count": 3,
+  "parents": {
+   "RU_Kurganets30mm": 1,
+   "RU_Bumerang30mm": 1,
+   "RU_PT76_30": 1
+  },
+  "components": {
+   "Transform": 3,
+   "SkinnedMeshRenderer": 3
+  },
+  "examples": [
+   "RU_Kurganets30mm",
+   "RU_Bumerang30mm",
+   "RU_PT76_30"
+  ]
+ },
+ "turret30mm_1": {
+  "count": 1,
+  "parents": {
+   "RU_MTLB_2A72": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MTLB_2A72"
+  ]
+ },
+ "turret30mm_2": {
+  "count": 1,
+  "parents": {
+   "RU_MTLB_2A42_AGS": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MTLB_2A42_AGS"
+  ]
+ },
+ "turret30mm_L": {
+  "count": 2,
+  "parents": {
+   "RU_Kurganets30mm": 1,
+   "RU_PT76_30": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "RU_Kurganets30mm",
+   "RU_PT76_30"
+  ]
+ },
+ "turret3_low": {
+  "count": 1,
+  "parents": {
+   "US_m1288_M230": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_m1288_M230"
+  ]
+ },
+ "turret4": {
+  "count": 1,
+  "parents": {
+   "US_MH47_M134_Rear": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_MH47_M134_Rear"
+  ]
+ },
+ "turret57mm": {
+  "count": 1,
+  "parents": {
+   "RU_Kurganets57mm": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_Kurganets57mm"
+  ]
+ },
+ "turret57mm_L": {
+  "count": 1,
+  "parents": {
+   "RU_Kurganets57mm": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_Kurganets57mm"
+  ]
+ },
+ "turretBTR80": {
+  "count": 1,
+  "parents": {
+   "RU_MTLB_KPVT": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MTLB_KPVT"
+  ]
+ },
+ "turretF_0": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "US_LHA",
+   "US_LHA_Damage",
+   "US_Arleigh_Burke"
+  ]
+ },
+ "turretF_1": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "US_LHA_Damage",
+   "US_LHA",
+   "Destroyed_Arleigh_Burke"
+  ]
+ },
+ "turretF_2": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_LHA_Damage",
+   "US_LHA"
+  ]
+ },
+ "turretR_0": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "US_LHA_Damage",
+   "Destroyed_Arleigh_Burke",
+   "US_LHA"
+  ]
+ },
+ "turretR_1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_LHA",
+   "US_LHA_Damage"
+  ]
+ },
+ "turretR_2": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2,
+   "MonoBehaviour": 2
+  },
+  "examples": [
+   "US_LHA",
+   "US_LHA_Damage"
+  ]
+ },
+ "turret_0": {
+  "count": 494,
+  "parents": {
+   "body": 471,
+   "pritsep": 7,
+   "US_M985_Battleship": 1,
+   "turret_anim_container": 2,
+   "anim_turret": 1,
+   "US_AMPV_MCV_MK19": 1,
+   "US_AMPV_MCV_M240": 1,
+   "RU_BMP2_NoATGM": 1,
+   "AnimationTurret": 1,
+   "RU_BMP2": 1,
+   "US_AMPV_MCV_M2": 1,
+   "special_reload": 1,
+   "US_AMPV_MK19": 1,
+   "RU_MSTA_M1": 1,
+   "US_AMPV_MCV_Empty": 1,
+   "US_AMPV_M2": 1,
+   "US_CRAM_Phalanx": 1
+  },
+  "components": {
+   "Transform": 494,
+   "MonoBehaviour": 466,
+   "ParentConstraint": 9,
+   "BoxCollider": 53,
+   "SkinnedMeshRenderer": 11,
+   "RotationConstraint": 3
+  },
+  "examples": [
+   "US_AC130U",
+   "RU_BRM3KBase",
+   "US_PATRIOT_PAC3MSE_4"
+  ]
+ },
+ "turret_01": {
+  "count": 2,
+  "parents": {
+   "turret_0": 1,
+   "body": 1
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LCAC",
+   "US_M985_Battleship"
+  ]
+ },
+ "turret_02": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_M985_Battleship"
+  ]
+ },
+ "turret_0_0": {
+  "count": 55,
+  "parents": {
+   "turret_0": 55
+  },
+  "components": {
+   "Transform": 55,
+   "MonoBehaviour": 52
+  },
+  "examples": [
+   "US_M8XM35",
+   "RU_2S_HOSTA",
+   "US_M109A7_HMG"
+  ]
+ },
+ "turret_0_1": {
+  "count": 14,
+  "parents": {
+   "turret_0": 14
+  },
+  "components": {
+   "Transform": 14,
+   "MonoBehaviour": 9
+  },
+  "examples": [
+   "US_M1A2",
+   "PLACEHOLDER5",
+   "NPC_Leopard2_Traincart"
+  ]
+ },
+ "turret_1": {
+  "count": 174,
+  "parents": {
+   "body": 156,
+   "turret_0": 7,
+   "US_AMPV_MCV_M240": 1,
+   "US_AMPV_MCV_MK19": 1,
+   "RU_BMP2G": 1,
+   "root": 1,
+   "US_AMPV_R800": 1,
+   "US_CRAM_SeaRAM": 1,
+   "US_AMPV_MCV_M2": 1,
+   "RU_MSTA_M2": 1,
+   "US_M985_Battleship": 1,
+   "US_HMMWV_GMV_M134": 1,
+   "US_AMPV_R800_Jav": 1
+  },
+  "components": {
+   "Transform": 174,
+   "MonoBehaviour": 137,
+   "RotationConstraint": 18,
+   "SkinnedMeshRenderer": 13,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "US_AV8B_NightAttack",
+   "US_MQ1C",
+   "RU_Mi8Cargo"
+  ]
+ },
+ "turret_10": {
+  "count": 12,
+  "parents": {
+   "body": 12
+  },
+  "components": {
+   "Transform": 12,
+   "MonoBehaviour": 12
+  },
+  "examples": [
+   "US_F15E",
+   "RU_SU33",
+   "US_F15C"
+  ]
+ },
+ "turret_11": {
+  "count": 13,
+  "parents": {
+   "body": 11,
+   "turret_1": 2
+  },
+  "components": {
+   "Transform": 13,
+   "MonoBehaviour": 11,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_F15C",
+   "US_AMPV_MCV_MK19",
+   "RU_SU35"
+  ]
+ },
+ "turret_12": {
+  "count": 10,
+  "parents": {
+   "body": 8,
+   "turret_1": 2
+  },
+  "components": {
+   "Transform": 10,
+   "MonoBehaviour": 8,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "RU_SU34",
+   "NPC_F15EX",
+   "RU_SU30SM"
+  ]
+ },
+ "turret_13": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "NPC_F15EX",
+   "US_F15EX",
+   "US_F15E"
+  ]
+ },
+ "turret_14": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "US_F15E",
+   "US_F15EX",
+   "NPC_F15EX"
+  ]
+ },
+ "turret_15": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "NPC_F15EX",
+   "US_F15EX",
+   "US_F15E"
+  ]
+ },
+ "turret_16": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "NPC_F15EX",
+   "US_F15E",
+   "US_F15EX"
+  ]
+ },
+ "turret_17": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "NPC_F15EX",
+   "US_F15E",
+   "US_F15EX"
+  ]
+ },
+ "turret_18": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "US_F15EX",
+   "NPC_F15EX",
+   "US_F15E"
+  ]
+ },
+ "turret_19": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3,
+   "MonoBehaviour": 3
+  },
+  "examples": [
+   "US_F15E",
+   "US_F15EX",
+   "NPC_F15EX"
+  ]
+ },
+ "turret_1_Javelin": {
+  "count": 1,
+  "parents": {
+   "US_AMPV_R800_Jav": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_AMPV_R800_Jav"
+  ]
+ },
+ "turret_2": {
+  "count": 96,
+  "parents": {
+   "body": 86,
+   "turret_1": 1,
+   "US_HMMWV_GMV_MK19": 1,
+   "US_M985_Battleship": 1,
+   "turret_0": 3,
+   "US_HMMWV_GMV_M2": 1,
+   "US_HMMWV_GMV_M240": 1,
+   "RU_BMP2M": 1,
+   "L_MLRS": 1
+  },
+  "components": {
+   "Transform": 96,
+   "MonoBehaviour": 87,
+   "SkinnedMeshRenderer": 9,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "RU_SU33",
+   "US_F35B",
+   "RU_BTR_D_Skrezhet"
+  ]
+ },
+ "turret_3": {
+  "count": 69,
+  "parents": {
+   "body": 67,
+   "R_MLRS": 1,
+   "turret_1": 1
+  },
+  "components": {
+   "Transform": 69,
+   "MonoBehaviour": 68,
+   "PositionConstraint": 4,
+   "SkinnedMeshRenderer": 1,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "NPC_SU24M2",
+   "RU_MI28N",
+   "US_AH64E"
+  ]
+ },
+ "turret_4": {
+  "count": 55,
+  "parents": {
+   "body": 55
+  },
+  "components": {
+   "Transform": 55,
+   "MonoBehaviour": 55,
+   "PositionConstraint": 4,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "NPC_SU24M2",
+   "RU_Mi8_AMTSh",
+   "US_F35A"
+  ]
+ },
+ "turret_5": {
+  "count": 43,
+  "parents": {
+   "body": 43
+  },
+  "components": {
+   "Transform": 43,
+   "MonoBehaviour": 43,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "RU_SU27SM",
+   "RU_MIG35",
+   "RU_KA29"
+  ]
+ },
+ "turret_6": {
+  "count": 38,
+  "parents": {
+   "body": 38
+  },
+  "components": {
+   "Transform": 38,
+   "MonoBehaviour": 38,
+   "ParentConstraint": 1
+  },
+  "examples": [
+   "US_AV8B_NightAttack",
+   "US_AH64E",
+   "US_F15EX"
+  ]
+ },
+ "turret_7": {
+  "count": 28,
+  "parents": {
+   "body": 28
+  },
+  "components": {
+   "Transform": 28,
+   "MonoBehaviour": 28
+  },
+  "examples": [
+   "RU_SU24M2",
+   "RU_SU27SM",
+   "RU_SU35"
+  ]
+ },
+ "turret_8": {
+  "count": 26,
+  "parents": {
+   "body": 26
+  },
+  "components": {
+   "Transform": 26,
+   "MonoBehaviour": 26
+  },
+  "examples": [
+   "RU_MIG35",
+   "RU_MiG29K",
+   "RU_MI24V_VP"
+  ]
+ },
+ "turret_9": {
+  "count": 15,
+  "parents": {
+   "body": 15
+  },
+  "components": {
+   "Transform": 15,
+   "MonoBehaviour": 15
+  },
+  "examples": [
+   "US_F15EX",
+   "US_F15E",
+   "RU_MIG35"
+  ]
+ },
+ "turret_L": {
+  "count": 5,
+  "parents": {
+   "US_LMTV_SLAMRAAM_6": 1,
+   "US_LMTV_SLAMRAAM_4_2": 1,
+   "RU_T1530mm": 1,
+   "US_LMTV_SLAMRAAM_4": 1,
+   "RU_T1557mm": 1
+  },
+  "components": {
+   "Transform": 5,
+   "SkinnedMeshRenderer": 5
+  },
+  "examples": [
+   "US_LMTV_SLAMRAAM_6",
+   "US_LMTV_SLAMRAAM_4_2",
+   "RU_T1530mm"
+  ]
+ },
+ "turret_L_MG": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MonoBehaviour": 4
+  },
+  "examples": [
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_BTR_D_PKT",
+   "RU_BTR_D_Skrezhet"
+  ]
+ },
+ "turret_MG": {
+  "count": 1,
+  "parents": {
+   "helper_add_ turret": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_m981_fist"
+  ]
+ },
+ "turret_R_MG": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4,
+   "MonoBehaviour": 4
+  },
+  "examples": [
+   "RU_BTR_D_SkrezhetM",
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_BTR_D_Skrezhet"
+  ]
+ },
+ "turret_S": {
+  "count": 1,
+  "parents": {
+   "RU_NonaS": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_NonaS"
+  ]
+ },
+ "turret_SM": {
+  "count": 1,
+  "parents": {
+   "RU_NonaSM": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_NonaSM"
+  ]
+ },
+ "turret_T": {
+  "count": 1,
+  "parents": {
+   "Main_Privod_T": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_2s4"
+  ]
+ },
+ "turret_V": {
+  "count": 1,
+  "parents": {
+   "RU_MI24V": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MI24V"
+  ]
+ },
+ "turret_VP": {
+  "count": 1,
+  "parents": {
+   "RU_MI24VP": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "RU_MI24VP"
+  ]
+ },
+ "turret_anim": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_BRDM_9P148"
+  ]
+ },
+ "turret_anim_container": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BUKM3",
+   "RU_BUKM2"
+  ]
+ },
+ "turret_close": {
+  "count": 2,
+  "parents": {
+   "US_MV-22_b_closed": 1,
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_MV-22_b_closed",
+   "US_MV-22_b"
+  ]
+ },
+ "turret_closed": {
+  "count": 2,
+  "parents": {
+   "US_CV-22_b_closed": 1,
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_CV-22_b_closed",
+   "US_CV-22_b"
+  ]
+ },
+ "turret_fly_VFX": {
+  "count": 29,
+  "parents": {
+   "turret_0": 29
+  },
+  "components": {
+   "Transform": 29
+  },
+  "examples": [
+   "RU_T90M_PKT",
+   "US_M8XM35",
+   "RU_T90"
+  ]
+ },
+ "turret_helper": {
+  "count": 2,
+  "parents": {
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 2,
+   "RotationConstraint": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_BTR_MDM",
+   "RU_2S7M_Malka"
+  ]
+ },
+ "turret_helper_aim": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_2S7M_Malka"
+  ]
+ },
+ "turret_open": {
+  "count": 4,
+  "parents": {
+   "Chassis": 2,
+   "US_CV-22_b_open": 1,
+   "US_MV-22_b_open": 1
+  },
+  "components": {
+   "Transform": 4,
+   "SkinnedMeshRenderer": 4
+  },
+  "examples": [
+   "US_CV-22_b",
+   "US_MV-22_b",
+   "US_CV-22_b_open"
+  ]
+ },
+ "turret_piston": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_M163_PIVADS"
+  ]
+ },
+ "turret_smokeVFX": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_M1A1FEP"
+  ]
+ },
+ "turret_special": {
+  "count": 1,
+  "parents": {
+   "turret_special5": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "turret_special1": {
+  "count": 1,
+  "parents": {
+   "recoil_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "turret_special2": {
+  "count": 1,
+  "parents": {
+   "anim_turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "turret_special3": {
+  "count": 1,
+  "parents": {
+   "weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "turret_special4": {
+  "count": 1,
+  "parents": {
+   "turret_special": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "turret_special5": {
+  "count": 1,
+  "parents": {
+   "recoil_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "turret_unused": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "Naparnik_PVO"
+  ]
+ },
+ "turret_weapon": {
+  "count": 2,
+  "parents": {
+   "US_AMPV_MCV_MK19": 1,
+   "US_AMPV_MCV_M2": 1
+  },
+  "components": {
+   "Transform": 2,
+   "SkinnedMeshRenderer": 2
+  },
+  "examples": [
+   "US_AMPV_MCV_MK19",
+   "US_AMPV_MCV_M2"
+  ]
+ },
+ "turrets": {
+  "count": 4,
+  "parents": {
+   "US_CH-53K_MMG": 1,
+   "US_CH-53K_Minigun": 1,
+   "US_CH-53K_HMG": 1,
+   "US_UH-1Y_M240": 1
+  },
+  "components": {
+   "Transform": 4,
+   "SkinnedMeshRenderer": 4
+  },
+  "examples": [
+   "US_CH-53K_MMG",
+   "US_CH-53K_Minigun",
+   "US_CH-53K_HMG"
+  ]
+ },
+ "weapon": {
+  "count": 18,
+  "parents": {
+   "turret_2": 1,
+   "turret": 5,
+   "US_RSOV_M2": 1,
+   "body": 2,
+   "turret_0": 4,
+   "turret_1": 2,
+   "weapon_0_1": 1,
+   "US_HMMWV_GMV_M2": 1,
+   "US_HMMWV_GMV_MK19": 1
+  },
+  "components": {
+   "Transform": 18,
+   "SkinnedMeshRenderer": 3
+  },
+  "examples": [
+   "RU_BTR_D_Skrezhet",
+   "RU_MTLB_Luchnik",
+   "US_RSOV_M2"
+  ]
+ },
+ "weaponF_0": {
+  "count": 4,
+  "parents": {
+   "turretF_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_Arleigh_Burke",
+   "US_LHA",
+   "Destroyed_Arleigh_Burke"
+  ]
+ },
+ "weaponF_1": {
+  "count": 4,
+  "parents": {
+   "turretF_1": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_LHA_Damage",
+   "US_LHA",
+   "Destroyed_Arleigh_Burke"
+  ]
+ },
+ "weaponF_2": {
+  "count": 2,
+  "parents": {
+   "turretF_2": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LHA_Damage",
+   "US_LHA"
+  ]
+ },
+ "weaponR_0": {
+  "count": 4,
+  "parents": {
+   "turretR_0": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "Destroyed_Arleigh_Burke",
+   "US_Arleigh_Burke",
+   "US_LHA"
+  ]
+ },
+ "weaponR_1": {
+  "count": 2,
+  "parents": {
+   "turretR_1": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LHA",
+   "US_LHA_Damage"
+  ]
+ },
+ "weaponR_2": {
+  "count": 2,
+  "parents": {
+   "turretR_2": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_LHA",
+   "US_LHA_Damage"
+  ]
+ },
+ "weapon_0": {
+  "count": 964,
+  "parents": {
+   "turret_2": 84,
+   "turret_4": 54,
+   "turret_0": 344,
+   "turret_8": 26,
+   "turret_1": 132,
+   "turret_3": 67,
+   "turret_5": 43,
+   "turret_0_0": 52,
+   "turret_7": 28,
+   "turret_6": 38,
+   "turret_10": 12,
+   "anim_weapon": 2,
+   "turret_L_MG": 4,
+   "turret_14": 3,
+   "turret_9": 15,
+   "turret_12": 8,
+   "turret_17": 3,
+   "turret_11": 11,
+   "turret_R_MG": 4,
+   "turret_0_1": 9,
+   "anim_weapon_0": 1,
+   "turret_18": 3,
+   "turret_13": 3,
+   "weapon_anim_container": 2,
+   "turret_15": 3,
+   "turret_19": 3,
+   "helper_main_ turret": 1,
+   "turret_16": 3,
+   "anim_turret_0": 1,
+   "AnimationWeapon": 1,
+   "TOW": 2,
+   "turret": 1,
+   "GameObject": 1
+  },
+  "components": {
+   "Transform": 964,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "RU_BTR_D_Robot",
+   "RU_MI24P",
+   "US_MV-22_b_open"
+  ]
+ },
+ "weapon_01": {
+  "count": 4,
+  "parents": {
+   "turret_1": 3,
+   "turret_01": 1
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "HMMWV_LRAS3_MK19",
+   "HMMWV_LRAS3_M2",
+   "HMMWV_LRAS3_M240"
+  ]
+ },
+ "weapon_02": {
+  "count": 1,
+  "parents": {
+   "turret_02": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_M985_Battleship"
+  ]
+ },
+ "weapon_0_0": {
+  "count": 1,
+  "parents": {
+   "turret_0_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "RU_T90M_PKT"
+  ]
+ },
+ "weapon_0_1": {
+  "count": 91,
+  "parents": {
+   "turret_0": 81,
+   "turret_0_0": 1,
+   "turret_0_1": 3,
+   "turret": 1,
+   "turret_3": 1,
+   "turret_4": 1,
+   "reload": 1,
+   "turret_2": 1,
+   "turret_1": 1
+  },
+  "components": {
+   "Transform": 91
+  },
+  "examples": [
+   "US_HMMWV_RWS_M134",
+   "US_MATV_M2_Jav",
+   "US_Rangers"
+  ]
+ },
+ "weapon_0_1_2": {
+  "count": 40,
+  "parents": {
+   "turret_0": 40
+  },
+  "components": {
+   "Transform": 40
+  },
+  "examples": [
+   "RU_BMP3M",
+   "US_LAV_AD_Hydra",
+   "RU_BMP3FM"
+  ]
+ },
+ "weapon_0_1_2_3": {
+  "count": 2,
+  "parents": {
+   "special_01": 1,
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_MTLB_STRELA10M3",
+   "RU_Kurganets57mm"
+  ]
+ },
+ "weapon_0_1_2_3_4": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "PLACEHOLDER5"
+  ]
+ },
+ "weapon_1": {
+  "count": 62,
+  "parents": {
+   "turret_1": 19,
+   "turret_0": 42,
+   "special2": 1
+  },
+  "components": {
+   "Transform": 62,
+   "RotationConstraint": 23
+  },
+  "examples": [
+   "US_PATRIOT_Front_M240_PAC2",
+   "RU_BTR80AM",
+   "US_HEMTT_M240"
+  ]
+ },
+ "weapon_1_Helper": {
+  "count": 2,
+  "parents": {
+   "weapon_0_1": 2
+  },
+  "components": {
+   "Transform": 2,
+   "AimConstraint": 2
+  },
+  "examples": [
+   "RU_BRDM_KPVB",
+   "RU_BRDM_Kord"
+  ]
+ },
+ "weapon_2": {
+  "count": 12,
+  "parents": {
+   "turret_0": 11,
+   "turret_2": 1
+  },
+  "components": {
+   "Transform": 12,
+   "RotationConstraint": 2
+  },
+  "examples": [
+   "RU_Toros_2A72",
+   "RU_B19",
+   "US_Ch47_M134"
+  ]
+ },
+ "weapon_MG": {
+  "count": 3,
+  "parents": {
+   "turret_1": 1,
+   "turret_0_0": 1,
+   "turret_MG": 1
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_BTR_MDM",
+   "US_LAV25",
+   "US_m981_fist"
+  ]
+ },
+ "weapon_T": {
+  "count": 1,
+  "parents": {
+   "turret_T": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_2s4"
+  ]
+ },
+ "weapon_anim_container": {
+  "count": 2,
+  "parents": {
+   "turret_0": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_BUKM3",
+   "RU_BUKM2"
+  ]
+ },
+ "weapon_bone_just_in_case": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "RotationConstraint": 1
+  },
+  "examples": [
+   "RU_DT30_PANTSIR"
+  ]
+ },
+ "weapon_hangar": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "weapon_helper": {
+  "count": 12,
+  "parents": {
+   "turret_0": 3,
+   "weapon_0": 9
+  },
+  "components": {
+   "Transform": 12,
+   "RotationConstraint": 3,
+   "AimConstraint": 8
+  },
+  "examples": [
+   "BALT_CR9037",
+   "US_LAV_AD_Stinger",
+   "RU_BTR_D_NSV"
+  ]
+ },
+ "weapon_helper00": {
+  "count": 1,
+  "parents": {
+   "weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_2S7M_Malka"
+  ]
+ },
+ "weapon_helper01": {
+  "count": 1,
+  "parents": {
+   "turret_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "RU_2S7M_Malka"
+  ]
+ },
+ "weapon_helper_01": {
+  "count": 7,
+  "parents": {
+   "turret_0": 7
+  },
+  "components": {
+   "Transform": 7,
+   "AimConstraint": 7
+  },
+  "examples": [
+   "US_PATRIOT_PAC2_2",
+   "US_PATRIOT_PAC3MSE_4",
+   "US_PATRIOT_PAC3_8"
+  ]
+ },
+ "weapon_helper_default": {
+  "count": 4,
+  "parents": {
+   "weapon": 2,
+   "weapon_0": 2
+  },
+  "components": {
+   "Transform": 4,
+   "AimConstraint": 4
+  },
+  "examples": [
+   "RU_BTR_MDM_ZU23",
+   "URAL4320_ZU23",
+   "RU_MTLB_SPAAG_ZU23"
+  ]
+ },
+ "weapon_helper_modernized": {
+  "count": 5,
+  "parents": {
+   "weapon": 3,
+   "weapon_0": 1,
+   "weapon_0_1": 1
+  },
+  "components": {
+   "Transform": 5,
+   "AimConstraint": 5
+  },
+  "examples": [
+   "RU_BTR_D_SkrezhetM_Igla",
+   "RU_BTR_MDM_ZU23M",
+   "RU_BTR_D_SkrezhetM"
+  ]
+ },
+ "weapon_holder": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_HMMWV_Hawkeye"
+  ]
+ },
+ "weapon_open": {
+  "count": 1,
+  "parents": {
+   "recoil_0": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_LMTV_Brutus"
+  ]
+ },
+ "weapon_piston": {
+  "count": 1,
+  "parents": {
+   "weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_M163_PIVADS"
+  ]
+ },
+ "weapon_stanok": {
+  "count": 1,
+  "parents": {
+   "anim_weapon_0": 1
+  },
+  "components": {
+   "Transform": 1,
+   "AimConstraint": 1
+  },
+  "examples": [
+   "US_LAV_M_81"
+  ]
+ },
+ "wheels": {
+  "count": 1,
+  "parents": {
+   "Chassis": 1
+  },
+  "components": {
+   "Transform": 1,
+   "SkinnedMeshRenderer": 1
+  },
+  "examples": [
+   "US_MQ9"
+  ]
+ },
+ "wing1_L": {
+  "count": 7,
+  "parents": {
+   "body": 7
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_MQ1C",
+   "US_MC130H",
+   "US_MQ1B"
+  ]
+ },
+ "wing1_R": {
+  "count": 7,
+  "parents": {
+   "body": 7
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_AC130_Base",
+   "US_MQ1B",
+   "US_MC130H"
+  ]
+ },
+ "wing2_L": {
+  "count": 7,
+  "parents": {
+   "body": 7
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_MC130H",
+   "US_AC130_Base",
+   "US_MQ1B"
+  ]
+ },
+ "wing2_R": {
+  "count": 7,
+  "parents": {
+   "body": 7
+  },
+  "components": {
+   "Transform": 7
+  },
+  "examples": [
+   "US_C130_SuperHercules",
+   "US_RQ170",
+   "US_AC130_Base"
+  ]
+ },
+ "wing3_3L": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_RQ170"
+  ]
+ },
+ "wing3_3R": {
+  "count": 1,
+  "parents": {
+   "body": 1
+  },
+  "components": {
+   "Transform": 1
+  },
+  "examples": [
+   "US_RQ170"
+  ]
+ },
+ "wing3_L": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_C130_SuperHercules",
+   "US_KC130_HarvestHawk",
+   "US_RQ170"
+  ]
+ },
+ "wing3_R": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_MC130H",
+   "US_C130_SuperHercules",
+   "US_AC130_Base"
+  ]
+ },
+ "wingBL1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_C17_GLOBEMASTER",
+   "NPC_C17_GLOBEMASTER"
+  ]
+ },
+ "wingBR1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_C17_GLOBEMASTER",
+   "NPC_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_L1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_L2": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_C17_GLOBEMASTER",
+   "NPC_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_L3": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_L4": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_L5": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_C17_GLOBEMASTER",
+   "NPC_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_L_1": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_SU27SM",
+   "RU_SU34",
+   "US_AV8B_NightAttack"
+  ]
+ },
+ "wing_L_2": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_AV8B_Plus",
+   "RU_SU27SM",
+   "RU_SU34"
+  ]
+ },
+ "wing_L_back2_1": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_AV8B_Plus",
+   "US_AV8B_NightAttack",
+   "RU_SU35"
+  ]
+ },
+ "wing_L_back_1": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_AV8B_Plus",
+   "RU_SU34",
+   "US_AV8B_NightAttack"
+  ]
+ },
+ "wing_Mid": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_R1": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_R2": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_C17_GLOBEMASTER",
+   "NPC_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_R3": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "US_C17_GLOBEMASTER",
+   "NPC_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_R4": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_R5": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "NPC_C17_GLOBEMASTER",
+   "US_C17_GLOBEMASTER"
+  ]
+ },
+ "wing_R_1": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "RU_SU35",
+   "US_AV8B_Plus",
+   "RU_SU27SM"
+  ]
+ },
+ "wing_R_2": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_AV8B_NightAttack",
+   "RU_SU34",
+   "RU_SU35"
+  ]
+ },
+ "wing_R_back2_1": {
+  "count": 3,
+  "parents": {
+   "body": 3
+  },
+  "components": {
+   "Transform": 3
+  },
+  "examples": [
+   "RU_SU27SM",
+   "RU_SU35",
+   "RU_SU34"
+  ]
+ },
+ "wing_R_back_1": {
+  "count": 5,
+  "parents": {
+   "body": 5
+  },
+  "components": {
+   "Transform": 5
+  },
+  "examples": [
+   "US_AV8B_Plus",
+   "RU_SU27SM",
+   "RU_SU34"
+  ]
+ },
+ "wing_backL": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_KC130_HarvestHawk",
+   "US_AC130_Base",
+   "US_C130_SuperHercules"
+  ]
+ },
+ "wing_backM": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_KC130_HarvestHawk",
+   "US_C130_SuperHercules",
+   "US_AC130_Base"
+  ]
+ },
+ "wing_backR": {
+  "count": 4,
+  "parents": {
+   "body": 4
+  },
+  "components": {
+   "Transform": 4
+  },
+  "examples": [
+   "US_MC130H",
+   "US_C130_SuperHercules",
+   "US_AC130_Base"
+  ]
+ },
+ "wing_front_L": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_TU160",
+   "RU_SU33"
+  ]
+ },
+ "wing_front_R": {
+  "count": 2,
+  "parents": {
+   "body": 2
+  },
+  "components": {
+   "Transform": 2
+  },
+  "examples": [
+   "RU_SU33",
+   "RU_TU160"
+  ]
+ }
+}

@@ -1,0 +1,16 @@
+# BA_Mod_Maker 运行/打包所需的第三方依赖
+# 安装：  pip install -r requirements.txt
+#
+# 说明：
+#   · Blender 插件**不需要**在这里装依赖 —— 它自带 `blender_addon/_unitypy/`
+#     （含 UnityPy / lz4 / fsspec / brotli 等，已适配 Blender 内置 Python 版本 ✓）
+#   · 下面这些是**桌面程序**（ba_db_tool.py）与打包用的
+
+# 图像处理：图标/贴图读写（PNG/DDS 等）
+Pillow>=10.0
+
+# Unity 资产包读写（模型、bundle、资产提取）
+UnityPy>=1.20
+
+# 打包 exe（可选，仅 build_exe.py 需要）
+pyinstaller>=6.0

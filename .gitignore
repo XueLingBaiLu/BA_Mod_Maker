@@ -1,0 +1,49 @@
+# ───────── 构建产物 / 发布包（走 GitHub Releases ✓ 不进 git ✗）─────────
+BA_Mod_Maker_v*/
+*.zip
+*.7z
+*.rar
+dist/
+build/
+*.spec
+
+# ───────── Python 缓存 ─────────
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# ───────── ★ 游戏资源：绝不能提交 ✗ ★ ─────────
+# 模型、贴图、图标、音频、bundle、游戏数据库等均属游戏版权方 ✓
+*.bundle
+*.assets
+*.unity3d
+*.bank
+*.fsb5
+*.bamod
+icons_extracted/
+icons_raw/
+data.unity3d
+DataBaseCompiled*
+RawData.json
+steam_appid.txt
+
+# ───────── 本地/临时 ─────────
+*.log
+*.tmp
+*.bak
+*.bak_*
+*.orig
+*.rej
+*~
+.idea/
+.vscode/
+Thumbs.db
+desktop.ini
+
+# ───────── 用户本机配置（含个人路径 ✓ 不提交 ✗）─────────
+user_config.json
+bamod_prefs.json
+*.local

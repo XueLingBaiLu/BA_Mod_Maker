@@ -1,0 +1,33 @@
+MIT License
+
+Copyright (c) 2026 BA Mod Maker contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 附加声明 · Additional notice
+
+本许可**仅覆盖本仓库自身的代码**。
+
+- **游戏资源不在授权范围内**：本仓库不包含《Broken Arrow》的任何模型、贴图、图标、音频、
+  `.bundle`、`data.unity3d` 等资源；这些资源的版权归其各自权利人所有。
+- **第三方库不在授权范围内**：仓库内 `blender_addon/_unitypy/` 目录捆绑的第三方库
+  各自由其原始许可证约束，详见 `THIRD_PARTY_NOTICES.md`。
+- 本工具与《Broken Arrow》的开发商/发行商**无任何关联**，也未获其背书。
