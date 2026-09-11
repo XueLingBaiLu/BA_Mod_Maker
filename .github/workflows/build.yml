@@ -1,0 +1,76 @@
+name: Build & Release
+
+# ★ 触发方式 ✓
+#   ① push 一个版本 tag（如 v1.8.55）⇒ 自动打包并**创建 Release 附带两个 zip** ✓✓
+#   ② 手动：仓库页 → Actions → 左栏 "Build & Release" → Run workflow ✓
+#      （手动跑只产出 Artifacts 供下载 ✓ 不动 Release ✓）
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write        # 创建 Release 需要 ✓
+
+jobs:
+  build:
+    # ⚠ 必须是 Windows ✓（PyInstaller 出 .exe ✓）
+    # ⚠ 必须是 Python 3.13 ✓（插件自带的 .pyd 是 cp313 编译的 ✓，换版本会加载失败 ✗）
+    runs-on: windows-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: 读取版本号
+        id: ver
+        shell: pwsh
+        run: |
+          $app = python -c "import version; print(version.APP_VERSION)"
+          $add = python -c "import version; print('.'.join(map(str, version.ADDON_VERSION)))"
+          "app=$app" >> $env:GITHUB_OUTPUT
+          "addon=$add" >> $env:GITHUB_OUTPUT
+          Write-Host "版本：BA_Mod_Maker v$app / 插件 v$add"
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 打包（exe + 插件 zip）
+        run: |
+          python auto_build.py
+          python _rebuild_addon_zip.py
+
+      - name: 校验产物存在
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.app }}"
+          $need = @("BA_Mod_Maker_v$v.zip", "BA_Mod_Maker_blender_addon.zip")
+          foreach ($f in $need) {
+            if (-not (Test-Path $f)) { Write-Error "缺少产物：$f"; exit 1 }
+            Write-Host ("✓ {0}  {1:N1} MB" -f $f, ((Get-Item $f).Length / 1MB))
+          }
+
+      - name: 上传到 Actions artifacts（手动跑时供下载 ✓）
+        uses: actions/upload-artifact@v4
+        with:
+          name: BA_Mod_Maker_v${{ steps.ver.outputs.app }}
+          path: |
+            BA_Mod_Maker_v*.zip
+            BA_Mod_Maker_blender_addon.zip
+
+      - name: 若是 tag 推送 ⇒ 创建 Release 并附带 zip
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            BA_Mod_Maker_v*.zip
+            BA_Mod_Maker_blender_addon.zip
+          generate_release_notes: true
+          draft: false
