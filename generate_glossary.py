@@ -286,16 +286,30 @@ def zh_field(table, name):
 def enum_lines():
     lines = ["## 枚举值对照", ""]
     for fname in sorted(BG.ENUMS):
+        note = BG.enum_note(fname, "zh")
+        members = BG.enum_members(fname)
         lines.append("### " + fname)
         lines.append("")
-        lines.append("| 值 | 含义 |")
-        lines.append("|---|---|")
+        if note:
+            # 「真实作用」说明（v1.8.55 起：Units.Role / Units.Type / Units.CategoryType 等）
+            lines.append("> " + note)
+            lines.append("")
+        if members:
+            lines.append("| 值 | 含义 | 枚举成员 (dump.cs) |")
+            lines.append("|---|---|---|")
+        else:
+            lines.append("| 值 | 含义 |")
+            lines.append("|---|---|")
         for item in BG.ENUMS[fname]:
             if not isinstance(item, (list, tuple)) or not item:
                 continue
             val = item[0]
             meaning = item[1] if len(item) > 1 else ""
-            lines.append("| " + c(str(val)) + " | " + str(meaning) + " |")
+            if members:
+                lines.append("| " + c(str(val)) + " | " + str(meaning)
+                             + " | " + c(members.get(str(val), "")) + " |")
+            else:
+                lines.append("| " + c(str(val)) + " | " + str(meaning) + " |")
         lines.append("")
     return lines
 
@@ -429,10 +443,15 @@ def main():
             fields[name] = {"zh": zhname, "desc": fdesc, "type": field_type(rows, name)}
         gloss["tables"][t] = {"zh": zh, "desc": desc, "row_count": len(rows), "fields": fields}
     gloss["enums"] = {
-        k: [{"value": str(item[0]), "meaning": (item[1] if len(item) > 1 else "")}
+        k: [{"value": str(item[0]), "meaning": (item[1] if len(item) > 1 else ""),
+             "member": (str(item[4]) if len(item) > 4 and item[4] else "")}
             for item in BG.ENUMS[k] if isinstance(item, (list, tuple)) and item]
         for k in BG.ENUMS
     }
+    # 每个枚举的「真实作用」说明（GUI 绿色箭头弹窗 / 词典窗口取用）
+    gloss["enum_notes"] = {k: BG.enum_note(k, "zh") for k in BG.ENUMS if BG.enum_note(k, "zh")}
+    gloss["enum_notes_en"] = {k: BG.enum_note(k, "en") for k in BG.ENUMS if BG.enum_note(k, "en")}
+    gloss["enum_notes_ru"] = {k: BG.enum_note(k, "ru") for k in BG.ENUMS if BG.enum_note(k, "ru")}
     gloss["constants"] = [{"name": n, "value": v, "use": u} for n, v, u in CONSTANTS]
     gloss["mount_categories"] = [{"id": x["id"], "name": x["name"], "desc": x["desc"]}
                                  for x in MOUNT_CATEGORIES]

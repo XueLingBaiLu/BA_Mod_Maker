@@ -71,6 +71,8 @@ from ba_crypto import (  # noqa: E402
 from i18n import LANGS, LANG_NAMES, Translator  # noqa: E402
 from ba_glossary import (  # noqa: E402
     field_info, table_info, enum_values, TABLES, FIELDS, COMMON, ENUMS, ORDER,
+    # v1.8.55：枚举字段的绿色箭头导航（枚举键 / 含义 / 成员名 / 真实作用说明）
+    enum_key, enum_label, enum_member, enum_note,
 )
 # 模型修改功能已整体迁移到 Blender 插件（BA Mod Maker Blender 插件 v2.0）：
 # 模型导入/挂载点编辑/构建写回/CRC 计算都在 Blender 里做，本工具只保留数据表编辑。
@@ -548,7 +550,9 @@ FIELD_REF_MAP = build_field_ref_map()
 # always available in the field editor). FK columns (UnitId, WeaponId, ...)
 # are resolved to the referenced row's name automatically.
 KEY_COLUMNS = {
-    "Units": ["Id", "HUDName", "Name", "CountryId", "Cost", "Type"],
+    # v1.8.55：单位大类的三个"分类"字段并排显示（Type / CategoryType / Role），
+    # 单元格里带绿色箭头指向它 ID 对应的种类（见 _enum_cell）。
+    "Units": ["Id", "HUDName", "Name", "CountryId", "Cost", "Type", "CategoryType", "Role"],
     "Weapons": ["Id", "Name", "HUDName"],
     "Abilities": ["Id", "Name", "IsDefault"],
     "Ammunitions": ["Id", "Name", "HUDName"],
@@ -1358,6 +1362,47 @@ class DetailWindow:
             name_l.config(text=f"→ ⚠ {app.tr.t('lookup_none')}", fg=app.c["warn"])
             name_l._color_role = "warn"
 
+    def _enum_update_label(self, entry, name_l, ekey, table=None):
+        """v1.8.55：枚举字段右侧的绿色箭头标签。
+
+        值合法 → `➜ 主战坦克 (Tank)`（绿色）；值不在枚举里 → `➜ ⚠ 未知值 99`
+        （黄色，游戏会走兜底分支，不会崩）；空/非数字 → 提示（灰色）。"""
+        app = self.app
+        t = entry.get().strip()
+        if not t:
+            name_l.config(text="➜", fg=app.c["hint"])
+            name_l._color_role = "hint"
+            return
+        try:
+            val = int(t)
+        except ValueError:
+            name_l.config(text="➜ ⚠ " + app.tr.t("enum_invalid"), fg=app.c["warn"])
+            name_l._color_role = "warn"
+            return
+        label = enum_label(ekey, val, app.tr.lang)
+        if label:
+            name_l.config(text="➜ " + label, fg=app.c["ok"])
+            name_l._color_role = "ok"
+        else:
+            name_l.config(text="➜ ⚠ " + app.tr.t("enum_unknown", value=val),
+                          fg=app.c["warn"])
+            name_l._color_role = "warn"
+
+    def _enum_tip_text(self, ekey):
+        """枚举字段的悬浮提示：真实作用说明 + 全部取值对照（点击可打开词典）。"""
+        lang = self.app.tr.lang
+        parts = [ekey]
+        note = enum_note(ekey, lang)
+        if note:
+            parts.append(note)
+        parts.append("")
+        for val, meaning in enum_values(ekey, lang):
+            member = enum_member(ekey, val)
+            parts.append("  %s = %s%s" % (val, meaning, ("  [%s]" % member) if member else ""))
+        parts.append("")
+        parts.append(self.app.tr.t("enum_click_hint"))
+        return "\n".join(parts)
+
     def _fk_schedule(self, entry, target):
         app = self.app
         if app._fk_after is not None:
@@ -1558,6 +1603,33 @@ class DetailWindow:
                 entry._fk_field = key
                 entry._dirty_cb = dirty_cb
                 self._fk_update_label(entry)
+                widgets[key] = (entry, value)
+                continue
+            ekey = enum_key(tname or "", key)
+            if ekey and isinstance(value, int) and not isinstance(value, bool):
+                # v1.8.55：枚举字段（单位大类 / 槽位类别 / 角色 / 武器类型 / 弹道…）
+                # 右侧绿色箭头 ➜ 直接写出该 ID 对应的种类；点箭头或文字打开词典对照。
+                cell = tk.Frame(inner, bg=c["bg"])
+                entry = tk.Entry(cell, width=18, bg=c["entry_bg"], fg=c["entry_fg"],
+                                 insertbackground=c["entry_fg"])
+                entry.pack(side="left")
+                entry.insert(0, str(value))
+                name_l = tk.Label(cell, anchor="w", fg=c["ok"], bg=c["bg"], cursor="hand2")
+                name_l._color_role = "ok"
+                name_l.pack(side="left", fill="x", expand=True, padx=6)
+                def ehandler(_e=None, entry=entry, name_l=name_l, ekey=ekey, tname=tname):
+                    dirty_cb()
+                    self._enum_update_label(entry, name_l, ekey, tname)
+                entry.bind("<KeyRelease>", ehandler)
+                entry.bind("<FocusOut>", self._on_field_focus_out)
+                cell.grid(row=i, column=1, sticky="ew", padx=4, pady=2)
+                entry._enum_key = ekey
+                entry._enum_label = name_l
+                entry._dirty_cb = dirty_cb
+                self._enum_update_label(entry, name_l, ekey, tname)
+                for w in (name_l,):
+                    ToolTip(w, lambda ekey=ekey: self._enum_tip_text(ekey), colors=c)
+                    w.bind("<Button-1>", lambda _e, ekey=ekey: app.show_dictionary(ekey))
                 widgets[key] = (entry, value)
                 continue
             if isinstance(value, bool):
@@ -1839,7 +1911,7 @@ class DetailWindow:
             app._fmt_ver[table] = app._data_version
             fmts = app._fmt_cache[table]
             cols = app._table_columns(table)
-            fmts[idx] = app._fmt_row(new_row, cols)
+            fmts[idx] = app._fmt_row(new_row, cols, table)
         app.refresh_visible_row(idx)
         # keep the unit's SquadWeapons pool in sync when a squad member's
         # primary/secondary weapon changes, and auto-attach the most common ammo
@@ -3584,11 +3656,36 @@ class EditorApp:
             return self._fk_name_for(field, target, val)
         return f"{self._row_name(target, val)} ({val})"
 
-    def _fmt_row(self, row, cols):
+    def _enum_cell(self, table, field, val, mark="➜"):
+        """Enum cell display: '11 ➜ 主战坦克 (Tank)' — the arrow points at the
+        kind the raw ID stands for (Units.Type / CategoryType / Role,
+        Weapons.Type, Ammunitions.TrajectoryType, ...).
+
+        Returns None when the field is not an enum field, so callers fall back
+        to the plain formatter. Unknown values keep the raw number and are
+        flagged with a warning arrow (they are legal — the game just takes the
+        fallback branch)."""
+        key = enum_key(table or "", field)
+        if key is None or isinstance(val, bool) or not isinstance(val, int):
+            return None
+        if val < 0:  # e.g. ContentMembership -1 = base game
+            label = enum_label(key, val, self.tr.lang)
+            if not label:
+                return fmt_cell(val)
+            return f"{val} {mark} {label}"
+        label = enum_label(key, val, self.tr.lang)
+        if label:
+            return f"{val} {mark} {label}"
+        return f"{val} {mark} ⚠ {self.tr.t('enum_unknown', value=val)}"
+
+    def _fmt_row(self, row, cols, table=None):
         out = []
         for c in cols:
             v = row.get(c)
-            if c in FIELD_REF_MAP:
+            enum_text = self._enum_cell(table, c, v) if table else None
+            if enum_text is not None:
+                out.append(enum_text)
+            elif c in FIELD_REF_MAP:
                 out.append(self._fk_display(c, v))
             elif c == "UIName" and isinstance(v, str) and v.strip():
                 out.append(localize_text(v, self.tr.lang))
@@ -3607,7 +3704,7 @@ class EditorApp:
             fmts = []
             for r in rows:
                 if isinstance(r, dict):
-                    fmts.append(self._fmt_row(r, cols))
+                    fmts.append(self._fmt_row(r, cols, table))
                 else:
                     fmts.append(())
             self._fmt_cache[table] = fmts
@@ -3740,7 +3837,7 @@ class EditorApp:
                     (row_idx is None and idx == self.current_row or idx == row_idx):
                 row = self.tables[table][idx]
                 cols = self._columns()
-                self.tree.item(children[pos], values=self._fmt_row(row, cols))
+                self.tree.item(children[pos], values=self._fmt_row(row, cols, table))
                 if row_idx is not None:
                     break
 
@@ -5884,8 +5981,11 @@ class EditorApp:
         self._umm_lang = self.tr.lang
         return out
 
-    def show_dictionary(self):
-        """Open the trilingual database dictionary window (tables + fields + enums)."""
+    def show_dictionary(self, query=None):
+        """Open the trilingual database dictionary window (tables + fields + enums).
+
+        v1.8.55：query 可以是枚举键（如 "Units.Role"）——字段编辑器里的绿色箭头
+        点击后用它直接在词典窗口里定位到该枚举对照表。"""
         tr = self.tr
         tk = self.tk
         c = self.c
@@ -5894,6 +5994,9 @@ class EditorApp:
                 if self._dict_win.winfo_exists():
                     self._dict_win.lift()
                     self._dict_win.focus_force()
+                    var = getattr(self, "_dict_search_var", None)
+                    if query is not None and var is not None:
+                        var.set(query)
                     return
             except Exception:
                 pass
@@ -5940,6 +6043,8 @@ class EditorApp:
         txt.tag_configure("field", foreground=c["label_key"], font=(cjk_family(), 10, "bold"))
         txt.tag_configure("dim", foreground=c["hint"])
         txt.tag_configure("val", foreground=c["fg"])
+        # v1.8.55：枚举的「真实作用」说明用绿色突出（与字段编辑器的绿色箭头同色）
+        txt.tag_configure("enum_note", foreground=c["ok"])
 
         def render():
             lang = self.tr.lang
@@ -5985,15 +6090,24 @@ class EditorApp:
             for enum_field in ENUMS:
                 vals = enum_values(enum_field, lang)
                 vals_zh = enum_values(enum_field, "zh")
+                note = enum_note(enum_field, lang) or enum_note(enum_field, "zh")
                 if not q or q in enum_field.lower() or any(
                         q in str(v).lower() or q in str(m).lower() for v, m in vals) \
-                        or any(q in str(v).lower() or q in str(m).lower() for v, m in vals_zh):
+                        or any(q in str(v).lower() or q in str(m).lower() for v, m in vals_zh) \
+                        or (note and q in note.lower()):
                     if not enum_shown:
                         txt.insert("end", self.tr.t("dict_enum_header") + "\n", "enum_head")
                         enum_shown = True
                     txt.insert("end", enum_field + "\n", "field")
+                    if note:
+                        # 该枚举的「真实作用」（反编译实证）
+                        txt.insert("end", "  " + note + "\n", "enum_note")
                     for v, m in vals:
-                        txt.insert("end", "  " + str(v) + "  —  " + str(m) + "\n", "val")
+                        member = enum_member(enum_field, v)
+                        line = "  " + str(v) + "  " + self.tr.t("enum_arrow") + "  " + str(m)
+                        if member:
+                            line += "   [" + member + "]"
+                        txt.insert("end", line + "\n", "val")
                     txt.insert("end", "\n")
                     shown += 1
 
@@ -6054,10 +6168,14 @@ class EditorApp:
         # ---- tab 3: mount points & templates (removed — knowledge lives in the Blender addon's dictionary)
         self._dict_render = render
         self._model_render = model_render
+        self._dict_search_var = query_var
         query_var.trace_add("write", lambda *a: render())
         model_query_var.trace_add("write", lambda *a: model_render())
         nb.add(dict_tab, text=tr.t("dict_title"))
         nb.add(model_tab, text=tr.t("dict_tab_models"))
+        if query:
+            # 从字段编辑器的绿色箭头跳进来：直接在词典里定位该枚举
+            query_var.set(query)
         render()
         model_render()
         entry.focus_set()

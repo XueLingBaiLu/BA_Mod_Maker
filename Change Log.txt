@@ -2,6 +2,73 @@
 更新日志 · Changelog · Журнал изменений
 ================================================================================
 
+## v1.8.55（BA_Mod_Maker v1.8.55 + Blender 插件 v2.7.55）—— 内置词典补全 Units.Role + 枚举绿色箭头 ➜ 导航
+
+【中文】
+- **内置词典补全 `Units.Role`（角色）**：写入 dump.cs 反编译出的完整 `UnitRole` 枚举
+  （31 个取值 + 枚举成员名，如 `11 = 主战坦克 [Tank]`、`35 = 反坦克导弹步兵 [ATGMInfantry]`），
+  并新增「真实作用」说明：① 出生时决定「哪把武器是主武器」（ATGM 步兵只认 ATGM/ATGMHE、
+  炮兵只认榴弹炮/迫击炮/火箭炮与巡航/弹道导弹、防空只认 MANPAD/SAM/高射炮，其它 Role 全部武器都算主武器）
+  → 主武器打空触发语音与标签警示；② AI 火炮用发射单位的 Role 查目标预设（冷却/最小目标群造价/
+  首选任务时长/目标 Role 黑名单）；③ 按 Role 统计击杀 → 7 枚勋章。`Units.Type`、`Units.CategoryType`
+  也补齐说明，明确三者分工（引擎大类 / 卡组槽位 / 战术角色）。
+- **新增枚举绿色箭头 ➜ 导航**：单位大类 `Type`、槽位类别 `CategoryType`、角色 `Role`（以及武器类型、
+  弹道类型等全部枚举字段）在详情/迷你编辑器里，右侧显示绿色箭头 + 该 ID 对应的种类，例如
+  `Role = 11` 右侧显示绿色 `➜ 主战坦克 (Tank)`；改数字实时更新，枚举外的值显示黄色
+  `➜ ⚠ 未知值 N（游戏按兜底分支处理）`（不会崩）。点击箭头/文字直接打开词典并定位到该枚举对照表；
+  悬浮提示给出该枚举的完整取值表与「真实作用」说明。
+- **主表格新增两列**：`Units` 浏览视图现在并排显示 `Type / CategoryType / Role`，单元格直接写成
+  `4 ➜ 载具`、`11 ➜ 主战坦克 (Tank)`，一眼看出每个 ID 是哪一类。
+- 词典窗口的枚举对照表同样加上成员名与绿色「真实作用」说明；`数据库词典.md` /
+  `database_glossary.json` 由同一数据源重新生成（`generate_glossary.py`）。
+- 版本号提升到 **v1.8.55**（Blender 插件同步 v2.7.55）。其余功能与 v1.8.54 一致。
+
+【English】
+- **Built-in dictionary now documents `Units.Role`**: the full decompiled `UnitRole` enum
+  (31 values with their member names, e.g. `11 = Main battle tank [Tank]`,
+  `35 = ATGM infantry [ATGMInfantry]`) plus a verified "what it actually does" note:
+  ① at spawn it picks the unit's MAIN weapon (ATGM infantry only ATGM/ATGMHE, artillery roles only
+  howitzer/mortar/MLRS + cruise/ballistic missiles, AA roles only MANPAD/SAM/AA-gun; every other role
+  treats all weapons as main) — an empty main weapon raises the out-of-ammo voice line and label warning;
+  ② AI artillery looks up its targeting preset by the firing unit's Role (cooldown / min group cost /
+  preferred duration / target-role blacklist); ③ kills are tallied per role for 7 medals.
+  `Units.Type` and `Units.CategoryType` got notes too, spelling out the division of labour
+  (engine class / deck slot / tactical role).
+- **New green-arrow ➜ navigation**: for `Type`, `CategoryType`, `Role` and every other enum field, the
+  detail/mini editor shows a green arrow with the kind its ID stands for — e.g. `Role = 11` shows a green
+  `➜ Main battle tank (Tank)`. It updates live while typing, and out-of-enum values show a yellow
+  `➜ ⚠ unknown value N (game uses the fallback branch)` — they never crash the game. Clicking the arrow
+  (or its text) opens the dictionary at that enum's table; the tooltip lists every value plus the verified
+  behaviour note.
+- **Two extra columns in the main grid**: the `Units` browsing view now shows `Type / CategoryType / Role`
+  side by side, with cells such as `4 ➜ Vehicle` and `11 ➜ Main battle tank (Tank)`.
+- The dictionary window's enum tables also show member names and the green behaviour note;
+  `数据库词典.md` and `database_glossary.json` are regenerated from the same single source
+  (`generate_glossary.py`).
+- Version bumped to **v1.8.55** (Blender addon v2.7.55 in lockstep). Everything else matches v1.8.54.
+
+【Русский】
+- **Встроенный словарь дополнен описанием `Units.Role`**: полное перечисление `UnitRole` из dump.cs
+  (31 значение с именами членов, напр. `11 = Основной боевой танк [Tank]`,
+  `35 = ПТ-пехота [ATGMInfantry]`) и проверенная заметка «что это реально делает»: ① при спавне выбирается
+  ГЛАВНОЕ оружие (ПТ-пехота — только ПТУР/ПТУР-ОФ, артиллерия — гаубица/миномёт/РСЗО и крылатые/баллистические
+  ракеты, ПВО — ПЗРК/ЗРК/зенитка; у остальных ролей главным считается любое оружие); пустое главное оружие
+  даёт озвучку и предупреждение на метке; ② ИИ-артиллерия ищет пресет по роли стреляющего
+  (перезарядка / мин. стоимость группы / длительность / чёрный список ролей целей); ③ убийства считаются
+  по ролям для 7 медалей. Для `Units.Type` и `Units.CategoryType` тоже добавлены пояснения — теперь ясно
+  разделение: класс движка / слот колоды / тактическая роль.
+- **Новая навигация зелёной стрелкой ➜**: для `Type`, `CategoryType`, `Role` и любых других полей-перечислений
+  в редакторе справа показывается зелёная стрелка с названием вида для этого ID, напр. `Role = 11` →
+  зелёное `➜ Основной боевой танк (Tank)`. Значение обновляется на лету; значение вне перечисления даёт
+  жёлтое `➜ ⚠ неизвестное значение N (игра использует резервную ветку)` — игра не падает.
+  Клик по стрелке открывает словарь на таблице этого перечисления; подсказка содержит все значения и заметку.
+- **Две новые колонки в основной таблице**: в таблице `Units` теперь рядом `Type / CategoryType / Role`,
+  ячейки вида `4 ➜ Техника`, `11 ➜ ОБТ (Tank)`.
+- В словаре таблицы перечислений тоже показывают имена членов и зелёную заметку о поведении;
+  `数据库词典.md` и `database_glossary.json` перегенерированы из единого источника.
+- Версия поднята до **v1.8.55** (аддон Blender — v2.7.55). Остальное совпадает с v1.8.54.
+
+
 ## v1.8.54（BA_Mod_Maker v1.8.54 + Blender 插件 v2.7.54）—— ✅ 确认可用版（F15EX 导入已验证）
 
 【中文】

@@ -42,6 +42,71 @@ _OVERRIDES = {
         "ru": ["Время пополнения",
                "Единица: секунды. Время пополнения этого боеприпаса. Напрямую влияет на время возврата «Без боеприпасов», а на «Уничтожен» — с коэффициентом 2,5×."],
     },
+    # ---- v1.8.55：三个"分类"字段的真实作用（反编译实证，见技术资料/10-Units-Role字段逆向分析）----
+    ("Units", "Role"): {
+        "zh": ["角色（战术兵种）",
+               "单位的战术兵种枚举 UnitRole（比 Type 大类更细的细分）。真实作用有三处实证："
+               "① 出生时决定「哪把武器是主武器」——ATGM 步兵(35)只认 ATGM/ATGMHE 类武器，炮兵(130-133)只认"
+               "榴弹炮/迫击炮/火箭炮与巡航/弹道导弹，防空(15/16/34)只认 MANPAD/SAM/高射炮，其它 Role 全部武器都算主武器；"
+               "主武器弹药打空会触发语音与单位标签警示。② AI 火力任务——AI 火炮用发射单位的 Role 查 "
+               "AiConfig.TargetingPresetOverrides（冷却/最小目标群造价/首选任务时长/目标 Role 黑名单），未命中用默认预设；"
+               "每个步兵/载具出生时还会把 Role+Cost 写进 AiTargetComponent 供 AI 分组。"
+               "③ 战报与勋章——按 Role 统计击杀，对应 7 枚勋章（坦克/战车/步兵/火炮/直升机/防空/飞机）；"
+               "任务 Lua 脚本也能读 LuaUnit.UnitRole。不影响卡组槽位（看 CategoryType）与可打击目标（看武器/弹药）。"
+               "填枚举外的值不会崩溃，但一律走兜底分支（所有武器都算主武器 + AI 默认预设）。"],
+        "en": ["Role (tactical class)",
+               "The unit's tactical role enum (UnitRole) — a finer split than the four-unit-class Type. Three verified effects: "
+               "① at spawn it decides which weapon is the MAIN weapon — ATGM infantry (35) accept only ATGM/ATGMHE weapons, "
+               "artillery roles (130-133) only howitzer/mortar/MLRS and cruise/ballistic missiles, AA roles (15/16/34) only "
+               "MANPAD/SAM/AA-gun; every other role treats ALL weapons as main. When the main weapon runs dry the game "
+               "raises the out-of-ammo flag (voice line + unit label warning). "
+               "② AI fire missions — AI artillery looks up AiConfig.TargetingPresetOverrides by the FIRING unit's Role "
+               "(cooldown / min group cost / preferred mission duration / target-role blacklist) and falls back to the default "
+               "preset; infantry and vehicles also carry Role+Cost in AiTargetComponent for AI grouping. "
+               "③ stats and medals — kills are tallied per role for 7 medals (tanks/IFV/infantry/artillery/helicopter/AA/aircraft); "
+               "mission Lua scripts can read LuaUnit.UnitRole too. It does NOT set the deck slot (CategoryType) or what the unit "
+               "can hit (weapons/ammo). Unknown values never crash — they take the fallback path (all weapons count as main + default AI preset)."],
+        "ru": ["Роль (тактический класс)",
+               "Тактическая роль юнита (UnitRole) — более тонкое деление, чем класс Type. Три подтверждённых эффекта: "
+               "① при спавне определяет ГЛАВНОЕ оружие — ПТ-пехота (35) принимает только ПТУР/ПТУР-ОФ, артиллерия (130-133) "
+               "только гаубицу/миномёт/РСЗО и крылатые/баллистические ракеты, ПВО (15/16/34) только ПЗРК/ЗРК/зенитку; "
+               "для всех прочих ролей главным считается ЛЮБОЕ оружие. Когда главное оружие пустеет, игра ставит флаг "
+               "«нет боеприпасов» (озвучка + предупреждение на метке юнита). "
+               "② огневые задачи ИИ — ИИ-артиллерия ищет AiConfig.TargetingPresetOverrides по роли СТРЕЛЯЮЩЕГО юнита "
+               "(перезарядка / мин. стоимость группы / желаемая длительность / чёрный список ролей целей), иначе берёт пресет "
+               "по умолчанию; пехота и техника носят Role+Cost в AiTargetComponent для группировки ИИ. "
+               "③ статистика и медали — убийства считаются по ролям для 7 медалей (танки/БМП/пехота/артиллерия/вертолёты/ПВО/авиация); "
+               "Lua-скрипты миссий видят LuaUnit.UnitRole. Роль НЕ задаёт слот колоды (это CategoryType) и не определяет цели "
+               "(это оружие/боеприпасы). Неизвестные значения не ломают игру — срабатывает резервная ветка."],
+    },
+    ("Units", "Type"): {
+        "zh": ["单位大类（引擎级）",
+               "引擎级位掩码：2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / 256 反辐射导弹 / "
+               "512 巡航导弹 / 1024 弹道导弹。决定单位走哪套引擎分支（出生时只有 Type=2 或 4 才会挂 AI 目标组件）。"
+               "注意：它与「卡组槽位」（CategoryType）和「战术角色」（Role）是三件不同的事。"],
+        "en": ["Unit class (engine level)",
+               "Engine-level bitmask: 2 infantry / 4 vehicle / 8 helicopter / 16 aircraft / 32 ship / 128 projectile / "
+               "256 SEAD missile / 512 cruise missile / 1024 ballistic missile. Selects the engine branch (only Type=2 or 4 "
+               "units get the AI targeting component at spawn). It is NOT the deck slot (CategoryType) nor the tactical role (Role)."],
+        "ru": ["Класс юнита (движок)",
+               "Битовая маска уровня движка: 2 пехота / 4 техника / 8 вертолёт / 16 самолёт / 32 корабль / 128 снаряд / "
+               "256 ПРР / 512 крылатая ракета / 1024 баллистическая ракета. Определяет ветку движка (компонент ИИ-цели "
+               "получают только Type=2 или 4). Это НЕ слот колоды (CategoryType) и НЕ роль (Role)."],
+    },
+    ("Units", "CategoryType"): {
+        "zh": ["卡组槽位类别",
+               "取值：0 侦察 / 1 步兵 / 2 战斗 / 3 支援 / 4 后勤(舰船) / 5 直升机 / 6 飞机。"
+               "卡组编辑器的可用槽位数量按它索引（DeckHelper.GetAvailablesSlots）。与 Role 无关——同一 Role 的单位"
+               "（例如主战坦克）可以分布在多个槽位类别里。"],
+        "en": ["Deck slot category",
+               "Which deck slot the unit occupies: 0 recon / 1 infantry / 2 combat / 3 support / 4 logistic (naval) / "
+               "5 helicopter / 6 aircraft. Deck slot counts are indexed by it (DeckHelper.GetAvailablesSlots). Independent of "
+               "Role — units of one role (e.g. tanks) can sit in several slot categories."],
+        "ru": ["Категория слота колоды",
+               "Какой слот колоды занимает юнит: 0 разведка / 1 пехота / 2 бой / 3 поддержка / 4 тыл (флот) / 5 вертолёты / "
+               "6 авиация. Число слотов в редакторе колод индексируется по нему (DeckHelper.GetAvailablesSlots). Не связано с "
+               "Role — юниты одной роли (напр. танки) встречаются в разных категориях слотов."],
+    },
 }
 for _t, _f in _OVERRIDES:
     FIELDS.setdefault(_t, {})[_f] = _OVERRIDES[(_t, _f)]
@@ -71,38 +136,40 @@ _EXTRA_ENUMS = {
         ["5", "直升机", "Helicopters", "Вертолёты"],
         ["6", "空军", "Aircrafts", "Авиация"],
     ],
+    # 第 5 项 = dump.cs 反编译出的枚举成员名（NetworkCommon.Enums.Common.UnitRole），
+    # 供 GUI 绿色箭头 / 词典窗口显示。540 个单位的 Role 全部落在这些取值内。
     "Units.Role": [
-        ["0", "无", "None", "Нет"],
-        ["10", "步兵战车(IFV)", "IFV", "БМП"],
-        ["11", "主战坦克", "Tank", "ОБТ"],
-        ["12", "装甲运兵车(APC)", "APC", "БТР"],
-        ["13", "轻型侦察车(LSV)", "LSV", "ЛРМ"],
-        ["14", "卡车/补给", "Cargo truck", "Грузовик"],
-        ["15", "远程防空(LRSAM)", "LRSAM", "Дальняя ПВО"],
-        ["16", "近程防空(SRSAM)", "SRSAM", "Ближняя ПВО"],
-        ["30", "步兵", "Line infantry", "Пехота"],
-        ["31", "突击步兵", "Assault infantry", "Штурмовая пехота"],
-        ["32", "侦察兵", "Recon infantry", "Разведчики"],
-        ["33", "狙击手", "Snipers", "Снайперы"],
-        ["34", "防空步兵", "AA infantry", "ПВО-пехота"],
-        ["35", "反坦克步兵", "ATGM infantry", "ПТ-пехота"],
-        ["36", "特种部队", "Special forces", "Спецназ"],
-        ["70", "侦察直升机", "Recon helicopter", "Развед. вертолёт"],
-        ["71", "多用途直升机", "Multi-role helicopter", "Многоцелевой вертолёт"],
-        ["72", "重型运输直升机", "Heavy transport helicopter", "Тяжёлый транспортный вертолёт"],
-        ["73", "攻击直升机", "Attack helicopter", "Ударный вертолёт"],
-        ["100", "无人机", "Drone", "БПЛА"],
-        ["130", "火箭炮(MLRS)", "MLRS", "РСЗО"],
-        ["131", "迫击炮", "Mortar", "Миномёт"],
-        ["132", "战术导弹(LAM)", "LAM", "Тактическая ракета"],
-        ["133", "自行火炮", "Artillery", "САУ"],
-        ["160", "攻击机", "Assault plane", "Штурмовик"],
-        ["161", "轰炸机", "Bomber", "Бомбардировщик"],
-        ["162", "战略轰炸机", "Strategic bomber", "Стратегический бомбардировщик"],
-        ["163", "运输机", "Transport plane", "Транспортный самолёт"],
-        ["164", "多用途战机", "Multi-role plane", "Многоцелевой самолёт"],
-        ["200", "舰船", "Ship", "Корабль"],
-        ["201", "登陆艇", "Hovercraft", "Десантный катер"],
+        ["0", "无（乘员/飞行员/靶标/舰船等杂项）", "None (crew/pilot/target/naval)", "Нет (экипаж/пилот/мишень/флот)", "None"],
+        ["10", "步兵战车(IFV)", "IFV", "БМП", "IFV"],
+        ["11", "主战坦克", "Tank", "ОБТ", "Tank"],
+        ["12", "装甲运兵车(APC)", "APC", "БТР", "APC"],
+        ["13", "轻型侦察车(LSV)", "LSV", "ЛРМ", "LSV"],
+        ["14", "卡车/补给", "Cargo truck", "Грузовик", "CargoTruck"],
+        ["15", "远程防空(LRSAM)", "LRSAM", "Дальняя ПВО", "LRSAM"],
+        ["16", "近程防空(SRSAM)", "SRSAM", "Ближняя ПВО", "SRSAM"],
+        ["30", "一线步兵", "Line infantry", "Линейная пехота", "LineInfantry"],
+        ["31", "突击步兵", "Assault infantry", "Штурмовая пехота", "AssaultInfantry"],
+        ["32", "侦察步兵", "Recon infantry", "Разведчики", "ReconInfantry"],
+        ["33", "狙击手", "Snipers", "Снайперы", "Snipers"],
+        ["34", "防空步兵（便携防空）", "AA infantry", "ПВО-пехота", "AAInfantry"],
+        ["35", "反坦克导弹步兵", "ATGM infantry", "ПТ-пехота", "ATGMInfantry"],
+        ["36", "特种部队", "Special forces", "Спецназ", "SpecialForces"],
+        ["70", "侦察直升机", "Recon helicopter", "Развед. вертолёт", "ReconHelicopter"],
+        ["71", "多用途直升机", "Multi-role helicopter", "Многоцелевой вертолёт", "MultiRoleHelicopter"],
+        ["72", "重型运输直升机", "Heavy transport helicopter", "Тяжёлый транспортный вертолёт", "HeavyTransportHelicopter"],
+        ["73", "攻击直升机", "Attack helicopter", "Ударный вертолёт", "AttackHelicopter"],
+        ["100", "无人机", "Drone", "БПЛА", "Drone"],
+        ["130", "火箭炮(MLRS)", "MLRS", "РСЗО", "MLRS"],
+        ["131", "迫击炮", "Mortar", "Миномёт", "Mortar"],
+        ["132", "战术导弹(LAM)", "LAM", "Тактическая ракета", "LAM"],
+        ["133", "自行火炮", "Artillery", "САУ", "Artillery"],
+        ["160", "攻击机", "Assault plane", "Штурмовик", "AssaultPlane"],
+        ["161", "轰炸机", "Bomber", "Бомбардировщик", "Bomber"],
+        ["162", "战略轰炸机", "Strategic bomber", "Стратегический бомбардировщик", "StrategicBomber"],
+        ["163", "运输机", "Transport plane", "Транспортный самолёт", "TransportPlane"],
+        ["164", "多用途战机", "Multi-role plane", "Многоцелевой самолёт", "MultiRolePlane"],
+        ["200", "舰船（枚举里有，数据库无单位使用）", "Ship (declared, unused in DB)", "Корабль (объявлен, не используется)", "Ship"],
+        ["201", "气垫登陆艇(LCAC)", "Hovercraft", "Десантный катер", "Hovercraft"],
     ],
     "Weapons.Type": [
         ["0", "未指定", "Not assigned", "Не задано"],
@@ -222,6 +289,116 @@ _EXTRA_ENUMS = {
 }
 for _ek, _ev in _EXTRA_ENUMS.items():
     ENUMS[_ek] = _ev
+
+
+# ---------------------------------------------------------------------------
+# v1.8.55：枚举「真实作用」说明 + 绿色箭头导航用的查询接口
+# ---------------------------------------------------------------------------
+# 说明写在 ENUM_NOTES 里（不进上面的大 JSON blob，方便审阅/维护），
+# 词典窗口、generate_glossary.py 生成的 数据库词典.md 与 database_glossary.json
+# 都从这里取文本，保持单一来源。
+ENUM_NOTES = {
+    "Units.Role": {
+        "zh": "真实作用（反编译实证）：① 出生时决定「哪把武器是主武器」——ATGM 步兵(35)只认 ATGM/ATGMHE，"
+              "炮兵(130-133)只认榴弹炮/迫击炮/火箭炮与巡航/弹道导弹，防空(15/16/34)只认 MANPAD/SAM/高射炮，"
+              "其它 Role 全部武器都算主武器；主武器弹药打空 → 语音 + 单位标签警示。"
+              "② AI 火力任务：AI 火炮用发射单位的 Role 查 AiConfig.TargetingPresetOverrides（冷却/最小目标群造价/"
+              "首选任务时长/目标 Role 黑名单），未命中回落默认预设；步兵/载具出生时把 Role+Cost 写进 AiTargetComponent。"
+              "③ 战报与勋章：按 Role 统计击杀 → 7 枚勋章（坦克/战车/步兵/火炮/直升机/防空/飞机）；任务 Lua 可读 LuaUnit.UnitRole。"
+              "不影响卡组槽位（CategoryType）与可打击目标（武器/弹药）。填枚举外的值不崩溃，走兜底分支。",
+        "en": "Verified behaviour: ① at spawn it picks the MAIN weapon — ATGM infantry (35) only ATGM/ATGMHE, artillery "
+              "roles (130-133) only howitzer/mortar/MLRS + cruise/ballistic missiles, AA roles (15/16/34) only MANPAD/SAM/"
+              "AA-gun; any other role treats EVERY weapon as main. An empty main weapon raises the out-of-ammo flag "
+              "(voice + unit label warning). ② AI fire missions: AI artillery looks up AiConfig.TargetingPresetOverrides by "
+              "the firing unit's Role (cooldown / min group cost / preferred duration / target-role blacklist), falling back "
+              "to the default preset; infantry and vehicles store Role+Cost in AiTargetComponent. ③ Stats & medals: kills are "
+              "tallied per role for 7 medals; mission Lua reads LuaUnit.UnitRole. It does not set the deck slot (CategoryType) "
+              "or what the unit can hit (weapons/ammo). Unknown values never crash — they take the fallback path.",
+        "ru": "Подтверждённое поведение: ① при спавне выбирает ГЛАВНОЕ оружие — ПТ-пехота (35) только ПТУР/ПТУР-ОФ, "
+              "артиллерия (130-133) только гаубицу/миномёт/РСЗО и крылатые/баллистические ракеты, ПВО (15/16/34) только "
+              "ПЗРК/ЗРК/зенитку; для прочих ролей главным считается ЛЮБОЕ оружие. Пустое главное оружие ставит флаг "
+              "«нет боеприпасов» (озвучка + метка юнита). ② Огневые задачи ИИ: ИИ-артиллерия ищет "
+              "AiConfig.TargetingPresetOverrides по роли стреляющего (перезарядка / мин. стоимость группы / длительность / "
+              "чёрный список ролей целей), иначе пресет по умолчанию; пехота и техника хранят Role+Cost в AiTargetComponent. "
+              "③ Статистика и медали: убийства считаются по ролям для 7 медалей; Lua миссий читает LuaUnit.UnitRole. "
+              "Не задаёт слот колоды (CategoryType) и цели (оружие/боеприпасы). Неизвестные значения не ломают игру.",
+    },
+    "Units.Type": {
+        "zh": "引擎大类位掩码（2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / 256 反辐射 / 512 巡航 / 1024 弹道）。"
+              "与卡组槽位（CategoryType）、战术角色（Role）是三件不同的事。",
+        "en": "Engine-level bitmask (2 infantry / 4 vehicle / 8 helicopter / 16 aircraft / 32 ship / 128 projectile / "
+              "256 SEAD / 512 cruise / 1024 ballistic). Distinct from the deck slot (CategoryType) and the role (Role).",
+        "ru": "Битовая маска уровня движка (2 пехота / 4 техника / 8 вертолёт / 16 самолёт / 32 корабль / 128 снаряд / "
+              "256 ПРР / 512 крылатая / 1024 баллистическая). Отличается от слота колоды (CategoryType) и роли (Role).",
+    },
+    "Units.CategoryType": {
+        "zh": "卡组槽位类别（0 侦察…6 飞机），卡组编辑器的槽位数量按它索引。同一 Role 的单位可以分布在多个槽位类别里，"
+              "所以改 Role 不会改变卡组槽位。",
+        "en": "Deck slot category (0 recon … 6 aircraft); deck slot counts are indexed by it. Units sharing a Role can live in "
+              "several slot categories, so changing Role never moves the deck slot.",
+        "ru": "Категория слота колоды (0 разведка … 6 авиация); число слотов индексируется по ней. Юниты одной роли могут "
+              "быть в разных категориях, поэтому смена Role не меняет слот колоды.",
+    },
+    "Ammunitions.TrajectoryType": {
+        "zh": "弹道类型，同时被「主弹药」判定使用（AmmunitionBoxComponent.IsMainAmmo）：炮兵 Role(130-133) 的主弹药 = "
+              "20/30/40/200/300；反坦克步兵 Role(35) 的主弹药 = 100/110/120。",
+        "en": "Trajectory type; also used by the main-ammo test (AmmunitionBoxComponent.IsMainAmmo): for artillery roles "
+              "(130-133) main ammo = 20/30/40/200/300; for ATGM infantry (35) main ammo = 100/110/120.",
+        "ru": "Тип траектории; также используется проверкой главного боеприпаса (AmmunitionBoxComponent.IsMainAmmo): "
+              "у артиллерийских ролей (130-133) главный БК = 20/30/40/200/300; у ПТ-пехоты (35) = 100/110/120.",
+    },
+}
+
+
+def enum_note(key, lang="zh"):
+    """该枚举的「真实作用」说明；无则返回空串。key 形如 'Units.Role'。"""
+    note = ENUM_NOTES.get(key)
+    if not isinstance(note, dict):
+        return ""
+    return note.get(lang) or note.get("en") or note.get("zh") or ""
+
+
+def enum_members(field):
+    """{值(str): 枚举成员名(str)}；成员名取自 dump.cs 反编译结果（第 5 列）。"""
+    out = {}
+    for item in ENUMS.get(field) or []:
+        if isinstance(item, (list, tuple)) and len(item) >= 5 and item[4]:
+            out[str(item[0])] = str(item[4])
+    return out
+
+
+def enum_member(field, value):
+    """单个值的枚举成员名（如 11 → 'Tank'），无则空串。value 可为 int/str。"""
+    return enum_members(field).get(str(value), "")
+
+
+def enum_key(table, field):
+    """(表, 字段) → 枚举键 'Table.Field'（不在 ENUMS 里则返回 None）。
+
+    用于 GUI：判断某字段是不是枚举字段、该显示哪张对照表。"""
+    if not table or not field:
+        return None
+    key = "%s.%s" % (table, field)
+    return key if key in ENUMS else None
+
+
+def enum_meaning(key, value, lang="zh"):
+    """枚举值的含义（如 ('Units.Role', 11).zh → '主战坦克'）；未知值返回空串。"""
+    for val, meaning in enum_values(key, lang):
+        if str(val) == str(value):
+            return meaning or ""
+    return ""
+
+
+def enum_label(key, value, lang="zh"):
+    """绿色箭头用的短标签：'主战坦克 (Tank)' / '11 未知值'；未知值返回空串由调用方提示。"""
+    meaning = enum_meaning(key, value, lang)
+    if not meaning:
+        return ""
+    member = enum_member(key, value)
+    if member and member.lower() not in meaning.lower():
+        return "%s (%s)" % (meaning, member)
+    return meaning
 
 
 def _pick(entry, lang):
