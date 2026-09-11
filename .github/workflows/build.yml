@@ -20,10 +20,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: 检出代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6        # ★ v6 ✓（v4/v5 目标是 Node 20 ✗ 会触发弃用警告 ✓）
 
       - name: 安装 Python 3.13
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6    # ★ v6 ✓（v5 同理 ✓）
         with:
           python-version: '3.13'
 
@@ -58,7 +58,7 @@ jobs:
           }
 
       - name: 上传到 Actions artifacts（手动跑时供下载 ✓）
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4   # 未被弃用警告点名 ✓ 暂不动 ✗（再被点名时升 v7 ✓）
         with:
           name: BA_Mod_Maker_v${{ steps.ver.outputs.app }}
           path: |
