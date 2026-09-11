@@ -81,8 +81,9 @@ _OVERRIDES = {
     },
     ("Units", "Type"): {
         "zh": ["单位大类（引擎级）",
-               "引擎级位掩码：2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / 256 反辐射导弹 / "
-               "512 巡航导弹 / 1024 弹道导弹。决定单位走哪套引擎分支（出生时只有 Type=2 或 4 才会挂 AI 目标组件）。"
+               "位掩码，值按位相加：2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / 256 反辐射导弹 / "
+               "512 巡航导弹 / 1024 弹道导弹（例：6 = 4 载具 + 2 步兵）。工具会自动拆成种类显示。"
+               "决定单位走哪套引擎分支（出生时只有 Type=2 或 4 才会挂 AI 目标组件）。"
                "注意：它与「卡组槽位」（CategoryType）和「战术角色」（Role）是三件不同的事。"],
         "en": ["Unit class (engine level)",
                "Engine-level bitmask: 2 infantry / 4 vehicle / 8 helicopter / 16 aircraft / 32 ship / 128 projectile / "
@@ -97,8 +98,7 @@ _OVERRIDES = {
         "zh": ["卡组槽位类别",
                "取值：0 侦察 / 1 步兵 / 2 战斗 / 3 支援 / 4 后勤(舰船) / 5 直升机 / 6 飞机。"
                "卡组编辑器的可用槽位数量按它索引（DeckHelper.GetAvailablesSlots）。与 Role 无关——同一 Role 的单位"
-               "（例如主战坦克）可以分布在多个槽位类别里。"],
-        "en": ["Deck slot category",
+               "（例如主战坦克）可以分布在多个槽位类别里。"],        "en": ["Deck slot category",
                "Which deck slot the unit occupies: 0 recon / 1 infantry / 2 combat / 3 support / 4 logistic (naval) / "
                "5 helicopter / 6 aircraft. Deck slot counts are indexed by it (DeckHelper.GetAvailablesSlots). Independent of "
                "Role — units of one role (e.g. tanks) can sit in several slot categories."],
@@ -106,6 +106,25 @@ _OVERRIDES = {
                "Какой слот колоды занимает юнит: 0 разведка / 1 пехота / 2 бой / 3 поддержка / 4 тыл (флот) / 5 вертолёты / "
                "6 авиация. Число слотов в редакторе колод индексируется по нему (DeckHelper.GetAvailablesSlots). Не связано с "
                "Role — юниты одной роли (напр. танки) встречаются в разных категориях слотов."],
+    },
+    ("Ammunitions", "TargetType"): {
+        "zh": ["目标类型（位掩码）",
+               "该弹药能打什么：1 地面 / 2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / "
+               "256 反辐射导弹 / 512 巡航导弹 / 1024 弹道导弹。**按加法合成**——把要打的类别对应的位相加："
+               "例 36 = 32(舰船) + 4(载具) 表示能打舰船和载具；39 = 32+4+2+1；1944 = 1024+512+256+128+16+8。"
+               "工具里该字段会直接显示拆解结果（`36 → 舰船 + 载具 (32 + 4)`）。"],
+        "en": ["Target types (bitmask)",
+               "What the round can hit: 1 ground / 2 infantry / 4 vehicle / 8 helicopter / 16 aircraft / 32 ship / "
+               "128 projectile / 256 SEAD missile / 512 cruise missile / 1024 ballistic missile. "
+               "**Add the bits** — e.g. 36 = 32 (ship) + 4 (vehicle) means ships and vehicles; 39 = 32+4+2+1; "
+               "1944 = 1024+512+256+128+16+8. The tool shows the decomposition inline "
+               "(`36 → Ship + Vehicle (32 + 4)`)."],
+        "ru": ["Типы целей (битовая маска)",
+               "Что может поражать боеприпас: 1 земля / 2 пехота / 4 техника / 8 вертолёт / 16 самолёт / 32 корабль / "
+               "128 снаряд / 256 ПРР / 512 крылатая ракета / 1024 баллистическая ракета. "
+               "**Значения складываются**: напр. 36 = 32 (корабль) + 4 (техника); 39 = 32+4+2+1; "
+               "1944 = 1024+512+256+128+16+8. Инструмент показывает расшифровку прямо в поле "
+               "(`36 → Корабль + Техника (32 + 4)`)."],
     },
 }
 for _t, _f in _OVERRIDES:
@@ -251,9 +270,9 @@ _EXTRA_ENUMS = {
         ["256", "反辐射导弹", "SEAD missile", "ПРР"],
         ["512", "巡航导弹", "Cruise missile", "Крылатая ракета"],
         ["1024", "弹道导弹", "Ballistic missile", "Баллистическая ракета"],
-        ["其他", "组合位掩码，按位拆解：1地面/2步兵/4载具/8直升机/16飞机/32舰船/128弹丸",
-         "Bitmask: 1 ground/2 infantry/4 vehicle/8 helicopter/16 aircraft/32 ship/128 projectile",
-         "Битовая маска: 1 земля/2 пехота/4 техника/8 вертолёт/16 самолёт/32 корабль/128 снаряд"],
+        ["组合", "位掩码：把要打的位相加（如 36 = 32+4 舰船+载具）",
+         "Bitmask: add the bits (e.g. 36 = 32+4 ship+vehicle)",
+         "Битовая маска: сложите биты (напр. 36 = 32+4 корабль+техника)"],
     ],
     "Ammunitions.ArmorTargeted": [
         ["0", "无", "None", "Нет"],
@@ -324,12 +343,16 @@ ENUM_NOTES = {
               "Не задаёт слот колоды (CategoryType) и цели (оружие/боеприпасы). Неизвестные значения не ломают игру.",
     },
     "Units.Type": {
-        "zh": "引擎大类位掩码（2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / 256 反辐射 / 512 巡航 / 1024 弹道）。"
-              "与卡组槽位（CategoryType）、战术角色（Role）是三件不同的事。",
-        "en": "Engine-level bitmask (2 infantry / 4 vehicle / 8 helicopter / 16 aircraft / 32 ship / 128 projectile / "
-              "256 SEAD / 512 cruise / 1024 ballistic). Distinct from the deck slot (CategoryType) and the role (Role).",
-        "ru": "Битовая маска уровня движка (2 пехота / 4 техника / 8 вертолёт / 16 самолёт / 32 корабль / 128 снаряд / "
-              "256 ПРР / 512 крылатая / 1024 баллистическая). Отличается от слота колоды (CategoryType) и роли (Role).",
+        "zh": "引擎大类**位掩码（加法合成）**：2 步兵 / 4 载具 / 8 直升机 / 16 飞机 / 32 舰船 / 128 弹丸 / "
+              "256 反辐射 / 512 巡航 / 1024 弹道。值按位相加（例：6 = 4 载具 + 2 步兵），工具会自动拆解显示。"
+              "注意：它与卡组槽位（CategoryType）、战术角色（Role）是三件不同的事。",
+        "en": "Engine-class **bitmask (add the bits)**: 2 infantry / 4 vehicle / 8 helicopter / 16 aircraft / 32 ship / "
+              "128 projectile / 256 SEAD / 512 cruise / 1024 ballistic. Sum the bits (e.g. 6 = 4 vehicle + 2 infantry); "
+              "the tool decomposes it automatically. Distinct from the deck slot (CategoryType) and the role (Role).",
+        "ru": "**Битовая маска** класса движка (значения складываются): 2 пехота / 4 техника / 8 вертолёт / 16 самолёт / "
+              "32 корабль / 128 снаряд / 256 ПРР / 512 крылатая / 1024 баллистическая. Значения складываются "
+              "(напр. 6 = 4 техника + 2 пехота); инструмент раскладывает автоматически. Отличается от слота колоды "
+              "(CategoryType) и роли (Role).",
     },
     "Units.CategoryType": {
         "zh": "卡组槽位类别（0 侦察…6 飞机），卡组编辑器的槽位数量按它索引。同一 Role 的单位可以分布在多个槽位类别里，"
@@ -347,7 +370,29 @@ ENUM_NOTES = {
         "ru": "Тип траектории; также используется проверкой главного боеприпаса (AmmunitionBoxComponent.IsMainAmmo): "
               "у артиллерийских ролей (130-133) главный БК = 20/30/40/200/300; у ПТ-пехоты (35) = 100/110/120.",
     },
+    "Ammunitions.TargetType": {
+        "zh": "**位掩码，按加法合成**：每个值是一个「可以打什么」的位，把要打的类别对应的位相加即可。"
+              "例：36 = 32(舰船) + 4(载具) → 该弹药能打舰船和载具；39 = 32+4+2+1（舰船+载具+步兵+地面）；"
+              "1944 = 1024+512+256+128+16+8（弹道导弹+巡航导弹+反辐射导弹+弹丸+飞机+直升机）。"
+              "工具会自动把掩码拆成种类显示（`36 → 舰船 + 载具 (32 + 4)`），64 这一位游戏未定义，别用。",
+        "en": "**Bitmask — add the bits together**: each value is one \"what can this hit\" bit; sum the bits you want. "
+              "E.g. 36 = 32 (ship) + 4 (vehicle) → the round can hit ships and vehicles; 39 = 32+4+2+1 "
+              "(ship+vehicle+infantry+ground); 1944 = 1024+512+256+128+16+8 (ballistic+cruise+SEAD missile+projectile+"
+              "aircraft+helicopter). The tool decomposes masks automatically (`36 → Ship + Vehicle (32 + 4)`). "
+              "Bit 64 is not defined by the game — do not use it.",
+        "ru": "**Битовая маска — значения складываются**: каждый бит отвечает за тип цели. "
+              "Напр. 36 = 32 (корабль) + 4 (техника) — снаряд бьёт корабли и технику; 39 = 32+4+2+1 "
+              "(корабль+техника+пехота+земля); 1944 = 1024+512+256+128+16+8 (баллистическая+крылатая+ПРР+снаряд+"
+              "самолёт+вертолёт). Инструмент сам раскладывает маску (`36 → Корабль + Техника (32 + 4)`). "
+              "Бит 64 игрой не определён — не используйте.",
+    },
 }
+
+# 位掩码型枚举（值按位相加 = 加法合成）：
+#   Units.Type             2 步兵/4 载具/8 直升机/16 飞机/32 舰船/128 弹丸/256 反辐射/512 巡航/1024 弹道
+#   Ammunitions.TargetType 1 地面/2 步兵/4 载具/8 直升机/16 飞机/32 舰船/128 弹丸/256 反辐射/512 巡航/1024 弹道
+# 例：36 = 32(舰船) + 4(载具)。
+MASK_ENUMS = {"Units.Type", "Ammunitions.TargetType"}
 
 
 def enum_note(key, lang="zh"):
@@ -372,6 +417,52 @@ def enum_member(field, value):
     return enum_members(field).get(str(value), "")
 
 
+def enum_is_mask(key):
+    """该枚举是不是位掩码（值按位相加，如 Ammunitions.TargetType / Units.Type）。"""
+    return key in MASK_ENUMS
+
+
+def enum_mask_parts(key, value, lang="zh"):
+    """拆解位掩码 → ([(bit, 含义)], 未知位)。
+
+    只认 2 的整数次幂的枚举行（位定义）；未知位 = 值里剩下的、游戏没定义的位。
+    例：('Ammunitions.TargetType', 36) → ([(32, '舰船'), (4, '载具')], 0)（按位从大到小）。
+    """
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return [], 0
+    bits = []
+    for vs, meaning in enum_values(key, lang):
+        try:
+            v = int(str(vs).strip())
+        except (TypeError, ValueError):
+            continue
+        if v <= 0 or (v & (v - 1)) != 0:  # 只保留单 bit
+            continue
+        if value & v:
+            bits.append((v, meaning or str(v)))
+    bits.sort(key=lambda x: -x[0])  # 从高位到低位，读起来就是 32 + 4
+    known = 0
+    for v, _ in bits:
+        known |= v
+    return bits, (value & ~known)
+
+
+def enum_mask_label(key, value, lang="zh", with_numbers=True):
+    """位掩码的拆解文本：36 → '舰船 + 载具 (32 + 4)'；0 / 无法拆解时返回空串。"""
+    bits, unknown = enum_mask_parts(key, value, lang)
+    if not bits and not unknown:
+        return ""
+    parts = [m for _, m in bits]
+    if unknown:
+        parts.append("未知位 %d" % unknown)
+    text = " + ".join(parts)
+    if with_numbers and len(bits) > 1:
+        text += " (%s)" % " + ".join(str(v) for v, _ in bits)
+    return text
+
+
 def enum_key(table, field):
     """(表, 字段) → 枚举键 'Table.Field'（不在 ENUMS 里则返回 None）。
 
@@ -391,7 +482,17 @@ def enum_meaning(key, value, lang="zh"):
 
 
 def enum_label(key, value, lang="zh"):
-    """绿色箭头用的短标签：'主战坦克 (Tank)' / '11 未知值'；未知值返回空串由调用方提示。"""
+    """绿色箭头用的短标签。
+
+    - 普通枚举：'主战坦克 (Tank)'（成员名来自 dump.cs）
+    - 位掩码枚举：'舰船 + 载具 (32 + 4)'（按位相加拆解）
+    - 未知值 / 无法拆解：返回空串，由调用方给出告警文案
+    """
+    if enum_is_mask(key):
+        text = enum_mask_label(key, value, lang)
+        if text:
+            return text
+        # 0 或空值 → 回落到普通查表（0 = '无'）
     meaning = enum_meaning(key, value, lang)
     if not meaning:
         return ""

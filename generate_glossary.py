@@ -288,8 +288,13 @@ def enum_lines():
     for fname in sorted(BG.ENUMS):
         note = BG.enum_note(fname, "zh")
         members = BG.enum_members(fname)
+        is_mask = BG.enum_is_mask(fname)
         lines.append("### " + fname)
         lines.append("")
+        if is_mask:
+            lines.append("**位掩码（加法合成）** —— 值按位相加，例如 "
+                         "`36 = 32(舰船) + 4(载具)`；工具会把掩码自动拆成种类显示。")
+            lines.append("")
         if note:
             # 「真实作用」说明（v1.8.55 起：Units.Role / Units.Type / Units.CategoryType 等）
             lines.append("> " + note)
@@ -452,6 +457,8 @@ def main():
     gloss["enum_notes"] = {k: BG.enum_note(k, "zh") for k in BG.ENUMS if BG.enum_note(k, "zh")}
     gloss["enum_notes_en"] = {k: BG.enum_note(k, "en") for k in BG.ENUMS if BG.enum_note(k, "en")}
     gloss["enum_notes_ru"] = {k: BG.enum_note(k, "ru") for k in BG.ENUMS if BG.enum_note(k, "ru")}
+    # 位掩码型枚举（值按位相加，如 Ammunitions.TargetType：36 = 32 舰船 + 4 载具）
+    gloss["enum_masks"] = sorted(k for k in BG.ENUMS if BG.enum_is_mask(k))
     gloss["constants"] = [{"name": n, "value": v, "use": u} for n, v, u in CONSTANTS]
     gloss["mount_categories"] = [{"id": x["id"], "name": x["name"], "desc": x["desc"]}
                                  for x in MOUNT_CATEGORIES]

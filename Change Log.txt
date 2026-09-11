@@ -2,6 +2,62 @@
 更新日志 · Changelog · Журнал изменений
 ================================================================================
 
+## v1.8.56（BA_Mod_Maker v1.8.56 + Blender 插件 v2.7.56）—— 箭头统一为 → + 目标类型掩码按加法拆解
+
+【中文】
+- **绿色箭头统一**：原来字段编辑器里有两种箭头 —— 外键用 `→ 名称`、枚举用 `➜ 种类`。
+  现在**全部统一成 `→`**（同一字形、同一绿色、同一位置、都可点击）：外键箭头点击跳到被引用的那一行
+  （与关联树双击一致），枚举箭头点击打开词典对照表；两者的悬浮提示风格也统一了。词典窗口里的
+  枚举行同样用 `→`（如 `36 → 舰船 + 载具`）。
+- **目标类型掩码按加法拆解**：`Ammunitions.TargetType` 与 `Units.Type` 是**位掩码（值按位相加）**，
+  例如 `36 = 32(舰船) + 4(载具)`，表示该弹药能打舰船和载具。工具现在会自动拆解：
+  - 字段编辑器右侧：`36 → 舰船 + 载具 (32 + 4)`
+  - 主表格：`Ammunitions` 新增 `TargetType`、`TrajectoryType` 两列，`Weapons` 新增 `Type` 列
+    （单元格同样显示拆解，如 `1944 → 弹道导弹 + 巡航导弹 + 反辐射导弹 + 弹丸 + 飞机 + 直升机`）
+  - 悬浮提示首行给出当前值拆解：`当前值 36 = 32 (舰船) + 4 (载具)（位掩码，加法合成）`
+  - 出现游戏未定义的位（如 64 这一位游戏没定义）时标黄：`→ ⚠ … + 未知位 64`
+- **词典同步**：`Ammunitions.TargetType` 的说明重写为「位掩码，按加法合成」并给出 36 / 39 / 1944 三个实例，
+  `Units.Type` 也标注为位掩码；词典与会话 JSON 新增 `enum_masks` 标记；《数据库词典.md》里位掩码枚举
+  会先打印一行「**位掩码（加法合成）**」再列位定义。
+- 版本号提升到 **v1.8.56**（Blender 插件同步 v2.7.56）。其余功能与 v1.8.55 一致。
+
+【English】
+- **One arrow everywhere**: the field editor used two different arrows — foreign keys showed `→ Name`
+  and enums showed `➜ Kind`. Both are now a single `→` (same glyph, same green, same position, both
+  clickable): the FK arrow jumps to the referenced row (same as double-clicking the relation tree), the
+  enum arrow opens the dictionary table; their tooltips are consistent too. Enum rows inside the
+  dictionary window use `→` as well (e.g. `36 → Ship + Vehicle`).
+- **Target-type masks are decomposed additively**: `Ammunitions.TargetType` and `Units.Type` are
+  **bitmasks (add the bits)** — e.g. `36 = 32 (ship) + 4 (vehicle)`, meaning the round can hit ships and
+  vehicles. The tool now decomposes them:
+  - field editor: `36 → Ship + Vehicle (32 + 4)`
+  - main grid: `Ammunitions` gained `TargetType` + `TrajectoryType` columns, `Weapons` gained a `Type`
+    column (cells show the decomposition too, e.g. `1944 → Ballistic + Cruise + SEAD missile + Projectile + Aircraft + Helicopter`)
+  - tooltip first line: `current value 36 = 32 (Ship) + 4 (Vehicle) (bitmask, add the bits)`
+  - bits the game never defined (64 is undefined) are flagged in yellow: `→ ⚠ … + unknown bit 64`
+- **Dictionary updated**: the `Ammunitions.TargetType` note now explains the additive bitmask with the
+  36 / 39 / 1944 examples, `Units.Type` is marked as a bitmask too, and both the dictionary window and
+  `database_glossary.json` carry an `enum_masks` marker; 《数据库词典.md》 prints a
+  "**位掩码（加法合成）**" line before the bit table.
+- Version bumped to **v1.8.56** (Blender addon v2.7.56 in lockstep). Everything else matches v1.8.55.
+
+【Русский】
+- **Одна стрелка везде**: в редакторе было две стрелки — у внешних ключей `→ Имя`, у перечислений `➜ Вид`.
+  Теперь везде единая `→` (тот же символ, тот же зелёный цвет, то же место, обе кликабельны): стрелка
+  внешнего ключа переходит к указанной строке (как двойной клик в дереве связей), стрелка перечисления
+  открывает таблицу в словаре; подсказки тоже унифицированы. В словаре строки перечислений тоже `→`
+  (напр. `36 → Корабль + Техника`).
+- **Маски типов целей раскладываются по битам**: `Ammunitions.TargetType` и `Units.Type` —
+  **битовые маски (значения складываются)**: напр. `36 = 32 (корабль) + 4 (техника)`. Инструмент раскладывает:
+  - редактор поля: `36 → Корабль + Техника (32 + 4)`
+  - основная таблица: у `Ammunitions` добавлены колонки `TargetType` и `TrajectoryType`, у `Weapons` — `Type`
+  - подсказка первой строкой: `текущее значение 36 = 32 (Корабль) + 4 (Техника) (битовая маска…)`
+  - неопределённые игрой биты (64 не определён) помечаются жёлтым: `→ ⚠ … + неизвестный бит 64`
+- **Словарь обновлён**: заметка `Ammunitions.TargetType` переписана под аддитивную маску с примерами
+  36 / 39 / 1944, `Units.Type` тоже помечен как маска; в словаре и `database_glossary.json` появился
+  маркер `enum_masks`; в 《数据库词典.md》 перед таблицей битов печатается строка «**位掩码（加法合成）**».
+- Версия поднята до **v1.8.56** (аддон Blender — v2.7.56). Остальное совпадает с v1.8.55.
+
 ## v1.8.55（BA_Mod_Maker v1.8.55 + Blender 插件 v2.7.55）—— 内置词典补全 Units.Role + 枚举绿色箭头 ➜ 导航
 
 【中文】

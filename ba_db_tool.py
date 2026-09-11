@@ -72,7 +72,9 @@ from i18n import LANGS, LANG_NAMES, Translator  # noqa: E402
 from ba_glossary import (  # noqa: E402
     field_info, table_info, enum_values, TABLES, FIELDS, COMMON, ENUMS, ORDER,
     # v1.8.55：枚举字段的绿色箭头导航（枚举键 / 含义 / 成员名 / 真实作用说明）
+    # v1.8.56：位掩码拆解（Ammunitions.TargetType / Units.Type 按位相加）
     enum_key, enum_label, enum_member, enum_note,
+    enum_is_mask, enum_mask_parts, enum_mask_label,
 )
 # 模型修改功能已整体迁移到 Blender 插件（BA Mod Maker Blender 插件 v2.0）：
 # 模型导入/挂载点编辑/构建写回/CRC 计算都在 Blender 里做，本工具只保留数据表编辑。
@@ -89,6 +91,11 @@ def app_title_text(tr):
 
 
 MAX_UNDO = 100
+
+# v1.8.56：绿色箭头统一字形 —— 外键「→ 名称」、枚举「→ 种类」、掩码「→ 拆解」
+# 用同一个箭头 + 同一个颜色 + 同一个位置（字段输入框右侧），点击都能跳转
+# （外键 → 跳到那一行，枚举/掩码 → 打开词典对照表）。
+REF_ARROW = "→"
 TREE_CHUNK = 400          # rows inserted per UI cycle (keeps browsing smooth)
 REL_CAP = 1000            # max relation items per group
 FOLD_OPEN = "▼ "          # big fold indicator: expanded
@@ -553,9 +560,10 @@ KEY_COLUMNS = {
     # v1.8.55：单位大类的三个"分类"字段并排显示（Type / CategoryType / Role），
     # 单元格里带绿色箭头指向它 ID 对应的种类（见 _enum_cell）。
     "Units": ["Id", "HUDName", "Name", "CountryId", "Cost", "Type", "CategoryType", "Role"],
-    "Weapons": ["Id", "Name", "HUDName"],
+    # v1.8.56：弹药表把「目标类型(位掩码)」「弹道类型」提到浏览列，掩码直接显示拆解
+    "Weapons": ["Id", "Name", "HUDName", "Type"],
     "Abilities": ["Id", "Name", "IsDefault"],
-    "Ammunitions": ["Id", "Name", "HUDName"],
+    "Ammunitions": ["Id", "Name", "HUDName", "TargetType", "TrajectoryType"],
     "Armors": ["Id", "Name", "IsDefault"],
     "Sensors": ["Id", "Name", "IsDefault"],
     "Mobility": ["Id", "Name", "IsDefault"],
@@ -1332,8 +1340,32 @@ class DetailWindow:
 
     # ---------------- smart FK fields (type a name -> Id) ----------------
 
+    def _fk_tip_text(self, target, entry):
+        """外键箭头的悬浮提示（与枚举箭头同一套交互：点击跳转）。"""
+        parts = [self.app.tr.t("fk_jump_hint", table=target)]
+        t = entry.get().strip()
+        if t and not t.lstrip("-").isdigit():
+            parts.append(self.app.tr.t("fk_name_hint"))
+        return "\n".join(parts)
+
+    def _fk_jump(self, entry):
+        """点击外键绿箭头 → 跳到被引用的那一行（与关联树双击、行双击行为一致）。"""
+        app = self.app
+        target = getattr(entry, "_fk_target", None)
+        if not target:
+            return
+        t = entry.get().strip()
+        if not t.lstrip("-").isdigit():
+            return
+        nav = app._rel_target(target, int(t))
+        if nav is None:
+            app._toast(app.tr.t("lookup_none"))
+            return
+        self.load(nav[0], nav[1], push=True)
+
     def _fk_update_label(self, entry):
-        """Show the referenced name next to a numeric FK value."""
+        """Show the referenced name next to a numeric FK value (green arrow,
+        same glyph/colour/position as the enum arrow)."""
         app = self.app
         name_l = getattr(entry, "_fk_name_label", None)
         target = getattr(entry, "_fk_target", None)
@@ -1349,56 +1381,81 @@ class DetailWindow:
             name_l.config(text="", fg=app.c["hint"])
             return
         if rid <= 0:
-            name_l.config(text="→ 0", fg=app.c["hint"])
+            name_l.config(text=REF_ARROW + " 0", fg=app.c["hint"])
             name_l._color_role = "hint"
             return
         app._ensure_indexes()
         if rid in app._id_index.get(target, {}):
             field = getattr(entry, "_fk_field", None)
-            name_l.config(text=f"→ {app._fk_name_for(field, target, rid)}",
+            name_l.config(text=REF_ARROW + " " + app._fk_name_for(field, target, rid),
                           fg=app.c["ok"])
             name_l._color_role = "ok"
         else:
-            name_l.config(text=f"→ ⚠ {app.tr.t('lookup_none')}", fg=app.c["warn"])
+            name_l.config(text=REF_ARROW + " ⚠ " + app.tr.t('lookup_none'),
+                          fg=app.c["warn"])
             name_l._color_role = "warn"
 
     def _enum_update_label(self, entry, name_l, ekey, table=None):
-        """v1.8.55：枚举字段右侧的绿色箭头标签。
+        """枚举字段右侧的绿色箭头标签（字形与「外键 → 名称」统一）。
 
-        值合法 → `➜ 主战坦克 (Tank)`（绿色）；值不在枚举里 → `➜ ⚠ 未知值 99`
-        （黄色，游戏会走兜底分支，不会崩）；空/非数字 → 提示（灰色）。"""
+        值合法 → `→ 主战坦克 (Tank)`（绿色）；位掩码 → `→ 舰船 + 载具 (32 + 4)`；
+        值不在枚举里 → `→ ⚠ 未知值 99`（黄色，游戏会走兜底分支，不会崩）；
+        掩码里有游戏没定义的位 → 黄色并标出 `未知位 64`；空/非数字 → 提示（灰色）。"""
         app = self.app
         t = entry.get().strip()
         if not t:
-            name_l.config(text="➜", fg=app.c["hint"])
+            name_l.config(text=REF_ARROW, fg=app.c["hint"])
             name_l._color_role = "hint"
             return
         try:
             val = int(t)
         except ValueError:
-            name_l.config(text="➜ ⚠ " + app.tr.t("enum_invalid"), fg=app.c["warn"])
+            name_l.config(text=REF_ARROW + " ⚠ " + app.tr.t("enum_invalid"),
+                          fg=app.c["warn"])
             name_l._color_role = "warn"
             return
         label = enum_label(ekey, val, app.tr.lang)
-        if label:
-            name_l.config(text="➜ " + label, fg=app.c["ok"])
-            name_l._color_role = "ok"
-        else:
-            name_l.config(text="➜ ⚠ " + app.tr.t("enum_unknown", value=val),
+        if not label:
+            name_l.config(text=REF_ARROW + " ⚠ " + app.tr.t("enum_unknown", value=val),
                           fg=app.c["warn"])
             name_l._color_role = "warn"
+            return
+        unknown = 0
+        if enum_is_mask(ekey):
+            _bits, unknown = enum_mask_parts(ekey, val, app.tr.lang)
+        if unknown:
+            name_l.config(text=REF_ARROW + " ⚠ " + label, fg=app.c["warn"])
+            name_l._color_role = "warn"
+        else:
+            name_l.config(text=REF_ARROW + " " + label, fg=app.c["ok"])
+            name_l._color_role = "ok"
 
-    def _enum_tip_text(self, ekey):
-        """枚举字段的悬浮提示：真实作用说明 + 全部取值对照（点击可打开词典）。"""
+    def _enum_tip_text(self, ekey, entry=None):
+        """枚举字段的悬浮提示：当前值拆解 + 真实作用说明 + 全部取值对照（点击可打开词典）。"""
         lang = self.app.tr.lang
         parts = [ekey]
+        if enum_is_mask(ekey) and entry is not None:
+            try:
+                cur = int(entry.get().strip())
+            except (TypeError, ValueError):
+                cur = None
+            if cur is not None:
+                bits, unknown = enum_mask_parts(ekey, cur, lang)
+                if bits:
+                    parts.append(self.app.tr.t(
+                        "mask_current",
+                        value=cur,
+                        items=" + ".join("%d (%s)" % (v, m) for v, m in bits)))
+                if unknown:
+                    parts.append(self.app.tr.t("mask_unknown_bit", value=unknown))
         note = enum_note(ekey, lang)
         if note:
             parts.append(note)
         parts.append("")
         for val, meaning in enum_values(ekey, lang):
             member = enum_member(ekey, val)
-            parts.append("  %s = %s%s" % (val, meaning, ("  [%s]" % member) if member else ""))
+            parts.append("  %s %s %s%s" % (val, REF_ARROW, meaning,
+                                           ("  [%s]" % member) if member else ""))
         parts.append("")
         parts.append(self.app.tr.t("enum_click_hint"))
         return "\n".join(parts)
@@ -1579,11 +1636,13 @@ class DetailWindow:
                           or value is None))
             if is_fk:
                 # smart FK field: type a name/HUD name to find the Id
+                # v1.8.56：右侧绿色箭头与枚举字段统一（同一字形 →、同一颜色、同一位置），
+                # 点箭头/文字跳到被引用的那一行（与关联树双击一致）。
                 cell = tk.Frame(inner, bg=c["bg"])
                 entry = tk.Entry(cell, width=18, bg=c["entry_bg"], fg=c["entry_fg"],
                                  insertbackground=c["entry_fg"])
                 entry.pack(side="left")
-                name_l = tk.Label(cell, anchor="w", fg=c["hint"], bg=c["bg"])
+                name_l = tk.Label(cell, anchor="w", fg=c["hint"], bg=c["bg"], cursor="hand2")
                 name_l._color_role = "hint"
                 name_l.pack(side="left", fill="x", expand=True, padx=6)
                 entry.insert(0, str(value) if isinstance(value, int) else "")
@@ -1603,12 +1662,16 @@ class DetailWindow:
                 entry._fk_field = key
                 entry._dirty_cb = dirty_cb
                 self._fk_update_label(entry)
+                ToolTip(name_l, lambda target=fk_target, entry=entry:
+                        self._fk_tip_text(target, entry), colors=c)
+                name_l.bind("<Button-1>", lambda _e, entry=entry: self._fk_jump(entry))
                 widgets[key] = (entry, value)
                 continue
             ekey = enum_key(tname or "", key)
             if ekey and isinstance(value, int) and not isinstance(value, bool):
                 # v1.8.55：枚举字段（单位大类 / 槽位类别 / 角色 / 武器类型 / 弹道…）
-                # 右侧绿色箭头 ➜ 直接写出该 ID 对应的种类；点箭头或文字打开词典对照。
+                # 右侧绿色箭头 → 直接写出该 ID 对应的种类（掩码则按位拆解）；
+                # 点箭头或文字打开词典对照表。字形与上面的外键箭头完全一致。
                 cell = tk.Frame(inner, bg=c["bg"])
                 entry = tk.Entry(cell, width=18, bg=c["entry_bg"], fg=c["entry_fg"],
                                  insertbackground=c["entry_fg"])
@@ -1627,9 +1690,9 @@ class DetailWindow:
                 entry._enum_label = name_l
                 entry._dirty_cb = dirty_cb
                 self._enum_update_label(entry, name_l, ekey, tname)
-                for w in (name_l,):
-                    ToolTip(w, lambda ekey=ekey: self._enum_tip_text(ekey), colors=c)
-                    w.bind("<Button-1>", lambda _e, ekey=ekey: app.show_dictionary(ekey))
+                ToolTip(name_l, lambda ekey=ekey, entry=entry:
+                        self._enum_tip_text(ekey, entry), colors=c)
+                name_l.bind("<Button-1>", lambda _e, ekey=ekey: app.show_dictionary(ekey))
                 widgets[key] = (entry, value)
                 continue
             if isinstance(value, bool):
@@ -3656,27 +3719,30 @@ class EditorApp:
             return self._fk_name_for(field, target, val)
         return f"{self._row_name(target, val)} ({val})"
 
-    def _enum_cell(self, table, field, val, mark="➜"):
-        """Enum cell display: '11 ➜ 主战坦克 (Tank)' — the arrow points at the
+    def _enum_cell(self, table, field, val, mark=None):
+        """Enum cell display: '11 → 主战坦克 (Tank)' — the arrow points at the
         kind the raw ID stands for (Units.Type / CategoryType / Role,
         Weapons.Type, Ammunitions.TrajectoryType, ...).
+
+        v1.8.56: 位掩码枚举（Ammunitions.TargetType / Units.Type）按加法拆解：
+        '36 → 舰船 + 载具 (32 + 4)'。箭头字形与「外键 → 名称」统一为 REF_ARROW。
 
         Returns None when the field is not an enum field, so callers fall back
         to the plain formatter. Unknown values keep the raw number and are
         flagged with a warning arrow (they are legal — the game just takes the
         fallback branch)."""
+        mark = mark if mark is not None else REF_ARROW
         key = enum_key(table or "", field)
         if key is None or isinstance(val, bool) or not isinstance(val, int):
             return None
-        if val < 0:  # e.g. ContentMembership -1 = base game
-            label = enum_label(key, val, self.tr.lang)
-            if not label:
-                return fmt_cell(val)
-            return f"{val} {mark} {label}"
         label = enum_label(key, val, self.tr.lang)
-        if label:
-            return f"{val} {mark} {label}"
-        return f"{val} {mark} ⚠ {self.tr.t('enum_unknown', value=val)}"
+        if not label:
+            return f"{val} {mark} ⚠ {self.tr.t('enum_unknown', value=val)}"
+        if enum_is_mask(key):
+            _bits, unknown = enum_mask_parts(key, val, self.tr.lang)
+            if unknown:
+                return f"{val} {mark} ⚠ {label}"
+        return f"{val} {mark} {label}"
 
     def _fmt_row(self, row, cols, table=None):
         out = []

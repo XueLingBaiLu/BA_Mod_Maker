@@ -13,8 +13,8 @@
   _rebuild_addon_zip.py 打包前把本文件同步进 blender_addon/version.py。
 """
 
-APP_VERSION = "1.8.55"
-ADDON_VERSION = (2, 7, 55)
+APP_VERSION = "1.8.56"
+ADDON_VERSION = (2, 7, 56)
 
 
 if __name__ == "__main__":
