@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import tempfile
 import tkinter as tk
+import audio_ui
 from tkinter import ttk, filedialog, messagebox
 
 from audio_import import detect_streaming_assets, BACKUP_DIRNAME, backup_audio
@@ -88,8 +89,6 @@ class AudioAddDialog(tk.Toplevel):
     def __init__(self, master, sa=None):
         super().__init__(master)
         self.title("添加音频/音效（新事件 + 武器预设）")
-        self.geometry("760x560")
-        self.minsize(680, 480)
         self.transient(master)
         self.sa = sa or detect_streaming_assets()
         self.src_file = None
@@ -155,10 +154,14 @@ class AudioAddDialog(tk.Toplevel):
         ttk.Button(ops, text="关闭", command=self.destroy).pack(side="right")
 
         # 输出
-        self.log = tk.Text(frm, height=8, state="disabled", bg="#f6f6f6")
+        self.log = tk.Text(frm, height=8, state="disabled", relief="flat",
+                           highlightthickness=1)
         self.log.pack(fill="both", expand=True, pady=(8, 0))
 
         self._toggle_wp()
+        # 继承主窗深色主题（含 tk.Text 日志框的底色，避免刺眼白底）
+        audio_ui.theme_from_master(self, master)
+        audio_ui.fit_and_center(self, master, 760, 520)
 
     # ---------- 内部 ----------
 

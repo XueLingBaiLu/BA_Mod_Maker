@@ -10,7 +10,7 @@ r"""断箭（Broken Arrow）bundle CRC 计算器 —— 已破解算法，不依
     python compute_bundle_crc.py --dir <aa/PC目录>
     python compute_bundle_crc.py --update-catalog <catalog.json>
 """
-import sys, struct, os, zlib, glob
+import sys, struct, os, zlib, glob, re
 import lz4.block, lzma
 
 

@@ -14,6 +14,7 @@
 """
 
 import os
+import shutil
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -34,6 +35,16 @@ FILES = [
     "audio_add.py",
     "audio_bank.py",
     "audio_preset.py",
+    # 素材导入 + 「我的 bundle」管理器（自建独立 bundle）
+    "mod_assets.py",
+    "my_bundle.py",
+    # ★ v1.8.112：这几项**以前漏在清单外** ⇒ 源码版一打开就 ModuleNotFoundError ✗
+    #   （exe 版走 PyInstaller 自动分析，所以只有源码包坏 —— 最难发现的那种）
+    #   回归：`测试\test_source_zip_completeness.py`（递归 import 分析 + 负向对照）✓
+    "ui_fit.py",              # 窗口自适应 + 深色主题（ba_db_tool 模块级 import）
+    "audio_ui.py",            # 音频对话框共用 UI 工具（audio_add/audio_import 用）
+    "game_snapshot.py",       # 「游戏文件快照」对话框（v1.8.106 新增）
+    "mod_checkup.py",         # 「Mod 自查」（v1.8.107 新增）
     # 单一版本来源（改版本只动这一个文件）
     "version.py",
     # Blender 插件一键安装脚本（配套 BA_Mod_Maker_blender_addon.zip）
@@ -51,6 +62,14 @@ FILES = [
     "build_exe.py",
     "auto_build.py",
     "自动打包.bat",
+    # ★ v1.8.112：`build_exe.py` 会调用它刷新发布目录/重打 zip ⇒ 源码包必须带上，
+    #   否则源码用户改了日志后跑打包会在这一步找不到文件 ✗
+    "_refresh_release.py",
+    # ★ 同一次审计（判据⑤）还查出这三个也漏了 —— 都是**打包流水线的组成部分**，
+    #   源码用户跑 `自动打包.bat` / `build_exe.py` 会走到 ✗
+    "_rebuild_addon_zip.py",   # 重打 Blender 插件 zip
+    "_sync_revtools.py",       # 把 _rev_tools 同步进插件/发布目录
+    "clean_old_releases.py",   # 清理旧版本发布件
     # 本打包工具
     "package_zip.py",
     "打包源码.bat",
@@ -131,6 +150,17 @@ def build_zip():
                     z.write(os.path.join(rev_dir, fn), os.path.join("_rev_tools", fn))
                     added += 1
             print("  + _rev_tools/*.py")
+        # 任务工具（.bascr 任务文件的读/看/改；节点大典以 .py 内嵌 ⇒ 会被这里带上）
+        task_dir = os.path.join(HERE, "任务工具")
+        if os.path.isdir(task_dir):
+            n = 0
+            for fn in sorted(os.listdir(task_dir)):
+                fp = os.path.join(task_dir, fn)
+                if os.path.isfile(fp) and not fn.endswith(".pyc"):
+                    z.write(fp, os.path.join("任务工具", fn))
+                    n += 1
+                    added += 1
+            print("  + 任务工具/* (%d files)" % n)
         # Blender 插件（直接构造版：含内置 _rev_tools 子目录）
         ba_dir = os.path.join(HERE, "blender_addon")
         if os.path.isdir(ba_dir):
@@ -144,6 +174,18 @@ def build_zip():
                     added += 1
             print("  + blender_addon/*（含内置 _rev_tools）")
     print("已生成:", out)
+    # ★ v1.8.99：**顺手在工作区根也留一份**。
+    #   交付体检（`动画模块/test_release_hygiene.py`）要求"发布件在工作区根有副本"
+    #   （用户就是从这两个地方拿的），以前这一步靠手拷 ⇒ 忘了就假红 ✗ ⇒ 现在写进脚本里。
+    root = os.path.dirname(os.path.dirname(HERE))
+    if os.path.isdir(root) and os.path.abspath(root) != os.path.abspath(HERE):
+        dst = os.path.join(root, ZIP_NAME)
+        try:
+            shutil.copy2(out, dst)
+            print("已复制到工作区根:", dst)
+        except OSError as e:
+            print("⚠ 复制到工作区根失败（不影响本次打包）:", e)
+    return out
 
 
 if __name__ == "__main__":

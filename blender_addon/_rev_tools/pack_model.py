@@ -73,24 +73,32 @@ def export_pack(sf, prefab_path, root_pid, preload_pids, out_zip, bundle_kind="u
     preload_pids: 导入时的 preload 顺序（MonoScript 常量 + 我的对象 pid 混合）
     """
     objects = []
+    kept = []
     for pid in preload_pids:
         o = sf.objects.get(pid)
+        # ⛔ 被跳过的 pid **不能**继续留在 preload 里：导入端会把"不在包对象里的 pid"
+        #    当作 MonoScript 常量原样写入 ⇒ 指向不存在对象的**悬挂 preload** ✗
+        #    （正是 `get_raw_data()` 对新建对象返空字节那个坑的下游后果）。
         if o is None or o.type.name == "MonoScript":
-            continue  # MonoScript 目标 bundle 里已有，preload 列表里保留其 pid 即可
+            kept.append(pid)      # MonoScript 常量：目标 bundle 里已有，保留 pid 即可
+            continue
         raw = o.data if getattr(o, "data", None) is not None else o.get_raw_data()
         if not raw:
+            print("[打包] ⚠ pid %s（%s）读不到字节，已从包与 preload 中剔除"
+                  % (pid, o.type.name))
             continue
         obj = _type_identity(o)
         obj["pid"] = pid
         obj["raw"] = base64.b64encode(raw).decode("ascii")
         objects.append(obj)
+        kept.append(pid)
     manifest = {
         "format": FORMAT,
         "version": VERSION,
         "bundle": bundle_kind,
         "prefab_path": prefab_path,
         "root_pid": root_pid,
-        "preload": list(preload_pids),
+        "preload": kept,
         "objects": objects,
     }
     with zipfile.ZipFile(out_zip, "w", zipfile.ZIP_DEFLATED) as z:

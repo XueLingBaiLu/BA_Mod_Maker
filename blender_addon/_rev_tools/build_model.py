@@ -18,7 +18,9 @@ import os, sys, struct
 HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(HERE, "..", "_unitypy"))
+# `_unitypy` 有两份（cp314 / cp313）：统一按解释器 tag 挑（说明见 unitypy_path.py）
+from unitypy_path import ensure as _ensure_unitypy  # noqa: E402
+_ensure_unitypy(HERE)
 
 from build_turret_direct import (
     _find_sources, _make_go, _attach_child, _save, _read_from_data, _synth_turret_info,
@@ -58,12 +60,32 @@ def _mul(a, b):
 
 
 def _world_matrices(bone_tree):
-    """每根骨骼的世界矩阵（父链连乘）。返回 {name: Matrix4x4f}。"""
+    """每根骨骼的世界矩阵（父链连乘）。返回 {name: Matrix4x4f}。
+
+    ⛔⛔ v1.8.80 修了一个**会让几何脱离模型**的乘法顺序错误：
+       旧写法 `_mul(_qmat(rot), t)`（其中 t = T·S）算出来的是 **R·T·S**，
+       等于**把节点自身的平移又跟着自身旋转转了一次** ✗。
+       后果：凡是**局部旋转不为 0 的骨骼**，算出的世界矩阵位置就是错的 ⇒ 写进
+       `Mesh.m_BindPose` 的绑定姿势错 ⇒ 绑在这些骨骼上的几何在游戏里**脱离模型**。
+       实测（US_ACV，静态位姿下）：`Shield`(正面护甲) 偏 7.68、`Shield_01` 偏 7.82、
+       `apparel`(后门/裙板) 偏 5.53；而**轮子那 16 根旋转≈0 的骨骼全部正常** ——
+       所以症状看起来像"只有某几块掉了"。
+       手算校验：Shield 局部 (0.423,0.875,4.212) 绕 X −74°，错误结果正好是
+       (0.220,5.507,0.701)，与现场包里写错的值逐位一致 ✓
+
+       正确写法 = 标准 TRS：`T · R · S`，再左乘父级世界矩阵 ✓
+    """
     mats = {}
     for name, parent, pos, rot, scale in bone_tree:
-        t = Matrix4x4f(scale[0], 0.0, 0.0, pos[0], 0.0, scale[1], 0.0, pos[1],
-                       0.0, 0.0, scale[2], pos[2], 0.0, 0.0, 0.0, 1.0)
-        m = _mul(_qmat(rot), t)
+        s = Matrix4x4f(scale[0], 0.0, 0.0, 0.0,
+                       0.0, scale[1], 0.0, 0.0,
+                       0.0, 0.0, scale[2], 0.0,
+                       0.0, 0.0, 0.0, 1.0)
+        t = Matrix4x4f(1.0, 0.0, 0.0, pos[0],
+                       0.0, 1.0, 0.0, pos[1],
+                       0.0, 0.0, 1.0, pos[2],
+                       0.0, 0.0, 0.0, 1.0)
+        m = _mul(t, _mul(_qmat(rot), s))
         if parent and parent in mats:
             m = _mul(mats[parent], m)
         mats[name] = m
@@ -98,10 +120,18 @@ def _rebuild_lod_group(lod_src, lod_read, root_gpid, smr_pids):
     n_lod = len(heights)
     if len(raw) != 36 + 4 + n_lod * 24 + 4:
         # 结构假设失效：回退到旧的字面单渲染器替换（单网格场景仍可用）
-        raw = raw.replace(struct.pack("<q", lod_read.m_GameObject.m_PathID), struct.pack("<q", root_gpid))
+        # ⛔ 回退路径本身有两个坑，这里都堵上：
+        #   ① 每级多渲染器时会把它们**全部**替成第一个 ⇒ 多网格只看得到第一个 ✗
+        #   ② `smr_pids` 为空时 `smr_pids[0]` 直接 IndexError ✗
+        if not smr_pids:
+            raise ValueError("LODGroup 重建：没有可用的 SkinnedMeshRenderer（smr_pids 为空）")
+        print("[构建] ⚠ LODGroup 结构与预期不符，走回退路径（每级只保留第一个渲染器）")
+        raw = raw.replace(struct.pack("<q", lod_read.m_GameObject.m_PathID),
+                          struct.pack("<q", root_gpid))
         for lod in lod_read.m_LODs:
-            for lr in (lod.renderers or []):
-                raw = raw.replace(struct.pack("<q", lr.renderer.m_PathID), struct.pack("<q", smr_pids[0]))
+            for i, lr in enumerate(lod.renderers or []):
+                raw = raw.replace(struct.pack("<q", lr.renderer.m_PathID),
+                                  struct.pack("<q", smr_pids[min(i, len(smr_pids) - 1)]))
         return bytes(raw)
     prefix = bytearray(raw[0:0x24])
     prefix[4:12] = struct.pack("<q", root_gpid)
@@ -319,7 +349,11 @@ def build_model(bundle, out_bundle, prefab_path, new_name,
 
     # ---- AssetBundle 容器 + preload（MonoScript 前置！） ----
     ab_obj = next(o for o in objs if o.type.name == "AssetBundle")
-    ab = ab_obj.read()
+    # ⛔ 必须用 `_read_from_data`（读 obj_reader.data = 内存当前状态），**不能** `.read()`：
+    #    后者会 reset 后从流里重读，把上面 `_clean_stale_build()` 刚写进内存的清理结果
+    #    丢掉 ⇒ 旧 preload/container 条目被写回、而它们指向的对象已从 sf.objects 删除
+    #    ⇒ **悬挂引用 ⇒ 战场加载崩溃**，工具却仍报成功 ✗（import_pack 一直用正确写法）。
+    ab = _read_from_data(ab_obj)
     preload_scripts = [UNITPREFABTURRETINFO_SCRIPT]
     if hub_pid:
         preload_scripts.append(ANIMATIONHUB_SCRIPT)

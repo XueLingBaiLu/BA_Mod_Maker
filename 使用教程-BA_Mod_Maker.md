@@ -34,7 +34,8 @@ BA_Mod_Maker = 断箭（Broken Arrow）模组制作的主工具：
 | 从 data.unity3d 打开 | 直接用内置 UABEADump 从游戏 data.unity3d 提取数据库（免手动 UABEA） |
 | 导出到 data.unity3d | 生成可导回游戏的 dump 文件 |
 | 导入到 data.unity3d | 用内置 UABEADump 把修改后的数据库写回 data.unity3d |
-| **导入 .bamod 素材包…** | 模型包 / 皮肤包 / 姿势包（见 §6） |
+| **导入 .bamod 素材包…** | 把素材**合并进游戏自带**的 bundle（见 §6） |
+| **我的 bundle（自建资源包）…** | ★ 新建**你自己的** bundle 装资源，可反复加（见 §6.5） |
 | **导入图片/图标/肖像…** | 图片直导（见 §7） |
 | **打包图标/肖像 (.bamod)…** | 只把图片打成 .bamod 不导入 |
 | 保存 / 另存为 | 保存数据库（自动 AES 加密写回同名文件） |
@@ -76,6 +77,65 @@ BA_Mod_Maker = 断箭（Broken Arrow）模组制作的主工具：
 - **姿势包**：新姿势模型导入后，还要在数据库里把 `SquadMembers.ModelFileName` 改成
   新模型名（§8.4）；原地替换模式则不用改数据库。
 
+## 6.5 ★ 我的 bundle（自建独立资源包）—— **推荐给"一堆自己的资源"的玩法**
+
+文件 → **我的 bundle（自建资源包）…**。上面 §6 是往**游戏自带**的 bundle 里塞东西
+（改乱了不好回退、多个 mod 会互相踩）；这里是**你自己的** bundle：catalog 只多出
+"你的 bundle + 你的地址"，可以反复加资产、整体搬迁、随时卸载 ✓
+
+界面从上到下四块：
+
+| 区块 | 做什么 |
+|---|---|
+| ① 工作区 | 选**工作目录**（默认 `我的文档\BrokenArrow_Mods`）；显示自动检测到的游戏目录 |
+| ② 我的 bundle | 列表 = 工作目录里已有的自建 bundle，**点一个**就是"接下来往它里面加" |
+| ③ 新建 / 加资产 | 「新建 bundle」= 起个名字 + 选**骨架模板**（默认用产品自带的小包，够用）→ 产出 `<名字>_<32hex>.bundle`；「加素材包」= 选 `.bamod` + 填**地址**与包内路径 + 选**资产类型**；**下半部分是图片那条路**（v1.8.100 起）：「选 PNG…」+「骨架图标」下拉 +「★ 把图片加进这个 bundle」 |
+| ④ 收尾 | 「同步 CRC」「自检」「安装到游戏（先备份）」「还原 catalog」「全流程」 |
+
+**推荐顺序**：③ 新建 → ③ 加素材包（第一次会自动把 bundle 条目 + 地址 + CRC 一起注册好）
+→ ④ 自检 → ④ 安装到游戏。以后再加东西：② 选中你的 bundle → ③ 加素材包 → ④ 同步 CRC → ④ 安装。
+
+要点：
+- **每次加完资产都要「同步 CRC」**（忘了这步游戏会报 `CRC Mismatch`，表现成"改了没生效/崩"）
+- 「安装」= 把 bundle 拷进 `aa\PC\`、catalog 拷成 `aa\catalog.json`，**会先备份** `catalog.json.bak_<时间>`；
+  点「还原 catalog」可回到上一次
+- 所有中间产物（含 catalog 副本）都落在**工作目录**里，**不往游戏目录写临时文件**
+- 游戏侧原理：catalog 里给你建了一份**新 bundle 条目**（`provider=AssetBundleProvider`、
+  extra 里带 `m_Hash/m_Crc/m_BundleSize`）+ 你的**资产条目** + **地址**；游戏用
+  `Addressables` 按地址加载 ⇒ 和它自己的包**同等对待** ✓（实机已验：T2 新包体被加载）
+- ★ **图片/图标/头像也能放进"我的 bundle"**（v1.8.100 起，在面板③ 下半部分）：
+  1. 先让它有"骨架"：新包默认的骨架小包里没有图片 ⇒ **用图标类包当骨架**最好
+     （工作目录里`--new` 时选模板 = 游戏 `aa\PC` 下的 `ammoicons_assets_all_*.bundle` /
+     `unitportraits_assets_all_*.bundle` / `unitlabels_assets_all_*.bundle`，1~20 MB）
+  2. 「选 PNG…」挑你的图 →「骨架图标」下拉里挑一个**现成的同类图标**
+     （新图会**保比例居中**放进那个图标的**内容区**、其余区域不动 ⇒ **不变形**；下拉里列的是"你这个包里所有可当骨架的图标"）
+  3. 点「★ 把图片加进这个 bundle」= **换图 + 注册新地址 + 同步 CRC** 一次做完
+     （同一地址键下**同时挂 `Texture2D` 与 `Sprite` 两条**，跟游戏原生图标完全一致；
+     bundle 内新路径会自动变成 `Assets/Mods/<名字>/New.png`，**不会覆盖你包里的原资产**）
+  4. 点「安装到游戏」，再把 DB 指到该地址：`Units.PortraitFileName` / `ThumbnailFileName`、
+     `Weapons.HUDIcon`、`Ammunitions.HUDIcon`…（改 DB 用编辑器里的表格，见 §4）
+  ⚠ 骨架决定**最终尺寸与纹理格式**；想换尺寸就选一个尺寸合适的骨架图标（自定义尺寸列在待办里）
+  ★ 尺寸规则（v1.8.105 起）：你的图会**保比例居中**放进骨架图标的**内容区**（`m_RD.textureRect`），
+  其余区域保持原样 ⇒ 不会变形；命令行还有 `--stretch`（拉满）与 `--no-scale`（不缩放）两个开关
+- 不想自建 bundle 时：图片也可以走 §7（写进游戏自带的图片包）
+- 🔁 **想"替换"而不是"加新图标"（v1.8.103 起，**零 DB 改动**）**：把游戏里那个图标**本身**换成你的图 ——
+  ```powershell
+  # 1) 用图标包当骨架新建"我的包"（你的包 = 原包副本，原图标都在里面）
+  python my_bundle.py --new MyIcons --workdir D:\mods\my --template "<游戏>\…\aa\PC\ammoicons_assets_all_*.bundle"
+  # 2) 把你做好的图按**原图标名**放进一个文件夹（如 AMMO_40MM_GRENADE.png），批量就地替换
+  python my_bundle.py --replace-by-name D:\mods\my\icons --bundle D:\mods\my\MyIcons_<hex>.bundle
+  # 3) 把 catalog 里那个包的条目改指向你的副本（地址键不变 ⇒ 游戏里所有界面直接变你的图）
+  python my_bundle.py --repoint --catalog D:\mods\my\catalog.json `
+      --old-key "ammoicons_assets_all_<32hex>.bundle" --bundle D:\mods\my\MyIcons_<hex>.bundle
+  ```
+  然后按 ④ 的「安装到游戏」思路把**你的包**放进 `aa\PC`、**重指向后的 catalog** 拷成 `aa\catalog.json` 即可 ✓
+  （原理：贴图对象 **pid 不变**、只换像素 ⇒ 引用它的 Sprite/地址自动跟随；bundle 条目重指向是 T2 实机验证过的机制）
+  ⚠ 同名多候选（`Icons/x.png` 与 `Icons/outline/x.png`）**默认跳过并报出来**，要用 `--grep outline` 过滤或 `--pick-first`
+- 🖱 **图形界面里也能做替换**（v1.8.104 起，不必命令行）：面板③ 最下面那组 ——
+  「选 PNG/文件夹…」→ 勾「批量」= 按文件名批量替换；不勾就用「骨架图标」下拉选**要换掉的那个图标** →
+  「重指向原包键」点右边「= 骨架包名」自动填上 → 点「🔁 ★ 替换现有图标」
+  ⇒ 替换 + 重指向一次做完；再点 ④ 的「安装到游戏」即可 ✓
+
 ## 7. 导入图片/图标/肖像
 
 文件 → 导入图片/图标/肖像…：
@@ -84,6 +144,11 @@ BA_Mod_Maker = 断箭（Broken Arrow）模组制作的主工具：
    （catalog 地址），双击行或「编辑选中」可自定义（路径/地址都是像导入模型一样注册）。
 3. 勾选：注册映射地址 + 计算 CRC；也可「只打包 .bamod」。
 4. 开始导入 → 按类别自动分组写进对应图片 bundle，完成后游戏即可引用新地址。
+
+> ★ **想放进"你自己的 bundle"而不是游戏自带的图片包** ⇒ 用 §6.5 里那条路
+> （面板③ 下半部分：「选 PNG…」+ 骨架图标 +「把图片加进这个 bundle」）。两者区别：
+> 这里（§7）是**写进游戏自带的图片包**（简单、但要动游戏文件），
+> §6.5 是**写进你的自建包**（可整体卸载、多个 mod 不互相踩）✓
 
 ## 8. 四个标准工作流
 

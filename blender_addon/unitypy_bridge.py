@@ -66,6 +66,15 @@ def read_mesh_full(bundle, mesh_pid):
     s1off = offs.get(1, 0); s1s = strides.get(1, 0)
     s2off = offs.get(2, 0); s2s = strides.get(2, 0)
 
+    # ⛔ 位置通道也要取它自己的 offset：旧实现直接 `s0off + i*s0s` **漏了 ch.offset**，
+    #    对 offset≠0 的网格会**静默读出错误顶点**（比报错更危险）✗
+    #    UV 那边一直是对的（用了 `+ uvoff`），位置这边忘了。
+    poff = 0
+    for ch in vd.m_Channels:
+        if ch.stream == 0 and (ch.dimension & 0xF) >= 3:
+            poff = ch.offset
+            break
+
     uvoff = 0; uvf = 1
     for ch in vd.m_Channels:
         if ch.stream == 1 and (ch.dimension & 0xF) == 2:
@@ -81,7 +90,7 @@ def read_mesh_full(bundle, mesh_pid):
 
     positions = []; uv = []; bones = []; weights = []
     for i in range(N):
-        positions.append(struct.unpack_from("<fff", data, s0off + i * s0s))
+        positions.append(struct.unpack_from("<fff", data, s0off + i * s0s + poff))
         if uvf == 1:
             u, v = struct.unpack_from("<ee", data, s1off + i * s1s + uvoff)
             uv.append((float(u), float(v)))
@@ -95,7 +104,16 @@ def read_mesh_full(bundle, mesh_pid):
     if isinstance(ib, list):
         ib = bytes(ib)
     total = sum(s.indexCount for s in m.m_SubMeshes)
-    is16 = len(ib) == total * 2
+    # ⛔ 用引擎字段 `m_IndexFormat`（0=16 位 / 1=32 位），别按缓冲区长度猜：
+    #    长度巧合会用错宽度解析（struct.error 或垃圾三角面）✗
+    fmt = getattr(m, "m_IndexFormat", None)
+    if fmt in (0, 1):
+        is16 = (fmt == 0)
+    else:
+        is16 = len(ib) == total * 2
+    need = total * (2 if is16 else 4)
+    if need > len(ib):
+        raise ValueError("索引缓冲区太小：需要 %d 字节，实际 %d" % (need, len(ib)))
     triangles = list(struct.unpack_from("<%dH" % total, ib, 0) if is16
                      else struct.unpack_from("<%dI" % total, ib, 0))
 

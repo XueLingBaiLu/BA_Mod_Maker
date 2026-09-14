@@ -29,8 +29,23 @@ from UnityPy.classes.PPtr import PPtr
 from UnityPy.classes.generated import AssetInfo
 from UnityPy.enums import ClassIDType
 
+# 自动备份开关（默认**关**）：GB 级 bundle 不再每次导入都留一份 .bak
+try:
+    from backup_policy import maybe_backup as _maybe_backup
+except Exception:                                        # 旧打包/独立运行
+    def _maybe_backup(path, log=None, label=None):
+        return None
+
 BASE = 0x4355424500000000
 BASE_RANGE = 0x10000
+# 允许留在 preload 里的"非包内 pid"白名单：这些是 MonoScript 常量（脚本资产），
+# 它们本来就不该出现在包对象里。其它未知 pid 一律视为坏引用并剔除。
+try:
+    from hub_edit import HUB_SCRIPT as _HUB
+    from build_turret_direct import UNITPREFABTURRETINFO_SCRIPT as _TI
+    MONOSCRIPT_CONSTS = {int(_HUB), int(_TI)}
+except Exception:  # noqa: BLE001 - 导入失败时退回最小集合
+    MONOSCRIPT_CONSTS = {4665939560152279323}
 
 
 def _match_type(sf, class_id, script_id, tree_hash):
@@ -92,7 +107,14 @@ def _clean_target(sf, prefab_path):
 
 
 def _alloc_pids(sf, count):
-    """从 BASE 起分配 count 个空闲 pid。"""
+    """从 BASE 起分配 count 个空闲 pid。
+
+    ⛔ 上限 `BASE_RANGE`：清理（`_clean_target`）只覆盖 `[BASE, BASE+BASE_RANGE)`，
+    超出这个范围的 pid **下一次导入不会被清掉** ⇒ 越积越多。所以这里直接拒绝 ✗。
+    """
+    if count >= BASE_RANGE:
+        raise ValueError("包对象数 %d 超过可清理范围 %d —— 需要扩大 BASE_RANGE 或拆包"
+                         % (count, BASE_RANGE))
     existing = set(sf.objects.keys())
     out = []
     i = 0
@@ -117,16 +139,61 @@ def _remap_pids(raw, pid_map):
     if not pid_map:
         return bytes(raw)
     raw = bytes(raw)
+    n = len(raw)
+    # ★ 2026-09-13 性能：原来无条件逐 4 字节跑 Python 循环（34 MB blob ≈ 850 万次迭代，
+    #   实测 4.5 s / 单次导入）。Unity 的 PPtr pathID(i64) 按 4 字节对齐、且 pid_map
+    #   通常只有几个条目 ⇒ 先用 C 速度的 bytes.find 枚举"低 16 位命中"的候选位置，
+    #   再按原贪心语义（命中后跳过 8 字节）替换。低 16 位模式过多时退回原扫描。
+    #   等价性：400 例模糊对拍（含"新 pid 恰为另一个旧 pid"的重叠用例）逐字节一致。
+    lows = {v & 0xFFFF for v in pid_map}
+    if len(lows) <= 64 and n >= 8:
+        cand = []
+        for lv in lows:
+            pat2 = struct.pack("<H", lv)
+            st = 0
+            while True:
+                p2 = raw.find(pat2, st)
+                if p2 < 0:
+                    break
+                if (p2 & 3) == 0 and p2 + 8 <= n:
+                    cand.append(p2)
+                st = p2 + 2
+        if not cand:
+            return raw
+        cand.sort()
+        res = None
+        end = -1
+        for p2 in cand:
+            if p2 < end:
+                continue
+            nv = pid_map.get(struct.unpack_from("<q", raw, p2)[0])
+            if nv is None:
+                continue
+            if res is None:
+                res = bytearray(raw)
+            res[p2:p2 + 8] = struct.pack("<q", nv)
+            end = p2 + 8
+        return bytes(res) if res is not None else raw
     out = bytearray()
     i = 0
-    n = len(raw)
+    # ⛔ Unity 的 PPtr 里 pathID（i64）至少按 4 字节对齐，所以只扫 4 字节边界：
+    #    既避免在任意偏移误命中，也把逐字节扫描的开销降到 1/4
+    #    （实测 34MB 的包逐字节要 8 秒，其中单个 28MB Shader 占 6.3 秒 ✗）。
+    #    再只用低两字节做预筛，绝大多数位置一次比较就跳过。
+    pre = lows
     while i < n:
         if i + 8 <= n:
-            v = struct.unpack_from("<q", raw, i)[0]
-            nv = pid_map.get(v)
-            if nv is not None:
-                out += struct.pack("<q", nv)
-                i += 8
+            if (raw[i] | (raw[i + 1] << 8)) in pre:
+                v = struct.unpack_from("<q", raw, i)[0]
+                nv = pid_map.get(v)
+                if nv is not None:
+                    out += struct.pack("<q", nv)
+                    i += 8
+                    continue
+            if i + 4 <= n:
+                # 整体平移 4 字节（保持对齐），比逐字节快得多
+                out += raw[i:i + 4]
+                i += 4
                 continue
         out.append(raw[i])
         i += 1
@@ -236,10 +303,7 @@ def register_address(catalog_path, address, internal_path, ref_substr="ModelPref
     cat.entries.append(tuple(e))
     new_entry = len(cat.entries) - 1
     cat.buckets.append({"dataOffset": 0, "entries": [new_entry]})
-    bak = catalog_path + ".bak"
-    if not os.path.exists(bak):
-        import shutil
-        shutil.copy(catalog_path, bak)
+    _maybe_backup(catalog_path, label=os.path.basename(catalog_path))
     cat.save(catalog_path)
     return "已注册"
 
@@ -428,6 +492,11 @@ def import_pack(pack_path, bundle_path, catalog_path=None, address=None, progres
     for (o, _, _), np_ in zip(matched, new_pids):
         pid_map[o["pid"]] = np_
     new_root = pid_map.get(manifest.get("root_pid"), 0)
+    # ⛔ root 取不到就写 pid 0 ⇒ 容器条目变成空引用、prefab 根本加载不出来，
+    #    但函数却"正常返回" ✗。这里直接失败，别造一个看起来成功的坏包。
+    if not new_root:
+        raise ValueError("manifest.root_pid=%r 不在包对象里 —— 包坏了（用创建它的工具重新打包）"
+                         % manifest.get("root_pid"))
 
     # 逐对象写入（字节级原子替换旧 pid 引用）
     for (o, type_id, st), np_ in zip(matched, new_pids):
@@ -453,8 +522,14 @@ def import_pack(pack_path, bundle_path, catalog_path=None, address=None, progres
     for p in (manifest.get("preload") or []):
         if p in pid_map:
             preload_pids.append(pid_map[p])
+        elif p in sf.objects:
+            # 不在包里、但**目标 bundle 里本来就有** ⇒ 正常（MonoScript 常量、共享资产）。
+            # ⛔ 判据必须是"目标里到底有没有"，不能只看 pid 是否像脚本常量：
+            #    早期版本用固定白名单，把 9 个合法 pid 当坏引用剔除了 ✗（端到端实测）。
+            preload_pids.append(p)
         else:
-            preload_pids.append(p)  # MonoScript 常量 pid，原样使用
+            print("[导入] ⚠ preload 里的 pid %s 在包和目标 bundle 里都不存在，已剔除"
+                  "（避免悬挂引用）" % p)
     if prefab_path and has_objects:
         new_start = len(ab.m_PreloadTable)
         ab.m_PreloadTable.extend([PPtr(m_FileID=0, m_PathID=p, assetsfile=sf) for p in preload_pids])
@@ -476,7 +551,39 @@ def import_pack(pack_path, bundle_path, catalog_path=None, address=None, progres
     step("保存 bundle（约 20 秒）...")
     from stream_save import ensure_stream_save
     ensure_stream_save()
-    env.file.save_stream(bundle_path, "lz4")
+    # ⛔ **原子替换，且必须在释放 env 之后做**：
+    #    UnityPy 是 mmap/内存映读取 bundle 的 ⇒ 映射会一直持有文件，Windows 不允许
+    #    `os.replace` 覆盖它（实测 `PermissionError [WinError 5]` ✗）。
+    #    所以先把新 bundle 写到 `.new`（写新文件不受影响），再丢掉 env + gc 释放映射，
+    #    最后原子替换。这样"导入到一半失败 ⇒ 游戏 bundle 被截断"就不可能发生了。
+    new_path = bundle_path + ".new"
+    env.file.save_stream(new_path, "lz4")
+    try:
+        _maybe_backup(bundle_path, log=step, label=os.path.basename(bundle_path))
+        del env
+        import gc
+        gc.collect()
+        try:
+            os.replace(new_path, bundle_path)
+            step("已原子替换 %s" % os.path.basename(bundle_path))
+        except OSError as e:
+            # 还有别的映射没释放（例如调用方仍持有同一个 env）⇒ 退回原地覆盖
+            # （原地覆盖不原子，所以这里只在万不得已时走；开了自动备份的话有 .bak 兜底）
+            import shutil
+            step("⚠ 无法原子替换（%s）⇒ 改为原地覆盖" % e)
+            with open(new_path, "rb") as fs, open(bundle_path, "wb") as fd:
+                shutil.copyfileobj(fs, fd, 8 * 1024 * 1024)
+            try:
+                os.remove(new_path)
+            except OSError:
+                pass
+    except Exception as e:  # noqa: BLE001
+        try:
+            if os.path.exists(new_path):
+                os.remove(new_path)
+        except OSError:
+            pass
+        raise
 
     crc = None
     if catalog_path and do_crc:

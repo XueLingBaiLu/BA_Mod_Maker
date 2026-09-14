@@ -12,6 +12,18 @@ here = os.path.dirname(os.path.abspath(__file__))
 addon = os.path.join(here, "blender_addon")
 out = os.path.join(here, "BA_Mod_Maker_blender_addon.zip")
 
+# 0) 先把两个 _rev_tools 目录同步（addon 是唯一源头）——
+#    否则根目录那份会悄悄变旧，出现「改了插件、exe 还是旧逻辑」这类难查的 bug ✗
+_sync = os.path.join(here, "_sync_revtools.py")
+if os.path.isfile(_sync):
+    import subprocess
+    r = subprocess.run([sys.executable, _sync, "--check"], capture_output=True)
+    if r.returncode == 2:
+        print("检测到 _rev_tools 分叉，正在同步…")
+        subprocess.run([sys.executable, _sync], check=True)
+    elif r.returncode != 0:
+        print("_rev_tools 同步检查异常（继续打包）：%s" % r.stdout.decode("utf-8", "replace")[-300:])
+
 # 1) 同步版本单一来源（exe 与插件版本成对更新，见 version.py 的策略说明）
 src_version = os.path.join(here, "version.py")
 dst_version = os.path.join(addon, "version.py")

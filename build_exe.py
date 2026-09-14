@@ -167,6 +167,11 @@ def build():
         "--add-data", os.path.join(HERE, "_rev_tools", "skin_data.py") + ";_rev_tools",
         "--add-data", os.path.join(HERE, "_rev_tools", "finalize_crc.py") + ";_rev_tools",
         "--add-data", os.path.join(HERE, "_rev_tools", "stream_save.py") + ";_rev_tools",
+        # v1.8.75：自动备份开关（默认关）——import_pack / stream_save 都 import 它
+        "--add-data", os.path.join(HERE, "_rev_tools", "backup_policy.py") + ";_rev_tools",
+        # 「我的 bundle」管理器（自建独立 bundle + catalog 新条目/地址）
+        "--add-data", os.path.join(HERE, "_rev_tools", "my_bundle_catalog.py") + ";_rev_tools",
+        "--add-data", os.path.join(HERE, "units_warehouse_small.bundle") + ";.",
         "--distpath", DIST,
         "--workpath", WORK,
         "--specpath", WORK,
@@ -209,6 +214,13 @@ def build():
     if os.path.isdir(addon_dir):
         shutil.copytree(addon_dir, os.path.join(dst_dir, "blender_addon"))
 
+    # 任务工具（.bascr 读/看/改的 CLI）。exe 用户没有 Python 就只是资料；
+    # 源码版用户（source.zip）可以直接 `python bascr_nodes.py --props …` ✓
+    task_dir = os.path.join(HERE, "任务工具")
+    if os.path.isdir(task_dir):
+        shutil.copytree(task_dir, os.path.join(dst_dir, "任务工具"),
+                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+
     # Ship the extracted game icons (unit/weapon/ammo/spec/indicator) as a
     # sibling folder. Portraits (~470 MB) are skipped to keep the zip lean —
     # the unit browser and relation tree only need the small icon categories.
@@ -223,6 +235,28 @@ def build():
     # Zip the moved folder in the release directory.
     zip_base = os.path.join(RELEASE, APP_NAME)
     zip_path = shutil.make_archive(zip_base, "zip", RELEASE, APP_NAME)
+    # ★ v1.8.99：发布 zip 也**在工作区根留一份**（交付体检要求；以前靠手拷 ⇒ 忘了就假红 ✗）
+    _root = os.path.dirname(os.path.dirname(HERE))
+    if os.path.isdir(_root) and os.path.abspath(_root) != os.path.abspath(HERE):
+        try:
+            shutil.copy2(zip_path, os.path.join(_root, os.path.basename(zip_path)))
+            print("root copy:", os.path.join(_root, os.path.basename(zip_path)))
+        except OSError as e:
+            print("⚠ root copy failed (not fatal): %s" % e)
+
+    # ★ v1.8.97：**打完包后再自检一次"发布目录里的副本是不是最新的"**。
+    #   打包会把当时的插件 zip / Change Log 复制进发布目录；如果之后又改了插件或日志，
+    #   发出去的包里就是旧文件（2026-10 真遇到：修完插件才发现发布目录还是旧的 ✗）。
+    refresh = os.path.join(HERE, "_refresh_release.py")
+    if os.path.isfile(refresh):
+        import subprocess as _sp
+        r = _sp.run([sys.executable, refresh], capture_output=True, text=True,
+                    encoding="utf-8", errors="replace")
+        out = (r.stdout or "") + (r.stderr or "")
+        for ln in out.strip().splitlines():
+            print("[refresh] " + ln)
+        if r.returncode != 0:
+            print("[refresh] ⚠ 自检未通过，请检查发布目录内容")
 
     exe = os.path.join(dst_dir, APP_NAME + ".exe")
     print("done:", exe)

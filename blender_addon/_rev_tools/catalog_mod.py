@@ -3,7 +3,7 @@
 
 Format fully reverse-engineered from com.unity.addressables ContentCatalogData.cs +
 SerializationUtilities.cs (ObjectType byte-tagged objects, little-endian int32)."""
-import json, base64, struct
+import json, base64, struct, os
 
 def ri32(d, o):
     return d[o] | (d[o+1]<<8) | (d[o+2]<<16) | (d[o+3]<<24)
@@ -129,9 +129,31 @@ class Catalog:
         return c
 
     def save(self, outpath):
+        r"""写 catalog.json。
+
+        ⛔ v1.8.97 修的真 bug：以前**直接 open(outpath,"w") 覆盖**——而 outpath 经常就是
+           **游戏本体那份 catalog.json**（`update_crc.update_catalog` / `import_pack` 都会调它）。
+           写到一半崩 / 磁盘满 / Ctrl+C ⇒ 原文件被截断 ⇒ **游戏读不了 catalog，整个资源系统瘫掉** ✗
+           现在改成：先写 `outpath + ".tmp"` → **自检能重新解析** → `os.replace` 原子替换。
+           （`.tmp` 与目标同目录是必须的：跨盘 replace 不是原子的。）
+        """
         c = self.serialize()
-        with open(outpath, "w", encoding="utf-8", newline="") as f:
+        tmp = outpath + ".tmp"
+        with open(tmp, "w", encoding="utf-8", newline="") as f:
             json.dump(c, f, ensure_ascii=False)
+        # 自检：新文件必须能被自己重新解析（校验桶/键/条目/extra 的偏移一致）
+        try:
+            chk = Catalog(tmp)
+            if len(chk.entries) != len(self.entries):
+                raise ValueError("条目数不一致：写出 %d，内存 %d"
+                                 % (len(chk.entries), len(self.entries)))
+        except Exception as e:                                    # noqa: BLE001
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            raise RuntimeError("写出的 catalog 自检失败，**原文件未动**：%s" % e)
+        os.replace(tmp, outpath)
         return outpath
 
 if __name__ == "__main__":

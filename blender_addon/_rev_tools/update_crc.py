@@ -66,6 +66,7 @@ def update_catalog(catalog_path, crc_map):
 
     objs = []
     updated = []
+    seen_hashes = []
     for off in offsets:
         obj, _ = read_object(cat.extra, off)
         assert obj[0] == 7, f"extraData offset {off} 不是 JsonObject"
@@ -74,6 +75,7 @@ def update_catalog(catalog_path, crc_map):
         cm = re.search(r'"m_Crc":(\d+)', jtext)
         if hm and cm:
             h = hm.group(1).lower()
+            seen_hashes.append(h)
             if h in crc_map:
                 new = crc_map[h]
                 if new != int(cm.group(1)):
@@ -82,6 +84,20 @@ def update_catalog(catalog_path, crc_map):
         objs.append((7, (asm, cls, jtext)))
 
     if not updated:
+        # ⛔ v1.8.97：这里以前**什么都不说**，用户看到"没有匹配到"完全不知道下一步做什么。
+        #    最常见的两种真实原因必须直接讲清楚（否则会以为"CRC 已经是最新的"）。
+        given = sorted(crc_map)[:4]
+        have = sorted(set(seen_hashes))[:4]
+        if given and have and not (set(crc_map) & set(seen_hashes)):
+            print("⚠ 一个都没命中：本次算出的文件名 hash 与 catalog 里的 m_Hash 完全不同。")
+            print("   本次算出：%s%s" % (", ".join(given), " …" if len(crc_map) > 4 else ""))
+            print("   catalog 里：%s%s" % (", ".join(have), " …" if len(seen_hashes) > 4 else ""))
+            print("   ⇒ 多数是 bundle **被重建/改名过**（文件名里的 32 位 hash 变了）。")
+            print("     处理：用 `add_bundle_and_asset.py` 把新 bundle 重新注册成新条目（新 m_Hash+新 m_Crc），")
+            print("     或者把 catalog 里那条的 m_Hash 改成新文件名里的 hash（同一 bundle 原地重建时用）。")
+        elif given:
+            print("⚠ 没命中：算出的 hash 与 catalog 的 m_Hash 没有交集。")
+            print("   ⇒ 先确认 catalog 选的是**游戏在用那一份**，再确认 bundle 文件名没被改过。")
         return []
 
     new_extra = bytearray()
@@ -154,10 +170,11 @@ def main():
         return
 
     print("CRC 来源:", src_desc, "(", len(crc_map), "个)")
-    bak = catalog_path + ".bak_crc"
-    if not os.path.exists(bak):
-        shutil.copy(catalog_path, bak)
-        print("已备份 ->", os.path.basename(bak))
+    try:
+        from backup_policy import maybe_backup
+        maybe_backup(catalog_path, label=os.path.basename(catalog_path))
+    except Exception:
+        pass
 
     updated = update_catalog(catalog_path, crc_map)
     if updated:

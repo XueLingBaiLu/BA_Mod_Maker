@@ -30,6 +30,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # 参与打包的源文件（改动任意一个都触发重建）
 WATCH_FILES = [
     "version.py",
+    "_sync_revtools.py",
     "ba_db_tool.py",
     "ba_crypto.py",
     "ba_aes.py",
@@ -37,10 +38,22 @@ WATCH_FILES = [
     "i18n.py",
     # 素材导入（.bamod → bundle）依赖：改这里必须触发重建
     "mod_assets.py",
+    # 「我的 bundle」管理器（自建独立 bundle + catalog 新条目/地址）
+    "my_bundle.py",
+    # ★ v1.8.112：共用 UI 工具（深色主题 / 窗口自适应）与对话框 —— 改了必须重建，
+    #   否则 exe 里还是"② ④ 白底"的旧版 ✗
+    "ui_fit.py",
+    "audio_ui.py",
+    "game_snapshot.py",
+    "mod_checkup.py",
+    "_rev_tools/my_bundle_catalog.py",
+    "units_warehouse_small.bundle",
     "_rev_tools/import_pack.py",
     "_rev_tools/pack_model.py",
     "_rev_tools/finalize_crc.py",
     "_rev_tools/stream_save.py",
+    # v1.8.75：自动备份开关（默认关）—— 改了必须重建，否则 exe 里还是旧的备份行为
+    "_rev_tools/backup_policy.py",
     "_rev_tools/update_crc.py",
     "_rev_tools/compute_bundle_crc.py",
     "_rev_tools/catalog_mod.py",
@@ -106,6 +119,13 @@ def _watched_count():
 
 
 def _build():
+    # 先把 _rev_tools 两份同步（addon 是唯一源头）：
+    # 根目录那份会进 exe，不同步就会出现「插件新、exe 旧」的静默分叉 ✗
+    sync = os.path.join(HERE, "_sync_revtools.py")
+    if os.path.isfile(sync):
+        import subprocess
+        _log("同步 _rev_tools …")
+        subprocess.run([sys.executable, sync], check=True)
     # 先重建 Blender 插件 zip：build_exe 会把它原样打进发布目录，
     # 不重建的话插件改动（hub_edit/copy_full/import_pack 等）不会进入分发包。
     rebuild_addon = os.path.join(HERE, "_rebuild_addon_zip.py")
@@ -118,6 +138,16 @@ def _build():
     build_exe.ensure_pylibs()
     exe = build_exe.build()
     _log("打包完成: %s" % exe)
+    # 清理旧版本发布件：只保留当前版本的目录 + zip。
+    # ⛔ 别靠人记得 —— 每版各 ~115MB 会堆满工作区，而且旧 exe 摆在旁边极易被误运行
+    #（用户就踩过"跑的是旧 exe ⇒ 修复看起来没生效"）。失败不影响本次打包结果。
+    cleaner = os.path.join(HERE, "clean_old_releases.py")
+    if os.path.isfile(cleaner):
+        import subprocess
+        try:
+            subprocess.run([sys.executable, cleaner], check=False)
+        except OSError as e:
+            _log("清理旧版本失败（不影响打包）: %s" % e)
     return exe
 
 

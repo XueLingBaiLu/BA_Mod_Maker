@@ -251,7 +251,9 @@ class AssetImportDialog(tk.Toplevel):
         ttk.Button(btns, text="关闭", command=self.destroy).pack(side="left")
 
         frm.columnconfigure(1, weight=1)
-        b, c = detect_game_bundle()
+        # ⛔ detect_game_bundle() 返回 **3 个值**（bundle, catalog, 图片bundle表）——
+        #    这里只接 2 个会直接 ValueError ⇒ 对话框一打开就崩（实测踩到）。
+        b, c, _imgs = detect_game_bundle()
         if b:
             self.bundle_var.set(b)
         self.catalog = c
@@ -272,7 +274,7 @@ class AssetImportDialog(tk.Toplevel):
             self.bundle_var.set(p)
 
     def _autodetect(self):
-        b, c = detect_game_bundle()
+        b, c, _imgs = detect_game_bundle()   # 返回 3 个值，别只接 2 个
         if b:
             self.bundle_var.set(b)
             self.catalog = c

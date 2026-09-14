@@ -74,10 +74,12 @@ def find_sfx_bundle(aa_dir):
 
 
 def _backup_once(path):
-    bak = path + ".bak"
-    if not os.path.exists(bak):
-        shutil.copy2(path, bak)
-    return bak
+    """按全局开关决定要不要留 `.bak`（v1.8.75 起默认**不留**，见 backup_policy.py）。"""
+    try:
+        from backup_policy import maybe_backup
+        return maybe_backup(path, log=lambda m: print("[音效] " + m))
+    except Exception:
+        return None
 
 
 def patch_preset_events(address, shot_event=None, impact_event=None,

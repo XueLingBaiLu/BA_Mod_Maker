@@ -22,7 +22,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 try:
     import UnityPy  # noqa: F401  （Blender 里用 pip 装的；本地测试用工作区副本）
 except ImportError:
-    sys.path.insert(0, os.path.join(HERE, "..", "_unitypy"))
+    # `_unitypy` 有两份（cp314 / cp313）：统一按解释器 tag 挑（说明见 unitypy_path.py）
+    if HERE not in sys.path:
+        sys.path.insert(0, HERE)
+    from unitypy_path import ensure as _ensure_unitypy
+    _ensure_unitypy(HERE)
     import UnityPy
 from UnityPy.files.ObjectReader import ObjectReader
 from UnityPy.classes.PPtr import PPtr
@@ -503,7 +507,11 @@ def build_turret(bundle, out_bundle, new_prefab, new_name,
         root_go2.save_typetree(rg2)
 
     ab_obj = next(o for o in objs if o.type.name == "AssetBundle")
-    ab = ab_obj.read()
+    # ⛔ 必须用 `_read_from_data`（读 obj_reader.data = 内存当前状态），**不能** `.read()`：
+    #    后者会 reset 后从流里重读，把上面 `_clean_stale_build()` 刚写进内存的清理结果
+    #    丢掉 ⇒ 旧 preload/container 条目被写回、而它们指向的对象已从 sf.objects 删除
+    #    ⇒ **悬挂引用 ⇒ 战场加载崩溃**，工具却仍报成功 ✗（import_pack 一直用正确写法）。
+    ab = _read_from_data(ab_obj)
     # preload 顺序关键：MonoScript 必须排在 MB 之前。
     # 战场加载按容器 preload 表顺序反序列化，MB 的 m_Script 指向的 MonoScript
     # 尚未加载时会报 "script unknown or not yet loaded"（Read 32 but expected 64）并崩溃；

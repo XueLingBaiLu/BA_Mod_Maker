@@ -69,6 +69,8 @@ from ba_crypto import (  # noqa: E402
     import_folder, is_dump_obj, load_dump, table_name, write_dump,
 )
 from i18n import LANGS, LANG_NAMES, Translator  # noqa: E402
+# ⛔ 全局窗口自适应 + 流式布局（v1.8.65）：解决"高 DPI 下按钮被裁 / 直接不显示"
+from ui_fit import install_autofit, make_flow, fit_window  # noqa: E402
 from ba_glossary import (  # noqa: E402
     field_info, table_info, enum_values, TABLES, FIELDS, COMMON, ENUMS, ORDER,
     # v1.8.55：枚举字段的绿色箭头导航（枚举键 / 含义 / 成员名 / 真实作用说明）
@@ -208,6 +210,63 @@ def localize_text(text, lang):
     if not entry:
         return text
     return entry.get(lang) or entry.get("en") or text
+
+
+# ---------------------------------------------------------------------------
+# v1.8.96：本地化**反查/检索**（用户要的：输入「长程型」→ 找到
+# Custom_Option_Long_range_rifles；输入键 → 看到三语名称）
+def loc_entry(text):
+    """本地化键 → {zh/en/ru: 文本}；不是键则 None。"""
+    if not isinstance(text, str) or not text.strip():
+        return None
+    return _load_locale_map().get(text.strip().lower())
+
+
+def loc_is_key(text):
+    return loc_entry(text) is not None
+
+
+def loc_search(query, limit=300, langs=None):
+    """在本地化表里检索：键名 / **任一语言**的值都能命中（中英俄日韩德法…通吃）。
+
+    返回 [(key, {lang: 文本}), …]；按键名精确命中排在前面，其余按字母序。
+    ★ 每个条目带 `_key` = **原始大小写的键**（写进数据库要用这个，游戏查表大小写敏感）。
+    """
+    q = (query or "").strip().lower()
+    d = _load_locale_map()
+    if not q:
+        return []
+    exact, sub = [], []
+    for key, entry in d.items():
+        if key == q:
+            exact.append(key)
+            continue
+        if q in key or any(q in str(v).lower() for k, v in entry.items()
+                           if not k.startswith("_")):
+            sub.append(key)
+    out = [(k, d[k]) for k in exact] + [(k, d[k]) for k in sorted(sub)]
+    return out[:limit]
+
+
+def loc_display_key(entry, fallback=""):
+    """条目里显示/复制用的键：优先原始大小写（`_key`），没有就用小写键。"""
+    try:
+        return entry.get("_key") or fallback
+    except Exception:
+        return fallback
+
+
+def loc_langs_present():
+    """表里实际有几种语言（供界面按可用语言出列）。
+
+    ⛔ 要排掉 `_` 开头的内部字段（`_key` 是原始键名，不是语言）——踩过：
+       不排掉时界面会显示"14 种语言"，其中一种是 `_key` ✗
+    """
+    d = _load_locale_map()
+    seen = set()
+    for v in d.values():
+        seen.update(k for k in v.keys() if not k.startswith("_"))
+    return sorted(seen)
 
 
 # deck-slot categories ("兵种") -> localized names
@@ -503,12 +562,61 @@ def load_settings():
 
 
 def save_settings(data):
+    """写设置文件；失败**不再静默**（磁盘满/权限问题会让用户完全看不出为什么设置没记住）✗"""
     try:
         os.makedirs(os.path.dirname(settings_path()), exist_ok=True)
         with open(settings_path(), "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
-    except Exception:
+    except Exception as e:  # noqa: BLE001
+        print("[设置] 保存失败（%s: %s）—— 本次设置不会被记住" % (type(e).__name__, e))
+
+
+# ---------------------------------------------------------------------------
+# 自动备份开关（v1.8.75）
+# ---------------------------------------------------------------------------
+# ⛔ 背景：以前导入 .bamod / 导入数据库 / 写回 bundle 时都**无条件**复制一份
+#    `<文件>.bak`，而目标全是 GB 级：data.unity3d 13.7GB、units bundle 3.42GB。
+#    实测用户机器上被这样白占 6.95GB ⇒ 现在默认**不备份**（原子替换那条安全线保留），
+#    要留回滚点的人在『文件』菜单里勾一下即可。
+
+def _backup_policy():
+    """按需载入 _rev_tools/backup_policy.py（打包后它在 _internal/_rev_tools 下）。"""
+    try:
+        import backup_policy
+        return backup_policy
+    except ImportError:
         pass
+    cands = []
+    if getattr(sys, "_MEIPASS", None):
+        cands.append(os.path.join(os.path.dirname(sys.executable), "_internal", "_rev_tools"))
+    cands.append(os.path.join(TOOL_DIR, "_rev_tools"))
+    cands.append(os.path.join(TOOL_DIR, "blender_addon", "_rev_tools"))
+    for d in cands:
+        if os.path.isdir(d) and d not in sys.path:
+            sys.path.insert(0, d)
+            try:
+                import backup_policy
+                return backup_policy
+            except ImportError:
+                continue
+    return None
+
+
+def auto_backup_enabled():
+    bp = _backup_policy()
+    if bp is not None:
+        return bool(bp.backup_enabled())
+    return bool(load_settings().get("auto_backup", False))
+
+
+def set_auto_backup(on):
+    bp = _backup_policy()
+    if bp is not None:
+        bp.set_backup_enabled(on)
+        return
+    s = load_settings()
+    s["auto_backup"] = bool(on)
+    save_settings(s)
 
 
 # ---------------------------------------------------------------------------
@@ -547,6 +655,13 @@ def build_field_ref_map():
         "Turret18Id": "Turrets", "Turret19Id": "Turrets", "Turret20Id": "Turrets",
         "Ability1Id": "Abilities", "Ability2Id": "Abilities", "Ability3Id": "Abilities",
         "FlyPresetId": "FlyPresets",
+        # ⛔ 实测漏掉的三个真实外键（拿 clean_baseline 全表统计「数据里出现的 *Id 字段」
+        #    与 FIELD_REF_MAP 求差得到）：漏了它们 ⇒ 悬空引用检查 + 绿色箭头导航都失效 ✗
+        #    · ParentTurretId    90 行，非零值 73/73 命中 Turrets
+        #    · SmokeAmmunitionId 78 行，非零值 3/3 命中 Ammunitions
+        #    （OwnerInfantryID 全库为 0，无法实证目标表 ⇒ **不猜**，宁缺勿错）
+        "ParentTurretId": "Turrets",
+        "SmokeAmmunitionId": "Ammunitions",
     })
     return m
 
@@ -624,7 +739,7 @@ def find_references(tables, table, row_id):
             if not isinstance(r, dict):
                 continue
             for field, val in r.items():
-                if field == "Id" or not isinstance(val, int):
+                if field == "Id" or isinstance(val, bool) or not isinstance(val, int):
                     continue
                 if FIELD_REF_MAP.get(field) == table and val == row_id:
                     results.append((tname, i, field))
@@ -729,7 +844,8 @@ def validate_db(tables, baseline_sigs=None):
             if not isinstance(r, dict):
                 continue
             for field, val in r.items():
-                if not isinstance(val, int) or val <= 0 or field == "Id":
+                # ⛔ `isinstance(True, int)` 为真 ⇒ 布尔值会被当整数参与外键匹配/校验 ✗
+                if isinstance(val, bool) or not isinstance(val, int) or val <= 0 or field == "Id":
                     continue
                 target = FIELD_REF_MAP.get(field)
                 if target and target in ids_by_table and val not in ids_by_table[target]:
@@ -848,8 +964,13 @@ BASELINE_PATH = os.path.join(_bundled_data_dir(), "clean_baseline.json")
 
 
 def issue_sig(it):
-    """Stable identity of an issue for baseline comparison."""
-    return (it["kind"], it["table"], it["id"], it.get("subid"))
+    """Stable identity of an issue for baseline comparison.
+
+    ⛔ 必须带上 `field`：`bad_ref`（外键指向不存在的行）带 field 说明**哪个外键**错了。
+    不带的话，同一 (kind,table,id,subid) 下"另一种字段"的悬空引用会被基线掩盖 ✗。
+    （当前基线里 bad_ref 为 0 条，属潜在问题，但带上没有代价。）
+    """
+    return (it["kind"], it["table"], it["id"], it.get("subid"), it.get("field"))
 
 
 def load_baseline():
@@ -1667,6 +1788,40 @@ class DetailWindow:
                 name_l.bind("<Button-1>", lambda _e, entry=entry: self._fk_jump(entry))
                 widgets[key] = (entry, value)
                 continue
+            if isinstance(value, str) and loc_is_key(value):
+                # v1.8.96：值是**本地化键**（如 Options.UIName = Custom_Option_Long_range_rifles）
+                # ⇒ 右侧给绿色箭头直接写出当前语言名称；点它跳到词典「名称」页看三语 ✓
+                # 字形/颜色/位置与上面的外键箭头完全一致（v1.8.56 的统一惯例）。
+                cell = tk.Frame(inner, bg=c["bg"])
+                lentry = tk.Entry(cell, width=26, bg=c["entry_bg"], fg=c["entry_fg"],
+                                  insertbackground=c["entry_fg"])
+                lentry.pack(side="left")
+                lentry.insert(0, value)
+                lname = tk.Label(cell, anchor="w", fg=c["ok"], bg=c["bg"], cursor="hand2")
+                lname._color_role = "ok"
+                lname.pack(side="left", fill="x", expand=True, padx=6)
+
+                def lhandler(_e=None, entry=lentry, name_l=lname):
+                    dirty_cb()
+                    v2 = entry.get().strip()
+                    if loc_is_key(v2):
+                        # ⛔ v1.8.98 修的崩溃：这里原来写 `self.tr.lang` —— 但本类（DetailWindow）
+                        #    没有 `tr`（`tr` 属于主 App）⇒ 打开任何**含本地化键字段**的详情页就抛
+                        #    `AttributeError: 'DetailWindow' object has no attribute 'tr'` ✗
+                        #    本类取翻译统一走 `self.app.tr`（与上面外键/枚举分支一致）。
+                        name_l.config(text=REF_ARROW + " " + localize_text(v2, self.app.tr.lang),
+                                      fg=c["ok"])
+                    else:
+                        name_l.config(text="")
+                lentry.bind("<KeyRelease>", lhandler)
+                lentry.bind("<FocusOut>", self._on_field_focus_out)
+                cell.grid(row=i, column=1, sticky="ew", padx=4, pady=2)
+                lhandler()
+                ToolTip(lname, lambda v=value: self.app.tr.t("loc_arrow_tip") + "\n" + v, colors=c)
+                lname.bind("<Button-1>", lambda _e, entry=lentry:
+                           self.show_localization(entry.get().strip()))
+                widgets[key] = (lentry, value)
+                continue
             ekey = enum_key(tname or "", key)
             if ekey and isinstance(value, int) and not isinstance(value, bool):
                 # v1.8.55：枚举字段（单位大类 / 槽位类别 / 角色 / 武器类型 / 弹道…）
@@ -1934,8 +2089,12 @@ class DetailWindow:
                 elif isinstance(orig, float):
                     try:
                         val = float(text.strip())
-                        ok = True
-                    except ValueError:
+                        # ⛔ "nan"/"inf"/"1e400" 都能被 float() 接受：写进库是非标准 JSON，
+                        #    渲染时 _num 也会炸 ⇒ 这里直接判为非法输入 ✗
+                        ok = math.isfinite(val)
+                        if not ok:
+                            val = None
+                    except (ValueError, OverflowError):
                         val, ok = None, False
                 elif orig is None:
                     if text.strip() == "":
@@ -1953,7 +2112,9 @@ class DetailWindow:
                         val = json.loads(text.strip())
                         ok = True
                     except Exception:
-                        val, ok = text, True
+                        # ⛔ 以前是 `val, ok = text, True` ⇒ 把**原始字符串**写进本该是
+                        #    数组/字典的字段，且不报错 ✗（整张表在游戏里反序列化失败）
+                        val, ok = None, False
             if ok:
                 new_row[key] = val
             else:
@@ -2436,6 +2597,46 @@ class DetailWindow:
         self.win.destroy()
 
 
+def _install_tk_error_handler(root):
+    """把 Tk 回调里的异常变成「日志 + 弹框」，不再静默。
+
+    ⛔ 打包版是 `--windowed`（无控制台）：`Tk.report_callback_exception` 默认只往
+    stderr 打印 ⇒ 菜单/按钮里一旦抛异常，用户看到的就是"**点了没反应**" ✗。
+    这一条是那类问题的**总开关**：以后任何一次点击失败都会明确告诉你原因。
+    """
+    import os
+    import sys
+    import time
+    import traceback
+
+    def _handler(exc, val, tb):
+        text = "".join(traceback.format_exception(exc, val, tb))
+        log_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0]))
+                                if getattr(sys, "frozen", False) else os.getcwd(),
+                                "BA_Mod_Maker_error.log")
+        try:
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write("[%s]\n%s\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), text))
+        except OSError:
+            log_path = "(日志写入失败)"
+        try:
+            from tkinter import messagebox
+            messagebox.showerror(
+                "操作失败（已记录）",
+                "%s: %s\n\n完整堆栈已写入：\n%s" % (getattr(exc, "__name__", exc), val, log_path))
+        except Exception:  # noqa: BLE001 - 连弹框都失败就只剩日志
+            pass
+        try:
+            sys.stderr.write(text)
+        except Exception:  # noqa: BLE001
+            pass
+
+    try:
+        root.report_callback_exception = _handler
+    except Exception:  # noqa: BLE001
+        pass
+
+
 class EditorApp:
     """Main application window.
 
@@ -2452,6 +2653,24 @@ class EditorApp:
         self.tk = tk
         self.ttk = ttk
         self.root = root
+        # 让对话框能拿回 app 引用（对话框的 master 是 Tk 根窗口，不是 app 对象）；
+        # 音频对话框靠它继承深色主题（否则 tk.Text 是刺眼的白底）。
+        try:
+            root._ba_app = self
+        except Exception:  # noqa: BLE001
+            pass
+        # ⛔ **全局异常可见化**（v1.8.63）：Tk 默认把回调里的异常打到 stderr，
+        #    而打包版 exe 是 `--windowed`（**没有控制台**）⇒ 菜单/按钮里的异常
+        #    完全看不到，表现就是"点了没反应" ✗（音频对话框这次就疑似如此）。
+        #    现在：写日志文件 + 弹错误框，任何一次点击失败都能看到原因。
+        _install_tk_error_handler(root)
+        # ⛔ **全局窗口自适应**（v1.8.65）：任何 Toplevel 首次显示时按内容真实需求
+        #    自动长到够用并锁住 minsize ⇒ 高 DPI / 大字体下**不会再把按钮挤出窗口**
+        #    （用户实测过"必须手动拉伸窗口才看到按钮"）。新写的对话框无需改动即受保护。
+        try:
+            install_autofit(root)
+        except Exception:  # noqa: BLE001 - 适配失败不影响主流程
+            pass
         self.tr = Translator()
         settings = load_settings()
         lang = settings.get("language", "zh")
@@ -3002,6 +3221,15 @@ class EditorApp:
         import mod_assets
         mod_assets.ImageImportDialog(self.root)
 
+    def open_my_bundle(self):
+        """打开「我的 bundle」管理器：自建独立 bundle 装自己的资源，游戏按 catalog 地址读取。
+
+        与「导入 .bamod 素材包」的区别：那个是往**游戏自带**的 bundle 里塞（改乱了不好回退、
+        多个 mod 会互相踩）；这里是**你自己的** bundle，可反复加资产、整体搬迁/卸载都方便。
+        """
+        import my_bundle
+        my_bundle.MyBundleDialog(self.root)
+
     def open_audio_import(self):
         """打开音频导入对话框（FMOD 音库文件级：列表/备份/替换/还原/批量）。"""
         import audio_import
@@ -3011,6 +3239,60 @@ class EditorApp:
         """打开添加音频/音效对话框（新事件注入音库 + 可选武器音效预设）。"""
         import audio_add
         audio_add.AudioAddDialog(self.root)
+
+    def open_mod_checkup(self):
+        """Mod 自查：军械库可见性 / 关联字段 / 重复行 / 名字像不像 loc 键。
+
+        判据来自三轮反汇编定案（第 68/70/71 轮）：游戏自己的 `[…] is invalid`、`Duplicate found` 告警对应的
+        关联检查，加上"武器没人引用 ⇒ 军械库与战场都不出现""单位没有 SpecAvails ⇒ 带不进来"这两条静默失败 ✓
+        """
+        if not self.tables:
+            self._show_warning(self.tr.t("msg_no_file"))
+            return
+        self.commit_editor(silent=False)
+        import mod_checkup as MC
+        tk = self.tk
+        issues, _stats = MC.check(dict(self.tables))
+        errs = [i for i in issues if i["severity"] == "error"]
+        warns = [i for i in issues if i["severity"] == "warn"]
+        infos = [i for i in issues if i["severity"] == "info"]
+        win = tk.Toplevel(self.root)
+        win.title("Mod 自查")
+        win.geometry("980x640")
+        bar = tk.Frame(win)
+        bar.pack(side="bottom", fill="x", padx=8, pady=6)
+        tk.Button(bar, text="关闭", width=12, command=win.destroy).pack(side="right")
+        only_err = tk.BooleanVar(value=bool(errs))
+        txt = tk.Text(win, wrap="none")
+        txt.pack(side="top", fill="both", expand=True, padx=8, pady=6)
+
+        def fill():
+            lines = ["Mod 自查结果：✗ 错误 %d · ⚠ 提示 %d · ℹ 说明 %d" % (len(errs), len(warns), len(infos)),
+                     ""]
+            show = errs if only_err.get() else (errs + warns + infos)
+            if only_err.get():
+                lines.append("（当前只显示错误；取消勾选可看全部）")
+            for i in show[:200]:
+                tag = {"error": "✗", "warn": "⚠", "info": "ℹ"}[i["severity"]]
+                lines.append("%s %s Id=%s  %s" % (tag, i["table"], i["id"], i["msg"]))
+                if i["log_hint"]:
+                    lines.append("     对应日志原文：%s" % i["log_hint"])
+            if len(show) > 200:
+                lines.append("…（还有 %d 条）" % (len(show) - 200))
+            if not issues:
+                lines.append("✓ 没发现已知问题（关联齐全、无重复、名字是字面量）")
+            txt.configure(state="normal")
+            txt.delete("1.0", "end")
+            txt.insert("1.0", "\n".join(lines))
+        tk.Checkbutton(bar, text="只看错误", variable=only_err, command=fill).pack(side="left")
+        tk.Label(bar, text="提示级里最多的是「原版残留」（没人引用的武器等），不一定是你的问题",
+                 fg="#666").pack(side="left", padx=10)
+        fill()
+
+    def open_game_snapshot(self):
+        """游戏文件快照（备份/校验/还原 `data.unity3d` 等）—— 改数据前的安全网。"""
+        import game_snapshot
+        game_snapshot.GameSnapshotDialog(self.root, app=self)
 
     # ---------------- language ----------------
 
@@ -3029,10 +3311,23 @@ class EditorApp:
         file_menu.add_command(label=tr.t("import_unity3d"), command=self.import_into_unity3d)
         file_menu.add_separator()
         file_menu.add_command(label="导入 .bamod 素材包…", command=self.open_asset_import)
+        file_menu.add_command(label="我的 bundle（自建资源包）…", command=self.open_my_bundle)
         file_menu.add_command(label="导入图片/图标/肖像…", command=self.open_image_import)
         file_menu.add_command(label="打包图标/肖像 (.bamod)…", command=self.open_texture_pack)
         file_menu.add_command(label="导入音频/音效…", command=self.open_audio_import)
         file_menu.add_command(label="添加音频/音效（新音效）…", command=self.open_audio_add)
+        file_menu.add_separator()
+        file_menu.add_command(label="游戏文件快照（备份 / 还原 data.unity3d 等）…",
+                              command=self.open_game_snapshot)
+        file_menu.add_separator()
+        # v1.8.75：默认**不备份**（bundle 3.42GB / data.unity3d 13.7GB，留一份就是整份副本）
+        if getattr(self, "backup_var", None) is None:
+            self.backup_var = tk.BooleanVar(master=self.root, value=auto_backup_enabled())
+        self.backup_var.set(auto_backup_enabled())
+        file_menu.add_checkbutton(
+            label="写入前自动备份（GB 级副本 · 默认关）",
+            variable=self.backup_var, command=self.toggle_auto_backup)
+        file_menu.add_command(label="清理自动备份文件…", command=self.clean_auto_backups)
         file_menu.add_separator()
         file_menu.add_command(label=tr.t("save"), command=self.save, accelerator="Ctrl+S")
         file_menu.add_command(label=tr.t("save_as"), command=self.save_as)
@@ -3053,6 +3348,9 @@ class EditorApp:
         tools_menu.add_command(label=tr.t("lookup_title"), command=self._focus_lookup, accelerator="F3")
         tools_menu.add_command(label=tr.t("find_references"), command=self.find_references_dialog)
         tools_menu.add_command(label=tr.t("validate"), command=self.validate_dialog, accelerator="F7")
+        tools_menu.add_command(label="Mod 自查（军械库可见性 / 关联 / 重复 / 名字）…",
+                               command=self.open_mod_checkup)
+        tools_menu.add_command(label="游戏文件快照（备份 / 还原）…", command=self.open_game_snapshot)
         bar.add_cascade(label=tr.t("menu_tools"), menu=tools_menu)
         lang_menu = tk.Menu(bar, tearoff=0)
         for code in LANGS:
@@ -3135,8 +3433,18 @@ class EditorApp:
             self.col_combo.config(values=[tr.t("pick_column")])
             self.col_combo.set(tr.t("pick_column"))
         self._update_status()
+        # ⛔ 只刷新**还活着**的详情窗口：列表里可能残留已销毁的窗口（用户关窗、
+        #    或窗口被程序关闭），对它调用 apply_lang 会抛 TclError
+        #    ("invalid command name") ⇒ **整个语言切换会中途失败**（实测）。
+        alive = []
         for d in self.details:
-            d.apply_lang()
+            try:
+                if d.win.winfo_exists():
+                    d.apply_lang()
+                    alive.append(d)
+            except Exception:  # noqa: BLE001 - 单个窗口失败不影响其他窗口/语言切换
+                continue
+        self.details[:] = alive      # 原地更新，避免别处持有的引用失效
         # refresh the dictionary window in the new language if it is open
         if getattr(self, "_dict_render", None) is not None and getattr(self, "_dict_win", None) is not None:
             try:
@@ -3172,6 +3480,58 @@ class EditorApp:
                 menu.grab_release()
             except Exception:
                 pass
+
+    def toggle_auto_backup(self):
+        """『文件』菜单里的自动备份开关（默认关；Blender 插件读同一份配置）。"""
+        on = bool(self.backup_var.get())
+        set_auto_backup(on)
+        if on:
+            self._toast("自动备份：开 —— 写入前会留 .bak 副本（bundle 3.4GB / 数据库 13.7GB）")
+        else:
+            self._toast("自动备份：关 —— 不再生成 .bak（原子替换仍在，原文件不会被截断）")
+
+    def clean_auto_backups(self):
+        """把历史上自动生成的 .bak 找出来删掉（默认已不再产生新的）。"""
+        bp = _backup_policy()
+        if bp is None:
+            self._show_error("找不到 backup_policy.py —— _rev_tools 目录不完整。")
+            return
+        s = load_settings()
+        roots = []
+        gd = s.get("game_data_dir")
+        if gd and os.path.isdir(gd):
+            roots.append(gd)
+        for p in (getattr(self, "dump_path", None), getattr(self, "folder_path", None)):
+            if p and os.path.isfile(p):
+                roots.append(os.path.dirname(os.path.abspath(p)))
+        if not roots:
+            from tkinter import filedialog
+            d = filedialog.askdirectory(title="选择要扫描的目录（通常是游戏 BrokenArrow_Data）",
+                                        parent=self.root)
+            if not d:
+                return
+            roots = [d]
+
+        found = {}
+        for r in dict.fromkeys(roots):
+            for p, size in bp.scan_tree_backups(r):
+                found[p] = size
+        if not found:
+            self._show_info("没找到自动备份文件（.bundle.bak / .unity3d.bak / .json.bak 等）。\n\n"
+                            "扫描目录：\n" + "\n".join(dict.fromkeys(roots)))
+            return
+        total = sum(found.values())
+        items = sorted(found.items(), key=lambda kv: -kv[1])
+        head = "\n".join("   %.2f GB  %s" % (sz / (1024.0 ** 3), os.path.basename(p))
+                         for p, sz in items[:15])
+        more = "" if len(items) <= 15 else "\n   … 另外还有 %d 个" % (len(items) - 15)
+        msg = ("找到 %d 个自动备份文件，合计 %.2f GB：\n\n%s%s\n\n"
+               "全部删除？（这些只是历史备份，删掉不影响游戏和数据库）" %
+               (len(items), total / (1024.0 ** 3), head, more))
+        if not self._ask_yes_no("清理自动备份", msg):
+            return
+        n, freed = bp.purge_backups(list(found.keys()), log=lambda m: print("[清理]", m))
+        self._show_info("已删除 %d 个备份文件，释放 %.2f GB。" % (n, freed / (1024.0 ** 3)))
 
     def set_language(self, code):
         if code not in LANGS:
@@ -4056,8 +4416,10 @@ class EditorApp:
             return encrypt_tables(self.dump_obj, self.tables)
         def done(out):
             try:
-                if os.path.exists(path):
-                    shutil.copyfile(path, path + ".bak")
+                # v1.8.75：默认不留 `.bak`（dump 也是几百 MB 级）；要回滚点在菜单里开开关
+                _bp = _backup_policy()
+                if _bp is not None:
+                    _bp.maybe_backup(path, log=lambda m: print("[保存] " + m))
                 write_dump(path, out)
                 self.dirty = False
                 self._update_status()
@@ -4072,9 +4434,19 @@ class EditorApp:
             return
         tr = self.tr
         try:
+            # ⛔ 逐表**原子**写 + 留 .bak：以前直接 open(...,"w") 覆盖，
+            #    中途失败会留下一半新一半旧的目录，且原文件已被截断 ✗
             for name, rows in self.tables.items():
-                with open(os.path.join(folder, name + ".json"), "w", encoding="utf-8") as f:
+                path = os.path.join(folder, name + ".json")
+                tmp = path + ".tmp"
+                with open(tmp, "w", encoding="utf-8") as f:
                     json.dump(rows, f, indent=2, ensure_ascii=False)
+                    f.flush()
+                    os.fsync(f.fileno())
+                if os.path.exists(path) and not os.path.exists(path + ".bak"):
+                    import shutil
+                    shutil.copy2(path, path + ".bak")
+                os.replace(tmp, path)
             self.dirty = False
             self._update_status()
             self._toast(tr.t("msg_exported", n=len(self.tables), folder=folder))
@@ -4313,22 +4685,72 @@ class EditorApp:
             self._show_error(self.tr.t("msg_template_required"))
             return
         import tempfile
-        import time
-        tmp = os.path.join(tempfile.gettempdir(), "ba_db_import_%d.json" % int(time.time()))
+        # ⛔ 用 mkstemp：时间戳到**秒**，同一秒内两次操作会撞名（旧写法）✗
+        fd, tmp = tempfile.mkstemp(prefix="ba_db_import_", suffix=".json")
+        os.close(fd)
         tr = self.tr
+        # ⛔ 覆盖 13.7GB 的 data.unity3d **默认不再先备份**（v1.8.75）：
+        #    留一份就是 13.7GB。安全性由下面「先写 .new，成功后 os.replace 原子替换」
+        #    保证 —— 中途失败原文件完整无损，根本不需要整份副本。
+        #    想额外留副本的人在『文件』菜单里勾『写入前自动备份』。
+        _bp = _backup_policy()
+        if _bp is not None:
+            _bp.maybe_backup(path, log=lambda m: print("[导入] " + m))
+
         def work():
             out = encrypt_tables(self.dump_obj, self.tables)
             write_dump(tmp, out)
-            cmd = ["import", path, tmp, "-o", path]
+            # ⛔ **不再原地覆盖 data.unity3d**：`import ... -o <同一个文件>` 时，
+            #    UABEADump 的"成功路径是否原子"无法验证（失败路径实测安全），
+            #    一旦中途失败 14GB 的原文件就没了 ✗。
+            #    改用 `-o <临时输出>` 写到旁边，成功后由我们 `os.replace` 原子替换 ——
+            #    原子性由**我们**保证，不再依赖外部工具的内部实现 ✓。
+            tmp_out = path + ".new"
+            if os.path.exists(tmp_out):
+                try:
+                    os.remove(tmp_out)
+                except OSError:
+                    pass
+            cmd = ["import", path, tmp, "-o", tmp_out]
             if load_settings().get("compress_on_save"):
                 cmd.append("--compressed")
-            return self._run_uabeadump(cmd, path)
+            ok, msg = self._run_uabeadump(cmd, path)
+            if ok and os.path.isfile(tmp_out) and os.path.getsize(tmp_out) > 0:
+                try:
+                    with open(tmp_out, "rb") as f:
+                        if f.read(8) != b"UnityFS\0":
+                            return False, "UABEADump 输出不是有效的 UnityFS 文件"
+                    os.replace(tmp_out, path)
+                except OSError as e:
+                    return False, "替换 %s 失败：%s" % (os.path.basename(path), e)
+            elif ok:
+                # 没拿到临时输出（旧版 UABEADump 不支持 -o？）⇒ 退回原地写入
+                cmd2 = ["import", path, tmp, "-o", path]
+                if load_settings().get("compress_on_save"):
+                    cmd2.append("--compressed")
+                return self._run_uabeadump(cmd2, path)
+            try:
+                if os.path.exists(tmp_out):
+                    os.remove(tmp_out)
+            except OSError:
+                pass
+            return ok, msg
+
         def done(res):
             try:
                 if os.path.exists(tmp):
                     os.remove(tmp)
             except OSError:
                 pass
+            # 临时输出（`-o <path>.new`）失败时也要清掉，别留 14GB 垃圾
+            try:
+                leftover = path + ".new"
+                if os.path.exists(leftover):
+                    os.remove(leftover)
+            except OSError:
+                pass
+            if res is None:          # 任务本身抛异常（清理信号）
+                return
             ok, msg = res
             if ok:
                 self.dirty = False
@@ -4542,8 +4964,19 @@ class EditorApp:
             v = float(v)
         except (TypeError, ValueError):
             return str(v)
-        if v == int(v):
-            return str(int(v))
+        # ⛔ NaN / ±Inf 必须挡在这里：`int(v)` 对 nan 抛 ValueError、对 inf 抛 OverflowError，
+        #    而这两个异常**不在** try 里 ⇒ 渲染单位信息卡时直接崩 ✗（实测复现）。
+        #    另外这类值写进 json 会产出非标准 `NaN`/`Infinity`，Unity 的 JsonUtility 不接受。
+        try:
+            if not math.isfinite(v):
+                return str(v)
+        except Exception:
+            return str(v)
+        try:
+            if v == int(v):
+                return str(int(v))
+        except (ValueError, OverflowError):
+            return str(v)
         return ("%." + str(nd) + "f") % v
 
     def _unit_ability_labels(self, uid, mob):
@@ -5851,7 +6284,6 @@ class EditorApp:
             tk.Label(win, text=tr.t("refs_none"), padx=12, pady=12).pack(anchor="w")
             return
         lb = tk.Listbox(win)
-        lb.pack(fill="both", expand=True, padx=8, pady=8)
         for (tname, idx, field) in results:
             lb.insert("end", tr.t("refs_item", table=tname, idx=idx, field=field, id=rid))
         def jump(_e=None):
@@ -5862,8 +6294,13 @@ class EditorApp:
             self._jump_to(tname, idx)
             win.destroy()
         lb.bind("<Double-1>", jump)
-        tk.Button(win, text=tr.t("goto_row"), command=jump).pack(pady=4)
-        tk.Button(win, text=tr.t("close"), command=win.destroy).pack(pady=(0, 8))
+        # ⛔ 底部按钮**先占位**：Tk 的 pack 按放入顺序分配空间，若先放 expand 的
+        # Listbox，在高 DPI / 大字体下它会吃掉整窗高度、把按钮裁到窗口外
+        # （表现＝"必须拉伸窗口才看到按钮"）。
+        tk.Button(win, text=tr.t("close"), command=win.destroy).pack(side="bottom", pady=(0, 8))
+        tk.Button(win, text=tr.t("goto_row"), command=jump).pack(side="bottom", pady=4)
+        lb.pack(fill="both", expand=True, padx=8, pady=8)
+        win.minsize(420, 240)
         self.theme_children(win)
 
     def _jump_to(self, table, idx):
@@ -5897,7 +6334,6 @@ class EditorApp:
         count_l = tk.Label(win, anchor="w")
         count_l.pack(anchor="w", padx=8)
         lb = tk.Listbox(win)
-        lb.pack(fill="both", expand=True, padx=8, pady=8)
         def fill(lst):
             lb.delete(0, "end")
             for it in lst:
@@ -5916,8 +6352,12 @@ class EditorApp:
                 self._jump_to(it["table"], it["idx"])
                 win.destroy()
         lb.bind("<Double-1>", jump)
-        tk.Button(win, text=tr.t("goto_row"), command=jump).pack(pady=4)
-        tk.Button(win, text=tr.t("close"), command=win.destroy).pack(pady=(0, 8))
+        # ⛔ 底部按钮**先占位**（同 find_references_dialog）：否则高 DPI / 大字体下
+        # 展开的 Listbox 会把按钮裁到窗口外，用户必须拉伸窗口才看得到。
+        tk.Button(win, text=tr.t("close"), command=win.destroy).pack(side="bottom", pady=(0, 8))
+        tk.Button(win, text=tr.t("goto_row"), command=jump).pack(side="bottom", pady=4)
+        lb.pack(fill="both", expand=True, padx=8, pady=8)
+        win.minsize(460, 260)
         self.theme_children(win)
 
     # ---------------- dialogs / misc ----------------
@@ -5950,6 +6390,12 @@ class EditorApp:
             win.destroy()
             if kind == "error":
                 self._show_error(f"{self.tr.t('error_title')}: {payload}")
+                # ⛔ 失败时也要给调用方一个收尾信号：调用方靠 on_done 做清理
+                #    （例如删掉临时 dump）—— 旧写法只在成功时调 ⇒ 临时文件泄漏 ✗
+                try:
+                    on_done(None)
+                except Exception as e:  # noqa: BLE001
+                    print("[异步] 失败清理回调出错：%s" % e)
             else:
                 on_done(payload)
         threading.Thread(target=worker, daemon=True).start()
@@ -6231,20 +6677,139 @@ class EditorApp:
                 mtxt.insert("end", tr.t("dict_no_result"), "dim")
             mtxt.configure(state="disabled")
 
+        # ---- tab 3: 名称（本地化反查）v1.8.96 --------------------------------
+        # 用户要的：输入「长程型」→ 找到 Custom_Option_Long_range_rifles；
+        # 输入键 → 看到三语名称。数据来自官方 localization_map.json（5375 条）。
+        loc_tab = tk.Frame(nb, bg=c["bg"])
+        lbar = tk.Frame(loc_tab, bg=c["bg"])
+        lbar.pack(side="top", fill="x", pady=(4, 2))
+        tk.Label(lbar, text=tr.t("dict_loc_search") + ":", bg=c["bg"], fg=c["fg"]).pack(side="left")
+        loc_var = tk.StringVar()
+        loc_entry_w = tk.Entry(lbar, textvariable=loc_var, bg=c["entry_bg"],
+                               fg=c["entry_fg"], insertbackground=c["entry_fg"])
+        loc_entry_w.pack(side="left", fill="x", expand=True, padx=6)
+        loc_info = tk.Label(loc_tab, text="", bg=c["bg"], fg=c["hint"], anchor="w")
+        loc_info.pack(side="top", fill="x", padx=8, pady=(0, 2))
+
+        lwrap = tk.Frame(loc_tab, bg=c["bg"])
+        lwrap.pack(fill="both", expand=True)
+        cols = ("key", "zh", "en", "ru")
+        tree = self.ttk.Treeview(lwrap, columns=cols, show="headings", height=18)
+        for col, wkey in zip(cols, ("loc_col_key", "loc_col_zh", "loc_col_en", "loc_col_ru")):
+            tree.heading(col, text=tr.t(wkey))
+            tree.column(col, width=(300 if col == "key" else 190), anchor="w", stretch=True)
+        lsb = tk.Scrollbar(lwrap, command=tree.yview)
+        tree.configure(yscrollcommand=lsb.set)
+        lsb.pack(side="right", fill="y")
+        tree.pack(side="left", fill="both", expand=True)
+        try:                      # 与各表主题一致（选中/斑马纹）
+            self._style_tree(tree)
+        except Exception:
+            pass
+
+        def loc_render():
+            q = loc_var.get().strip()
+            tree.delete(*tree.get_children())
+            rows = loc_search(q) if q else []
+            for key, ent in rows:
+                # ★ 显示**原始大小写**的键（写进数据库要用的就是它）
+                tree.insert("", "end", values=(loc_display_key(ent, key),
+                                               ent.get("zh", ""), ent.get("en", ""),
+                                               ent.get("ru", "")))
+            if not q:
+                loc_info.config(text=tr.t("dict_loc_hint", n=len(_load_locale_map()),
+                                          l=len(loc_langs_present())))
+            elif rows:
+                loc_info.config(text=tr.t("dict_loc_found", n=len(rows)))
+            else:
+                loc_info.config(text=tr.t("dict_no_result"))
+
+        def loc_copy(_e=None):
+            sel = tree.selection()
+            if not sel:
+                return
+            key = tree.item(sel[0], "values")[0]
+            try:
+                self.root.clipboard_clear()
+                self.root.clipboard_append(key)
+                self._toast(tr.t("dict_loc_copied", key=key))
+            except Exception:
+                pass
+
+        def loc_usage(_e=None):
+            """双击：跳到**用到这个键的那张表那一行**（Options.UIName 等）。"""
+            sel = tree.selection()
+            if not sel:
+                return
+            key = tree.item(sel[0], "values")[0]
+            hit = self._find_usage_of_loc_key(key)
+            if hit is None:
+                loc_copy()
+                return
+            tab, rid = hit
+            try:
+                if getattr(self, "_dict_win", None) is not None:
+                    self._dict_win.withdraw()
+            except Exception:
+                pass
+            self.load(tab, rid, push=True)
+
+        tree.bind("<Double-1>", loc_usage)
+        tree.bind("<Control-c>", loc_copy)
+        loc_var.trace_add("write", lambda *a: loc_render())
+
         # ---- tab 3: mount points & templates (removed — knowledge lives in the Blender addon's dictionary)
         self._dict_render = render
         self._model_render = model_render
+        self._dict_loc_render = loc_render
+        self._dict_loc_var = loc_var
+        self._dict_loc_tree = tree
         self._dict_search_var = query_var
         query_var.trace_add("write", lambda *a: render())
         model_query_var.trace_add("write", lambda *a: model_render())
         nb.add(dict_tab, text=tr.t("dict_title"))
         nb.add(model_tab, text=tr.t("dict_tab_models"))
+        nb.add(loc_tab, text=tr.t("dict_loc_title"))
         if query:
             # 从字段编辑器的绿色箭头跳进来：直接在词典里定位该枚举
             query_var.set(query)
         render()
         model_render()
+        loc_render()
         entry.focus_set()
+
+    def _find_usage_of_loc_key(self, key):
+        """哪个表的哪一行**用了**这个本地化键（UIName / Name / HUDName 等）。
+
+        返回 (表名, Id) 或 None。用于「名称」页双击 → 直接跳到实际使用处。
+        """
+        k = (key or "").strip().lower()
+        if not k:
+            return None
+        for tname in ("Options", "Modifications", "Specializations", "Units"):
+            for row in self.tables.get(tname, []) or []:
+                if not isinstance(row, dict):
+                    continue
+                for f in ("UIName", "Name", "HUDName"):
+                    v = row.get(f)
+                    if isinstance(v, str) and v.strip().lower() == k:
+                        rid = row.get("Id")
+                        if isinstance(rid, int):
+                            return (tname, rid)
+        return None
+
+    def show_localization(self, query=None):
+        """打开词典并切到「名称」页（绿色箭头/菜单用它）。"""
+        self.show_dictionary()
+        var = getattr(self, "_dict_loc_var", None)
+        if var is not None and query:
+            var.set(query)
+        nb = getattr(self, "_dict_notebook", None)
+        if nb is not None:
+            try:
+                nb.select(nb.tabs()[-1])          # 名称页是最后一页
+            except Exception:
+                pass
 
     def show_about(self):
         self._show_info(self.tr.t("about_text"))
@@ -6253,6 +6818,11 @@ class EditorApp:
         self._show_info(self.tr.t("help_text"))
 
     def on_close(self):
+        # ⛔ 先提交编辑器：字段编辑有 600ms 的自动提交窗口，在窗口内关窗会**静默丢编辑** ✗
+        try:
+            self.commit_editor(silent=True)
+        except Exception:
+            pass
         if self.dirty and not self._ask_yes_no(self.tr.t("warning_title"), self.tr.t("msg_unsaved")):
             return
         self.close_detail()
@@ -6273,19 +6843,62 @@ def cli(args):
                 print(tr.t("cli_warn_missing", missing=", ".join(missing)))
             return tables
         obj = load_dump(path)
+        # ⛔ **先判这是不是数据库 dump**：以前 CLI 完全不检查 ⇒ 拿任意 JSON 跑
+        #    `validate` 会输出"未发现问题"并 exit 0（**假阴性**，做门禁时最危险 ✗）。
+        #    GUI 侧一直有 is_dump_obj 检查，CLI 漏了。
+        try:
+            if not is_dump_obj(obj):
+                print("!! 这不是数据库 dump（缺少 DataBaseCompiled 结构）：%s" % path)
+                print("   如果是 UABEA 导出的 dump，请确认导出的是 DataBaseCompiled 那一条；"
+                      "如果是表目录，请把路径指向目录。")
+                return None
+        except NameError:
+            pass
         tables, errors = decrypt_tables(obj)
         if errors:
             for k, e in errors:
                 print(tr.t("cli_warn_decrypt", table=k, error=e))
+        if not tables:
+            print("!! 没有解出任何表 —— 输入可能不是有效的 dump（或需要先解密）")
+            return None
         return tables
+
+    def _need_tables(path):
+        """取表；无效输入返回 None（调用方给退出码 2）。"""
+        try:
+            return load_tables_from_input(path)
+        except FileNotFoundError as e:
+            print("!! 找不到文件：%s" % e)
+            return None
+        except Exception as e:  # noqa: BLE001
+            print("!! 读取失败：%s: %s" % (type(e).__name__, e))
+            return None
 
     if args.command == "decrypt":
         if not args.output:
             args.output = os.path.splitext(args.input)[0] + "_tables"
-        tables, errors, written = export_folder(load_dump(args.input), args.output)
+        # ⛔ CLI 以前对不存在的路径直接抛 FileNotFoundError 裸 traceback（GUI 有友好处理）✗
+        try:
+            obj = load_dump(args.input)
+        except FileNotFoundError as e:
+            print("!! 找不到文件：%s" % e)
+            return 2
+        except Exception as e:  # noqa: BLE001
+            print("!! 读取失败：%s: %s" % (type(e).__name__, e))
+            return 2
+        try:
+            if not is_dump_obj(obj):
+                print("!! 这不是数据库 dump（缺少 DataBaseCompiled 结构）：%s" % args.input)
+                return 2
+        except NameError:
+            pass
+        tables, errors, written = export_folder(obj, args.output)
         print(tr.t("cli_decrypted", n=written, folder=args.output))
         for k, e in errors:
             print(tr.t("cli_warn_decrypt", table=k, error=e))
+        if not written:
+            print("!! 没解出任何表 —— 输入可能不是有效的 dump")
+            return 2
         return 0
 
     if args.command == "encrypt":
@@ -6293,14 +6906,25 @@ def cli(args):
         tables, missing = import_folder(args.input)
         if missing:
             print(tr.t("cli_warn_missing", missing=", ".join(missing)))
+        # ⛔ 缺表时以前照常打印"已加密并写入"并 **exit 0**（输出与模板逐字节相同 = 空操作）
+        #    ⇒ 自动化会以为成功 ✗。现在明确失败。
+        if missing or not tables:
+            print("!! 输入目录缺 %d 张表（或为空）—— 拒绝写出'看起来成功'的空结果"
+                  % len(missing))
+            return 2
         out = encrypt_tables(template, tables)
         write_dump(args.output, out)
         print(tr.t("cli_encrypted", path=args.output))
         return 0
 
     if args.command in ("validate", "tables", "find"):
-        tables = load_tables_from_input(args.input)
+        tables = _need_tables(args.input)
+        if tables is None:
+            return 2
         if args.command == "tables":
+            if not tables:
+                print("!! 没有表")
+                return 2
             for name in [table_name(f) for f in TABLE_FIELDS]:
                 if name in tables:
                     print(tr.t("cli_table_rows", name=name, n=len(tables[name])))
@@ -6343,23 +6967,29 @@ def cli(args):
 def build_parser():
     p = argparse.ArgumentParser(prog="ba_db_tool", add_help=True,
                                 description="Broken Arrow Database Editor")
+    # ⛔ `--lang` 以前只挂在顶层 ⇒ 写在子命令后面会 `unrecognized arguments` exit 2 ✗。
+    #    现在把它同时挂到每个子命令上（argparse 的 parents 机制）。
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--lang", choices=LANGS, default=None, help="UI/CLI language")
     p.add_argument("--lang", choices=LANGS, default=None, help="UI/CLI language")
     sub = p.add_subparsers(dest="command")
-    sub.add_parser("gui", help="launch the GUI (default)")
-    d = sub.add_parser("decrypt", help="decrypt a dump JSON to a folder of table JSONs")
+    sub.add_parser("gui", help="launch the GUI (default)", parents=[common])
+    d = sub.add_parser("decrypt", help="decrypt a dump JSON to a folder of table JSONs",
+                       parents=[common])
     d.add_argument("input")
     d.add_argument("-o", "--output")
-    e = sub.add_parser("encrypt", help="encrypt a folder of table JSONs into a dump JSON")
+    e = sub.add_parser("encrypt", help="encrypt a folder of table JSONs into a dump JSON",
+                       parents=[common])
     e.add_argument("input")
     e.add_argument("-t", "--template", required=True, help="original UABEA dump JSON (template)")
     e.add_argument("-o", "--output", required=True)
-    v = sub.add_parser("validate", help="validate a dump JSON or folder")
+    v = sub.add_parser("validate", help="validate a dump JSON or folder", parents=[common])
     v.add_argument("input")
     v.add_argument("--json", dest="json_out", action="store_true")
     v.add_argument("--full", action="store_true", help="show all issues, including clean-DB baseline ones")
-    t = sub.add_parser("tables", help="list tables and row counts")
+    t = sub.add_parser("tables", help="list tables and row counts", parents=[common])
     t.add_argument("input")
-    f = sub.add_parser("find", help="find rows referencing a table Id")
+    f = sub.add_parser("find", help="find rows referencing a table Id", parents=[common])
     f.add_argument("input")
     f.add_argument("table")
     f.add_argument("id", type=int)

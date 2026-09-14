@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 r"""挂载点词典 —— 断箭模型挂载点分类、命名规则与用途说明。
 
 数据来源：对 units_assets_all.bundle 全部 prefab 层级的实测扫描

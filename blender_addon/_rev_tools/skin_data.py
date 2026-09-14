@@ -25,7 +25,11 @@ try:
 except ImportError:
     HERE = os.path.dirname(os.path.abspath(__file__))
     import sys
-    sys.path.insert(0, os.path.join(HERE, "..", "..", "_unitypy"))
+    # `_unitypy` 有两份（cp314 / cp313）：统一按解释器 tag 挑（说明见 unitypy_path.py）
+    if HERE not in sys.path:
+        sys.path.insert(0, HERE)
+    from unitypy_path import ensure as _ensure_unitypy
+    _ensure_unitypy(HERE)
     import UnityPy  # noqa: F401
 
 
@@ -35,32 +39,55 @@ def parse_bridge_items(raw, off=32):
     """从字节偏移 off 解析 List<SkinStorageData>，返回 (items, 结束偏移)。
 
     items: [{"id": int, "mats": [{"pid": mat_pid, "renderers": [r_pid...]}...]}...]
+
+    ⛔ 加了**边界检查**：旧实现完全依赖"数据没被截断"，越界会抛 struct.error，
+    被上层 `except Exception: continue` 吞掉 ⇒ 该皮肤桥**静默消失**（用户只看到"扫不到皮肤"）✗
     """
-    n = struct.unpack_from("<i", raw, off)[0]
+    def _i32(p):
+        if p + 4 > len(raw):
+            raise ValueError("皮肤桥数据越界（需要 4 字节 @%d，实际 %d）" % (p, len(raw)))
+        return struct.unpack_from("<i", raw, p)[0]
+
+    n = _i32(off)
     off += 4
+    if n < 0 or n > 100000:
+        raise ValueError("皮肤桥条目数异常：%d" % n)
     items = []
     for _ in range(n):
-        sid = struct.unpack_from("<i", raw, off)[0]
+        sid = _i32(off)
         off += 4
-        kn = struct.unpack_from("<i", raw, off)[0]
+        kn = _i32(off)
         off += 4
+        if kn < 0 or kn > 100000:
+            raise ValueError("皮肤桥材质数异常：%d" % kn)
         keys = []
         for _k in range(kn):
+            if off + 12 > len(raw):
+                raise ValueError("皮肤桥键越界 @%d" % off)
             _fid, mp = struct.unpack_from("<iq", raw, off)
             off += 12
             keys.append(mp)
-        vn = struct.unpack_from("<i", raw, off)[0]
+        vn = _i32(off)
         off += 4
         vals = []
         for _v in range(vn):
-            rn = struct.unpack_from("<i", raw, off)[0]
+            rn = _i32(off)
             off += 4
+            if rn < 0 or rn > 100000:
+                raise ValueError("皮肤桥渲染器数异常：%d" % rn)
             rs = []
             for _r in range(rn):
+                if off + 12 > len(raw):
+                    raise ValueError("皮肤桥渲染器越界 @%d" % off)
                 _fid, rp = struct.unpack_from("<iq", raw, off)
                 off += 12
                 rs.append(rp)
             vals.append(rs)
+        # ⛔ 键值个数不等时旧实现会被 `zip` **静默截断**，而写回按 len(mats) 写两遍计数
+        #    ⇒ 往返字节不一致（数据被改写）✗。这里直接拒绝。
+        if kn != vn:
+            raise ValueError("皮肤桥键/值个数不等（%d vs %d）—— 拒绝解析以免改写数据"
+                             % (kn, vn))
         items.append({"id": sid, "mats": [{"pid": k, "renderers": r}
                                           for k, r in zip(keys, vals)]})
     return items, off

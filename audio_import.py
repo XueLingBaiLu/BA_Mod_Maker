@@ -12,6 +12,7 @@ import os
 import glob
 import shutil
 import tkinter as tk
+import audio_ui
 from tkinter import ttk, filedialog, messagebox
 
 BANK_EXTS = (".bank", ".gts", ".gtp")
@@ -103,8 +104,6 @@ class AudioImportDialog(tk.Toplevel):
     def __init__(self, master, sa=None):
         super().__init__(master)
         self.title("导入音频/音效（FMOD 音库）")
-        self.geometry("860x560")
-        self.minsize(720, 420)
         self.transient(master)
         self.sa = sa or detect_streaming_assets()
         self.rows = []  # [fn, size, mtime]
@@ -113,14 +112,34 @@ class AudioImportDialog(tk.Toplevel):
         frm.pack(fill="both", expand=True)
 
         top = ttk.Frame(frm)
-        top.pack(fill="x")
+        top.pack(side="top", fill="x")
         self.sa_lbl = ttk.Label(top, text="音库目录：%s" % (self.sa or "未检测到"),
                                 foreground="#555", wraplength=700, justify="left")
         self.sa_lbl.pack(side="left")
         ttk.Button(top, text="刷新", command=self._refresh).pack(side="right")
 
+        # 底部（提示 + 按钮行）**先占位**：Tk 的 pack 按放入顺序分配空间，若先放
+        # 展开的 Treeview，高 DPI / 大字体下它会吃掉整窗高度，把按钮行挤出可见区
+        # ⇒ 用户必须手动拉伸窗口才能看到按钮。
+        hint = ttk.Label(frm, foreground="#777", justify="left", wraplength=820,
+                         text="提示：断箭音效在 FMOD 音库（*.bank + .gts/.gtp）里，替换整文件即可生效"
+                              "（StreamingAssets 无 CRC 校验）；首次替换自动备份到 "
+                              "<StreamingAssets>\\%s\\。" % BACKUP_DIRNAME)
+        hint.pack(side="bottom", fill="x", pady=(8, 0))
+
+        btns = ttk.Frame(frm)
+        btns.pack(side="bottom", fill="x", pady=(8, 0))
+        ttk.Button(btns, text="添加新音效…", command=self._open_add).pack(side="left", padx=2)
+        ttk.Button(btns, text="替换选中…", command=self._replace_selected).pack(side="left", padx=2)
+        ttk.Button(btns, text="批量替换（按文件名）…", command=self._batch_replace).pack(side="left", padx=2)
+        ttk.Button(btns, text="还原选中", command=self._restore_selected).pack(side="left", padx=2)
+        ttk.Button(btns, text="备份全部", command=self._backup_all).pack(side="left", padx=2)
+        ttk.Button(btns, text="关闭", command=self.destroy).pack(side="right")
+
+        mid = ttk.Frame(frm)
+        mid.pack(side="top", fill="both", expand=True, pady=(8, 0))
         cols = ("name", "size", "time", "state")
-        self.tree = ttk.Treeview(frm, columns=cols, show="headings", height=14)
+        self.tree = ttk.Treeview(mid, columns=cols, show="headings", height=8)
         self.tree.heading("name", text="音库文件")
         self.tree.heading("size", text="大小")
         self.tree.heading("time", text="修改时间")
@@ -129,25 +148,14 @@ class AudioImportDialog(tk.Toplevel):
         self.tree.column("size", width=100, stretch=False)
         self.tree.column("time", width=150, stretch=False)
         self.tree.column("state", width=100, stretch=False)
-        self.tree.pack(fill="both", expand=True, pady=(8, 0))
-        sb = ttk.Scrollbar(frm, orient="vertical", command=self.tree.yview)
+        sb = ttk.Scrollbar(mid, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=sb.set)
+        sb.pack(side="right", fill="y")
+        self.tree.pack(side="left", fill="both", expand=True)
 
-        btns = ttk.Frame(frm)
-        btns.pack(fill="x", pady=(8, 0))
-        ttk.Button(btns, text="添加新音效…", command=self._open_add).pack(side="left", padx=2)
-        ttk.Button(btns, text="替换选中…", command=self._replace_selected).pack(side="left", padx=2)
-        ttk.Button(btns, text="批量替换（按文件名）…", command=self._batch_replace).pack(side="left", padx=2)
-        ttk.Button(btns, text="还原选中", command=self._restore_selected).pack(side="left", padx=2)
-        ttk.Button(btns, text="备份全部", command=self._backup_all).pack(side="left", padx=2)
-        ttk.Button(btns, text="关闭", command=self.destroy).pack(side="right")
-
-        hint = ttk.Label(frm, foreground="#777", justify="left", wraplength=820,
-                         text="提示：断箭音效在 FMOD 音库（*.bank + .gts/.gtp）里，替换整文件即可生效"
-                              "（StreamingAssets 无 CRC 校验）；首次替换自动备份到 "
-                              "<StreamingAssets>\\%s\\。" % BACKUP_DIRNAME)
-        hint.pack(fill="x", pady=(8, 0))
         self._refresh()
+        audio_ui.theme_from_master(self, master)
+        audio_ui.fit_and_center(self, master, 860, 520)
 
     def _refresh(self):
         self.tree.delete(*self.tree.get_children())
@@ -179,8 +187,25 @@ class AudioImportDialog(tk.Toplevel):
         vals = self.tree.item(sel[0], "values")
         return vals[0]
 
+    def _need_sa(self):
+        """音库目录没检测到就**明确报错**。
+
+        ⛔ 旧写法是 `if not self.sa: return` —— **静默返回** ⇒ 用户点按钮毫无反应，
+        这正是"点了没反应"的来源之一 ✗（对话框能开、列表空、按钮全是哑的）。
+        """
+        if not self.sa or not os.path.isdir(self.sa):
+            messagebox.showerror(
+                "未找到音库目录",
+                "没有检测到游戏的 StreamingAssets 目录，下面的列表是空的，"
+                "所以任何操作都不会生效。\n\n"
+                "解决：先用【文件 → 打开 data.unity3d】打开一次数据库"
+                "（工具会记住游戏目录），再回来打开本窗口；\n"
+                "或确认游戏装在 Steam 的 common 目录下。")
+            return False
+        return True
+
     def _replace_selected(self):
-        if not self.sa:
+        if not self._need_sa():
             return
         fn = self._selected_fn()
         if not fn:
@@ -201,7 +226,7 @@ class AudioImportDialog(tk.Toplevel):
             fn, "（原文件已备份）" if was_backup else ""))
 
     def _batch_replace(self):
-        if not self.sa:
+        if not self._need_sa():
             return
         d = filedialog.askdirectory(title="选择包含新音频文件的文件夹（按文件名匹配覆盖）")
         if not d:
@@ -223,7 +248,7 @@ class AudioImportDialog(tk.Toplevel):
         messagebox.showinfo("批量替换完成", "成功 %d 个，跳过（目录无同名）%d 个" % (done, skipped))
 
     def _restore_selected(self):
-        if not self.sa:
+        if not self._need_sa():
             return
         fn = self._selected_fn()
         if not fn:
@@ -237,7 +262,7 @@ class AudioImportDialog(tk.Toplevel):
         messagebox.showinfo("完成", "已还原 %s" % fn)
 
     def _backup_all(self):
-        if not self.sa:
+        if not self._need_sa():
             return
         n = 0
         for fn, _size, _mt in self.rows:

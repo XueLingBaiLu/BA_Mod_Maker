@@ -13,9 +13,10 @@
   _rebuild_addon_zip.py 打包前把本文件同步进 blender_addon/version.py。
 """
 
-APP_VERSION = "1.8.56"
-ADDON_VERSION = (2, 7, 56)
+APP_VERSION = "1.8.112"
+ADDON_VERSION = (2, 7, 112)
 
 
 if __name__ == "__main__":
     print("BA_Mod_Maker v%s / Blender addon v%s" % (APP_VERSION, ".".join(map(str, ADDON_VERSION))))
+

@@ -193,11 +193,74 @@ SECTION_ORDER = ["IBSS", "GBSS", "RBSS", "MBSS", "BEFX", "PEFX", "SEFX", "SCFX",
 
 
 def _fnv1a32(data):
+    r"""⚠⚠ **这个哈希函数已被实测证伪（2026-09）——它不一定是游戏用的那个**。
+
+    它写在新增事件的 `HASH` 块里（`{u32 hash, GUID}`），而 HASH 块是
+    **事件路径 → GUID 的正向查找表**。实测（`技术资料/scripts/fmod_hash_id.py`）：
+    把 `Master.strings.bank` 的 2,576 条路径片段 × 6 种前缀，代入 **9 个候选函数**
+    （fnv1a32 / fnv1a32(lower) / fnv1a32(utf16le) / fnv1_32 / crc32 / djb2 / sdbm…），
+    与**全部 15 个 bank 的 873 个真实 hash 值**比对 —— **全部 0 命中** ✗
+    ⇒ `fnv1a32` **不是**游戏用的算法（正确函数应命中几十~几百）。
+
+    ⇒ **后果**：新加的事件若靠**按名解析**（`FMOD_Studio_System_LookupID(path)`），
+    很可能**找不到**（表现为"打包成功、进游戏没声音"）✗。
+    定案与修法见 `.re-kb/data-structures/fmod-studio-bank-format.md` 的 HASH 小节
+    （下一步：解开 FEV 路径表编码，或 Frida hook `LookupID` 抓一对 (path, GUID) 真值）。
+    **在查清之前，别把这个哈希当成"已验证正确"** ✓
+    """
     h = 0x811C9DC5
     for c in data:
         h ^= c
         h = (h * 0x01000193) & 0xFFFFFFFF
     return h
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ 2026-09 查清（比上面那段更彻底，以这段为准）：
+#   HASH 块真实布局 = [u32 头(低 16 位 = 2N+1)][N × (GUID 16 字节 + u32 项目内 id)]
+#     · 证据：`技术资料/scripts/fmod_hash_records2.py` —— 每个 bank 的 GUID 命中数
+#             **恰好等于引擎报的事件数**（Ambience 71/71、Dialog 1617/1617…）✓
+#   · 那个尾随 u32 **不是路径哈希**：`fmod_id_field.py` + `fmod_id_seed.py` 用
+#     **4,124 条引擎真路径** × 13 函数 × 6 输入变体 + XOR 常数差 + seed 0..1023 扫描
+#     —— **全部 0 命中** ✗（它只保证"同一对象恒定"，是项目内 id）
+#   · **游戏不按路径找事件**：C# 侧 0 条 `event:/` 字面量，走 FMODUnity 的
+#     `EventReference`（**GUID**）⇒"路径哈希"这个前提本身不成立 ✗
+#   ⇒ 本文件用 `_fnv1a32` 只当**确定性占位**：它不能让新事件变成"游戏可调用的"。
+#     要让游戏用到新音效，得改**游戏侧引用点（Unity 资产里的 EventReference GUID）**，
+#     或者**复用已有事件的 GUID 做原位替换**。
+#   ⇒ 按名字查真实 GUID：`技术资料/scripts/fmod_oracle.py`（加载游戏自带 fmodstudio.dll
+#     2.1.11，用官方 C API 读）导出的 `技术资料/data/fmod_oracle.json` = 4,226 条真值表 ✓
+# ══════════════════════════════════════════════════════════════════════════════
+ORACLE_JSON = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                           "技术资料", "data", "fmod_oracle.json")
+_ORACLE = None
+
+
+def load_oracle():
+    """读引擎真值表（路径↔GUID）。读不到返回 None，工具照常工作"""
+    global _ORACLE
+    if _ORACLE is None:
+        try:
+            import json
+            with open(ORACLE_JSON, encoding="utf-8") as f:
+                data = json.load(f)
+            _ORACLE = {s["path"]: s["guid"] for s in data.get("strings", [])}
+        except Exception:
+            _ORACLE = {}
+    return _ORACLE or None
+
+
+def lookup_event_guid(name):
+    """按事件名/完整路径查真实 GUID（引擎真值）。找不到返回 None"""
+    tb = load_oracle()
+    if not tb:
+        return None
+    if name in tb:
+        return tb[name]
+    for p, g in tb.items():                    # 允许只给最后一段
+        if p.rsplit("/", 1)[-1] == name:
+            return g
+    return None
 
 
 def _p16(v):
@@ -279,10 +342,13 @@ def rebuild_bank_with_event(bank_path, event_name, encrypted_fsb5):
     # 尾部块（SNDH 12B 数据 + STDT/STBL 空 + HASH + DEL/MUTE/REFI/PLAT 空）
     path_bytes = event_name.encode("utf-8")
     h_hash = _fnv1a32(path_bytes)
-    # HASH：4B 头 + {GUID, u32 hash} × 2（事件/WAV；hash 为占位 fnv1a32(path)）
-    hash_chunk = (b"HASH" + _p32(4 + 20 * 2) + _p32(0x0014009D)
-                  + new_event_guid + _p32(h_hash)
-                  + new_wav_guid + _p32(h_hash))
+    # HASH 真实布局（2026-09 实测坐实）：
+    #   [u32 头：高 16 位=0x0014，**低 16 位 = 2N+1**（N=记录数）][N × (GUID 16B + u32 id)]
+    #   ⛔ 旧代码把 0x0014009D 写死（那是 Master.bank 78 条记录的数值）⇒ 2 条记录应为 0x00140005
+    recs = [(new_event_guid, h_hash), (new_wav_guid, h_hash)]
+    hash_chunk = (b"HASH" + _p32(4 + 20 * len(recs))
+                  + _p32(0x00140000 | (2 * len(recs) + 1))
+                  + b"".join(g + _p32(v) for g, v in recs))
     tail = hash_chunk
     for tag in (b"STDT", b"STBL", b"DEL ", b"MUTE", b"REFI", b"PLAT"):
         tail += tag + _p32(0)

@@ -15,28 +15,47 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 try:
     import UnityPy  # noqa: F401  （Blender 里用 pip 装的；本地测试用工作区副本）
 except ImportError:
-    sys.path.insert(0, os.path.join(HERE, "..", "..", "_unitypy"))
+    # `_unitypy` 有两份（cp314 / cp313）：统一按解释器 tag 挑（说明见 unitypy_path.py）
+    if HERE not in sys.path:
+        sys.path.insert(0, HERE)
+    from unitypy_path import ensure as _ensure_unitypy
+    _ensure_unitypy(HERE)
     import UnityPy
 
 _TI_SCRIPT = 6426374804064612000
 _HUB_SCRIPT = 4665939560152279323
 
 
-_ENV_CACHE = {}  # bundle 路径 -> (env, objs, by_pid)，避免每个网格重复 load 3.4GB
+_ENV_CACHE = {}   # bundle 路径 -> (env, objs, by_pid)
+_ENV_MTIME = {}   # bundle 路径 -> 加载时的 mtime（文件被外部改动就重新加载）
 
 
 def _load(bundle):
-    if bundle in _ENV_CACHE:
+    """加载（并缓存）bundle。
+
+    ⛔ 缓存**按 mtime 失效**：旧实现只按路径缓存 ⇒ 用工具导入新包覆盖 bundle 之后，
+    同一 Blender 会话里再读还是**旧内容** ✗（表现为"导入成功了但读不出来"）。
+    """
+    try:
+        mtime = os.path.getmtime(bundle)
+    except OSError:
+        mtime = None
+    if bundle in _ENV_CACHE and _ENV_MTIME.get(bundle) == mtime:
         return _ENV_CACHE[bundle]
+    if bundle in _ENV_CACHE:
+        print("[加载] bundle 已被外部改动，重新加载：%s" % os.path.basename(bundle))
+        _ENV_CACHE.pop(bundle, None)
     env = UnityPy.load(bundle)
     objs = list(env.objects)
     by_pid = {o.path_id: o for o in objs}
     _ENV_CACHE[bundle] = (env, objs, by_pid)
+    _ENV_MTIME[bundle] = mtime
     return env, objs, by_pid
 
 
 def clear_cache():
     _ENV_CACHE.clear()
+    _ENV_MTIME.clear()
 
 
 def list_prefabs(bundle):
@@ -183,9 +202,18 @@ def extract_prefab(bundle, root_gpid):
             if not mp:
                 continue
             # m_Bones 是 Transform pathID，映射回 GO pathID（树以 GO 为键）
+            # ⛔⛔ **槽位必须原样保留，包括空槽（v1.8.76 修）**：
+            #    顶点权重里的 blend index 是**按这个数组的槽位**索引的。旧写法
+            #    `if b and b.m_PathID` 把空槽过滤掉 ⇒ 38 槽压成 31/26 槽 ⇒
+            #      · 下标 ≥ 第一个空槽的全部**错位到别的骨骼**上；
+            #      · 下标 ≥ 压缩后长度的**直接越界**，权重被静默丢弃（顶点落到 body）。
+            #    实测（US_ACV，38 槽有 12 个空槽）：下标 23 本该是轮子 LR001，
+            #    却被绑到 RR002；下标 26~37 全丢 ⇒ 游戏里轮子乱飞、车门掉到车底 ✗
+            #    空槽写成 0，导入端命名为 `bone_N`（不参与骨骼表），槽位对齐 ✓
             bones = []
             if getattr(rd, "m_Bones", None):
-                bones = [tr_go.get(b.m_PathID, 0) for b in rd.m_Bones if b and b.m_PathID]
+                bones = [(tr_go.get(b.m_PathID, 0) if (b and b.m_PathID) else 0)
+                         for b in rd.m_Bones]
             # 蒙皮根骨 + 根骨 bind pose：用于把网格放到骨骼"静止"比例上（root_scale 缩放）。
             # 网格顶点是原始绑定空间（scale=1），骨骼树可能带 root_scale(如 0.89)，
             # 静止位姿 = world[root_bone] @ bindpose_root，让网格与骨骼对齐。
@@ -197,7 +225,7 @@ def extract_prefab(bundle, root_gpid):
             if mo and root_bone:
                 mdr = mo.read()
                 bp = getattr(mdr, "m_BindPose", None) or []
-                idx = bones.index(root_bone) if root_bone in bones else 0
+                idx = bones.index(root_bone) if (root_bone and root_bone in bones) else 0
                 if idx < len(bp):
                     root_bind_pose = [getattr(bp[idx], "e%d%d" % (i, j), 0.0)
                                       for i in range(4) for j in range(4)]
@@ -351,6 +379,12 @@ def extract_mesh_geometry(bundle, mesh_pid):
         if vals:
             positions = [(x, -z, y) for (x, y, z) in vals]  # Y-up -> Z-up
     if not positions:
+        # ⛔ 顶点位置一个都没读到时**必须出声**：旧行为是静默用全零顶点，用户只看到
+        #    "模型塌陷到原点"却不知道原因（多半是 .resS 侧载文件缺失/路径不对）✗
+        if N:
+            print("[提取] ⚠ 网格 %s：顶点数 %d 但位置数据读不到（检查 bundle 旁的 "
+                  "*_unpacked/*.resS 侧载文件是否齐全）—— 将用全零点位导入"
+                  % (getattr(m, "m_Name", "?"), N))
         positions = [(0.0, 0.0, 0.0)] * N
 
     uvs = []
@@ -385,7 +419,22 @@ def extract_mesh_geometry(bundle, mesh_pid):
     if isinstance(ib, list):
         ib = bytes(ib)
     total = sum(s.indexCount for s in m.m_SubMeshes)
-    is16 = len(ib) == total * 2
+    # ⛔ 索引位宽要用**引擎字段** `m_IndexFormat`（0=16 位 / 1=32 位），
+    #    旧写法按"缓冲区长度是否等于 indexCount*2"猜 —— 长度巧合或 sub.indexCount
+    #    异常时会用错宽度解析（struct.error 或垃圾三角面）✗
+    fmt = getattr(m, "m_IndexFormat", None)
+    if fmt in (0, 1):
+        is16 = (fmt == 0)
+        need = total * (2 if is16 else 4)
+        if len(ib) < need:
+            print("[提取] ⚠ 索引缓冲区 %d 字节 < m_IndexFormat 要求的 %d 字节，"
+                  "退回按长度推断" % (len(ib), need))
+            is16 = len(ib) == total * 2
+    else:
+        is16 = len(ib) == total * 2
+    if (total * 2 if is16 else total * 4) > len(ib):
+        raise ValueError("索引缓冲区太小：需要 %d 字节，实际 %d"
+                         % (total * 2 if is16 else total * 4, len(ib)))
     triangles = list(struct.unpack_from("<%dH" % total, ib, 0) if is16
                      else struct.unpack_from("<%dI" % total, ib, 0))
     return {"positions": positions, "triangles": triangles, "uv": uvs,
