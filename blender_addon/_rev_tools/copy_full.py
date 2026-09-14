@@ -114,7 +114,7 @@ def collect_prefab_objects(bundle, root_gpid, want_path=None):
             "  ⛔ 常见原因：这个 bundle 里的 prefab 容器**已被上一次导入改成新分配的根 pid**\n"
             "     ⇒ 场景里记的『复制源』pid 过期了。三种解法（任选其一）：\n"
             "     1) 偏好设置 →『游戏 bundle 文件』指回**没被导入过**的那份"
-            "（如 D:\\断箭模组制作\\备份\\units_assets_all_…bundle），再重新 ① 导入；\n"
+            "（如 <工作目录>\\备份\\units_assets_all_…bundle），再重新 ① 导入；\n"
             "     2) 直接用当前 bundle 重新 ① 导入所选模型（刷新复制源）；\n"
             "     3) 或点 ④ 面板里的『把①所选模型设为当前模型』。"
             % (root_gpid, ("，路径=%r" % want_path) if want_path else ""))
