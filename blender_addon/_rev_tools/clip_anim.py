@@ -337,11 +337,11 @@ def conv_q(q):
          是 **(w,x,y,z)** ✗ —— 直接把 Unity 的 (x,y,z,w) 赋给 Blender，等于把 w 塞进了 x 槽，
          旋转会乱成一团（这就是"绞起来"的真凶 ✓）。
     """
-    return (q[3], q[0], -q[2], q[1])
+    return (q[3], q[0], q[2], -q[1])  # ★㓓：随手性修同步（verify_math.py V7 数值验证）
 
 
 def conv_v(v):
-    return (v[0], -v[2], v[1])
+    return (-v[0], -v[2], v[1])  # ★㓓：随手性修同步
 
 
 def _armature_for(scene):

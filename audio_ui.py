@@ -26,6 +26,13 @@ def fit_and_center(dlg, master, min_w=800, min_h=520, extra_h=0):
         dlg.minsize(w, h)
     except Exception:  # noqa: BLE001 - 尺寸自适应失败不影响功能
         pass
+    # ★ 2026-10-15：`transient()` 会把标题栏的**最大化按钮**抹掉（Win32 清掉 WS_MAXIMIZEBOX）
+    #   ⇒ 这里补回来（本模块是音频对话框的统一收尾点，一处修、两个对话框都生效）✓
+    try:
+        import ui_fit
+        ui_fit.allow_maximize(dlg)
+    except Exception:  # noqa: BLE001
+        pass
     return center_on_parent(dlg, master)
 
 

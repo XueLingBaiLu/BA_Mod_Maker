@@ -142,18 +142,39 @@ def create_skin_pack(out_zip, replace_mats, textures, target_id, prefab_path,
     return out_zip, len(mats), len(tex_items)
 
 
+def _tex_key(t):
+    r"""贴图条目的去重键：PNG 用绝对路径，**流式引用**用名字（内容在游戏 `.resS` 里，名字即身份）。"""
+    if t.get("stream"):
+        return "stream:" + (t.get("name") or "")
+    return os.path.abspath(t["png"])
+
+
+def _slot_key(s):
+    """材质槽引用的去重键（与 `_tex_key` 同一套）。"""
+    if s.get("stream"):
+        return "stream:" + (s.get("name") or "")
+    return os.path.abspath(s["png"])
+
+
 def _pack_tex_slots(replace_mats, textures):
     """共用：把 {orig, texs:[{slot,png}]} + [{name,png}] 归一化成 manifest 结构。
 
     返回 (mats, tex_items)：mats=[{orig, texs:[{slot, tex索引}]}]，tex_items=[{name,png(b64)}]。
+    ★ v1.9.1（★⑮）：`textures` 里的条目可以是**两种**之一 ——
+      · PNG 内嵌：`{"name": 名字, "png": png文件路径}`
+      · **流式引用**：`{"name": 贴图名, "stream": {path,offset,size,w,h,fmt,mip,img_size}}`
+        ⇒ **不搬像素**（包只 + 几十 KB），导入端建一个 `m_StreamData` 指到游戏 `.resS` 段 ✓
     """
     tex_index = {}
     tex_items = []
     for t in textures:
-        key = os.path.abspath(t["png"])
+        key = _tex_key(t)
         if key in tex_index:
             continue
         tex_index[key] = len(tex_items)
+        if t.get("stream"):
+            tex_items.append({"name": t["name"], "stream": dict(t["stream"])})
+            continue
         with open(t["png"], "rb") as f:
             tex_items.append({"name": t["name"],
                               "png": base64.b64encode(f.read()).decode("ascii")})
@@ -161,41 +182,83 @@ def _pack_tex_slots(replace_mats, textures):
     for m in replace_mats:
         slots = []
         for s in m["texs"]:
-            key = os.path.abspath(s["png"])
+            key = _slot_key(s)
             if key in tex_index:
                 slots.append({"slot": s["slot"], "tex": tex_index[key]})
         if not slots:
             continue
-        mats.append({"orig": m["orig"], "texs": slots})
+        ent = {"orig": m["orig"], "texs": slots}
+        # ★★ v1.11.0（★⑯）：`orig` 是**源包**的材质 pid —— 导入到"自建包"（pid 被重新分配）时
+        #   在目标包里查不到 ⇒ 必须带上**材质名**，让导入端能按名字定位 ✓（老包没有这个字段，
+        #   导入端退回"只按 pid"，行为与以前一致）
+        if m.get("orig_name"):
+            ent["orig_name"] = m["orig_name"]
+        mats.append(ent)
     if not mats:
         raise ValueError("没有找到可替换的纹理（贴图文件名需与材质纹理名一致）")
     return mats, tex_items
 
 
 def create_matswap_pack(out_zip, replace_mats, textures, renderer_pids, prefab_path,
-                        bundle_kind="units_assets_all"):
+                        bundle_kind="units_assets_all", tex_source=None, renderer_info=None,
+                        scope=None):
     r"""把模型材质贴图替换打成 .bamod 包（枪械等无皮肤桥的模型）。
 
-    replace_mats / textures 同 create_skin_pack（只替换给出 png 的纹理槽）。
-    renderer_pids: 要更新材质引用的渲染器 pid 列表（当前导入模型的所有渲染器）。
+    replace_mats / textures 同 create_skin_pack（只替换给出 png 的纹理槽）；
+    `textures` 条目也可给 `{"name":…, "stream":{…}}`（**流式引用**，见 `_pack_tex_slots`）。
+    renderer_pids: 要更新材质引用的渲染器 pid 列表 ——
+      ★ **★⑮**：只列"选中网格"的渲染器 ⇒ **只有它们换材质**，其余（车身等）一个不动 ✓；
+        列成全部渲染器 ⇒ 整车一起换（面板上「不勾=整车」就是这条）✓
+    renderer_info: ★★ **★⑯**：与 `renderer_pids` **一一对应**的补充信息
+      `[{"pid": 源包渲染器 pid, "go": "网格/GO 名（如 Ah_1z）", "mats": ["该渲染器当前用的材质名"]}]`。
+      为什么需要：这些 pid 来自**源包**（① 导入模型时写进 `ba_renderer_pid`/`ba_materials`，
+      全工具只有那一处写入），而导入目标往往是**自建包**（`copy_full` 导入时**重新分配过 pid**）
+      ⇒ 目标包里按 pid 一个都查不到 ✗。带上名字后导入端能**按名字定位**，而且**抗重建**
+      （每重建一次都会重分配 pid，只有"按名字"才活得下来）✓
+    tex_source: 可选，"png" / "stream" —— 只写进 manifest 备查/UI 显示用。
+    scope: ★★ **★⑰**：整车模式下的**覆盖面**说明 `{"mode": "subtree", "assigned": n, "skipped": m,
+      "total": k}` —— 只写进 manifest 当"这次是按 prefab 子树展开的"标记。
+      导入端看到 `mode == "subtree"` 时，**同名目标渲染器要全部重指**（实测构建期克隆会重名：
+      `000_skinned_Chassis` 有两个 ⇒ 老逻辑"同名取第一个"会漏掉一个 ⇒ 那一级 LOD 还是旧图）✓
 
     导入端（import_pack._import_matswap）：
-      1. 新建 Texture2D（RGBA32 内嵌）；
-      2. 克隆原材质并替换对应纹理槽引用；
-      3. 把这些渲染器的 m_Materials 里匹配的原材质 pid 换成新 pid（原地更新）。
+      1. 先在目标包里**解析**这些渲染器/材质（pid 查得到就用 pid，查不到就按名字 + 材质名定位）；
+      2. 新建 Texture2D（PNG ⇒ RGBA32 内嵌；流式 ⇒ 克隆本包同规格流式模板 + 填 m_StreamData）；
+      3. 克隆材质并替换对应纹理槽引用；
+      4. 把这些渲染器的 m_Materials 里匹配的原材质 pid 换成新 pid（原地更新）。manifest.renderers 里
+         **没有列出的渲染器一律不动** ✓
     与皮肤包的区别：不经过 SkinStorageBridge——任何模型（武器/炸弹/挂架）都能换贴图。
     """
     mats, tex_items = _pack_tex_slots(replace_mats, textures)
+    ms = {
+        "mats": mats,
+        "textures": tex_items,
+        "renderers": [int(r) for r in renderer_pids],
+    }
+    if tex_source:
+        ms["tex_source"] = tex_source
+    if renderer_info:
+        ri = []
+        for e in renderer_info:
+            if not isinstance(e, dict):
+                continue
+            d = {"pid": int(e.get("pid", 0))}
+            if e.get("go"):
+                d["go"] = str(e["go"])
+            mm = [str(x) for x in (e.get("mats") or []) if x]
+            if mm:
+                d["mats"] = mm
+            ri.append(d)
+        if ri:
+            ms["renderer_info"] = ri
+    if scope:
+        ms["scope"] = scope            # ★⑰：整车按 prefab 子树展开的标记（导入端据此"同名全部重指"）
     manifest = {
         "format": FORMAT,
         "version": VERSION,
         "bundle": bundle_kind,
         "prefab_path": prefab_path,
-        "matswap": {
-            "mats": mats,
-            "textures": tex_items,
-            "renderers": [int(r) for r in renderer_pids],
-        },
+        "matswap": ms,
     }
     with zipfile.ZipFile(out_zip, "w", zipfile.ZIP_DEFLATED) as z:
         z.writestr("manifest.json", json.dumps(manifest, ensure_ascii=False, indent=1))

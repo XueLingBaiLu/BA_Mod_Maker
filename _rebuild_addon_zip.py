@@ -46,7 +46,10 @@ with open(init_path, "w", encoding="utf-8") as f:
 print("bl_info version 已同步为", ADDON_VERSION)
 
 files = []
-for name in ("README.md", "unitypy_bridge.py", "__init__.py", "mount_dict.py", "version.py"):
+# ⛔ 2026-10：这是**写死的白名单** ⇒ 新增的顶层模块不加进来就会**静默漏进 zip** ✗
+#   实测踩到：`mod_paths.py`（默认路径 D 盘优先）没进 zip，装上后只能走插件内的兜底逻辑
+for name in ("README.md", "unitypy_bridge.py", "__init__.py", "mount_dict.py", "version.py",
+             "mod_paths.py"):
     files.append(name)
 files += ["_rev_tools/" + f for f in sorted(os.listdir(os.path.join(addon, "_rev_tools")))
           if f.endswith(".py") or f.endswith(".json")]

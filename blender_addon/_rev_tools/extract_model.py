@@ -22,8 +22,10 @@ except ImportError:
     _ensure_unitypy(HERE)
     import UnityPy
 
-_TI_SCRIPT = 6426374804064612000
-_HUB_SCRIPT = 4665939560152279323
+# ⛔ 脚本 pathID 从 `hub_edit` 取（**单一来源**）：以前这里也自己写一份 ⇒ 游戏更新后过期
+#   不报错、只是"这些组件认不出来"（静默失效）✗（2026-10-16 立此存照）
+from hub_edit import UNITPREFABTURRETINFO_SCRIPT as _TI_SCRIPT        # noqa: E402
+from hub_edit import HUB_SCRIPT as _HUB_SCRIPT
 
 
 _ENV_CACHE = {}   # bundle 路径 -> (env, objs, by_pid)
@@ -86,7 +88,7 @@ def _unity_to_blender(pos, rot, scale):
     x, y, z = pos.x, pos.y, pos.z
     qx, qy, qz, qw = rot.x, rot.y, rot.z, rot.w
     sx, sy, sz = scale.x, scale.y, scale.z
-    return (x, -z, y), (qx, -qz, qy, qw), (sx, sz, sy)
+    return (-x, -z, y), (qx, qz, -qy, qw), (sx, sz, sy)  # ★㓓：det=−1（翻 X）；旋转按镜像共轭 —— 规则由 _scratch\★㓓-手性修-preview\verify_math.py V4/V7 数值验证
 
 
 def extract_prefab(bundle, root_gpid):
@@ -377,7 +379,7 @@ def extract_mesh_geometry(bundle, mesh_pid):
         dim, off, stride, code = p
         vals = _read_chan(data, N, off, stride, code, dim)
         if vals:
-            positions = [(x, -z, y) for (x, y, z) in vals]  # Y-up -> Z-up
+            positions = [(-x, -z, y) for (x, y, z) in vals]  # Y-up -> Z-up（★㓓：det=−1，翻 X）
     if not positions:
         # ⛔ 顶点位置一个都没读到时**必须出声**：旧行为是静默用全零顶点，用户只看到
         #    "模型塌陷到原点"却不知道原因（多半是 .resS 侧载文件缺失/路径不对）✗

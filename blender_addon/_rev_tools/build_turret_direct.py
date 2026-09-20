@@ -40,9 +40,12 @@ BONE_NAME_HASHES = {
     "recoil_0_0": 0x5A6309D7,
 }
 
-UNITPREFABTURRETINFO_SCRIPT = 6426374804064612000
-ANIMATIONHUB_SCRIPT = 4665939560152279323
-ANIMATIONMANAGERBRIDGE_SCRIPT = 8775279424834731323
+# ⛔ 这三个脚本 pathID **不在本文件里定义**（2026-10-16 起）：它们是**游戏版本相关**的常量，
+#   以前这里、`hub_edit`、`extract_model`、`analyze_hub` 各写一份 ⇒ 任何一处过期都**不报错**、
+#   只是写出错脚本（静默失效）✗ ⇒ 统一从 `hub_edit` 取（单一来源 + 带 `verify_script_pids` 复核）✓
+from hub_edit import (UNITPREFABTURRETINFO_SCRIPT,      # noqa: E402
+                      HUB_SCRIPT as ANIMATIONHUB_SCRIPT,
+                      ANIMATIONMANAGERBRIDGE_SCRIPT)
 
 # 军械库演示动画源（RU_BMP2M 炮塔，units_assets_all 内）：
 #   AnimationHub pid=4361187508110648207（764 字节，demo 状态 = 1 个 AxisRandom 扫掠 turret_0）

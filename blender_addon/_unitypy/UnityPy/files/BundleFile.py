@@ -170,16 +170,28 @@ class BundleFile(File.File):
         if isinstance(self.dataflags, ArchiveFlags) and self.dataflags & ArchiveFlags.BlockInfoNeedPaddingAtStart:
             reader.align_stream(16)
 
-        blocksReader = EndianBinaryReader(
-            b"".join(
-                self.decompress_data(
+        # P0-1：预分配整块缓冲 + 逐块就地写入。
+        # 原本用 b"".join(生成器) ⇒ 需 list（全部解压结果）与结果**同时在场**，
+        # 峰值 ≈ 2 × Σ(uncompressedSize)；此处只用一份缓冲，峰值 ≈ 1 × Σ。
+        # 逐块 read_bytes / decompress_data 的调用与偏移语义完全不变，⛔ 不改解析行为。
+        if m_BlocksInfo:
+            _block_buffer = bytearray(sum(blockInfo.uncompressedSize for blockInfo in m_BlocksInfo))
+            _block_offset = 0
+            for i, blockInfo in enumerate(m_BlocksInfo):
+                _decompressed = self.decompress_data(
                     reader.read_bytes(blockInfo.compressedSize),
                     blockInfo.uncompressedSize,
                     blockInfo.flags,
                     i,
                 )
-                for i, blockInfo in enumerate(m_BlocksInfo)
-            ),
+                _block_buffer[_block_offset : _block_offset + len(_decompressed)] = _decompressed
+                _block_offset += len(_decompressed)
+            _blocks_bytes = _block_buffer
+        else:
+            _blocks_bytes = b""
+
+        blocksReader = EndianBinaryReader(
+            _blocks_bytes,
             offset=(blocksInfoReader.real_offset()),
         )
 

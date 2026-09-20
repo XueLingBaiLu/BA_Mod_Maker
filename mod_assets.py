@@ -64,6 +64,13 @@ def _fit_window(win, w, h, master):
             win.transient(master)
         except Exception:
             pass
+    # ★ 2026-10-15：`transient()` 会抹掉标题栏**最大化按钮**（Win32 清 WS_MAXIMIZEBOX）
+    #   ⇒ 补回来。⛔ 必须在 `transient()` **之后**调：顺序反了会被 Tk 覆盖回去 ✗
+    try:
+        import ui_fit
+        ui_fit.allow_maximize(win)
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def guess_category(path):

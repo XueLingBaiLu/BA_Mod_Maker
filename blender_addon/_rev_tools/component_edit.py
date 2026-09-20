@@ -22,7 +22,10 @@ import os
 import struct
 import sys
 
-sys.stdout.reconfigure(encoding="utf-8")
+try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # ⛔ 路径必须是 `HERE/..`，不能是 `HERE/../..`：
@@ -36,7 +39,15 @@ for _p in (os.path.abspath(os.path.join(HERE, "..", "_unitypy")), HERE):
     if os.path.isdir(_p) and _p not in sys.path:
         sys.path.append(_p)
 
-PRISTINE = r"<工作目录>\备份\units_assets_all_3cc1eb58d8b7f6cdf82bbfbf3b5b8aaf.bundle"
+# ⛔ 2026-10 修（B 分支）：这里原来写死了备份包的 **32 位内容哈希**
+#   （`…3cc1eb58….bundle`），而游戏更新后磁盘上那份已经叫 `…1e6c04ce….bundle`
+#   ⇒ 路径失效；而 `UnityPy.load(<不存在的路径>)` **不报错**、只返回空 Environment ⇒
+#   表现成光秃秃的 `IndexError`（看着像代码 bug）✗ ⇒ 现在按 glob 解析。
+try:
+    from bundle_paths import units_bundle as _units_bundle
+    PRISTINE = _units_bundle(pristine=True) or ""
+except Exception:                                                     # noqa: BLE001
+    PRISTINE = ""
 
 
 # ---------------------------------------------------------------- 头部/工具

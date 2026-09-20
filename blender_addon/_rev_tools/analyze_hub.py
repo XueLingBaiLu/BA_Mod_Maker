@@ -36,8 +36,47 @@ import sys, os, struct
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from analyze_common import load_bundle, mb_header, resolve
 
-HUB_SCRIPT = 4665939560152279323
+HUB_SCRIPT_FALLBACK = 4665939560152279323      # ⚠ 随游戏版本变 ⇒ 只当**兜底**，不再是判据
+HUB_SCRIPT_NAME = "AnimationHub"
 NS_ANIM = "BrokenArrow.Client.Ecs.AnimationBehaviors"
+
+
+def resolve_hub_script(objs, log=None):
+    r"""**按类名**解析 AnimationHub 的 `m_Script` pathID（⛔ 不再写死）。
+
+    为什么要改（2026-10-16，用户点名的"写死点"）：
+      写死 pathID 的失败模式是**静默**的 —— 游戏更新后 pathID 变了，`--list` 一条都列不出来、
+      `print_hub` 拿错对象解析出垃圾，而**没有任何报错** ✗
+    ⇒ 现在：**先按类名找** `MonoScript`（`m_ClassName == AnimationHub`）；
+      找不到才退回硬编码值，并**明确打印"用的是兜底值、可能已过期"**；
+      两者都能拿到但**不一致**时也打印警告（提示硬编码值该更新了）✓
+    """
+    def say(m):
+        if log:
+            log(m)
+    by_name, by_pid = [], []
+    for o in objs:
+        if o.type.name != "MonoScript":
+            continue
+        try:
+            d = o.read()
+            cn = (getattr(d, "m_ClassName", "") or "").split(".")[-1]
+        except Exception:                                        # noqa: BLE001
+            continue
+        if cn == HUB_SCRIPT_NAME:
+            by_name.append(o.path_id)
+        if o.path_id == HUB_SCRIPT_FALLBACK:
+            by_pid.append(o.path_id)
+    if by_name:
+        pid = by_name[0]
+        if by_pid and pid != HUB_SCRIPT_FALLBACK:
+            say("⚠ 按类名解析出 %s = %d，而**硬编码的兜底值**是 %d ⇒ 兜底值已过期，建议更新"
+                % (HUB_SCRIPT_NAME, pid, HUB_SCRIPT_FALLBACK))
+        return pid
+    say("⚠ 这个包里没有名为 %s 的 MonoScript ⇒ 退回**硬编码** pathID %d"
+        "（⚠ 随游戏版本变，可能已过期；包里本来就没有它时也会走到这里）"
+        % (HUB_SCRIPT_NAME, HUB_SCRIPT_FALLBACK))
+    return HUB_SCRIPT_FALLBACK
 
 
 def read_str(buf, off):
@@ -162,12 +201,13 @@ def main(argv):
         return 1
     path = argv[0]
     _, sf, objs, by_pid = load_bundle(path)
+    hub_pid = resolve_hub_script(objs, log=print)
     if argv[1] == "--list":
         for o in objs:
             if o.type.name != "MonoBehaviour":
                 continue
             h = mb_header(o.get_raw_data())
-            if h and h[1] == HUB_SCRIPT and len(o.get_raw_data()) > 60:
+            if h and h[1] == hub_pid and len(o.get_raw_data()) > 60:
                 print(f"Hub pid={o.path_id} len={len(o.get_raw_data())} GO={h[0]} name={h[2]!r}")
         return 0
     pid = int(argv[1])

@@ -13,7 +13,10 @@ import os
 import sys
 import traceback
 
-sys.stdout.reconfigure(encoding="utf-8")
+try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)

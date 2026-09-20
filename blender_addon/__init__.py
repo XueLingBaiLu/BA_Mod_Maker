@@ -14,10 +14,15 @@
 # 必须是**纯字面量**（不能引用 ADDON_VERSION 变量）——所以下面的 version 是字面量，
 # 由 _rebuild_addon_zip.py 打包时从 version.py 自动同步（AUTO-SYNC 标记行）。
 # 运行时再 import version.py 做一致性核对，未同步时打印警告。
+# ★ 过渡说明（2026-09-18 中枢令 · 由子⑦ 落）：**用户面措辞＝中枢给定候选甲**（与 子⑤ exe 侧同批，
+#   ⛔ 不许只改一边）；第三处是 v1.12.3 已发 Change Log（⛔ 不改已发件，下批写更正）。
+#   位置 = 模块级常量（运行期可从 `blender_addon.TRANSITION_NOTE` 读到），并在「③ 工具」面板显示
+TRANSITION_NOTE = "本功能仍在 exe 侧正常提供；后续形态正在评估中，如有调整会提前说明。"
+
 bl_info = {
     "name": "BA Mod Maker（断箭模型工具）",
     "author": "BA Mod Maker",
-    "version": (2, 7, 112),  # AUTO-SYNC from version.py
+    "version": (2, 12, 9),  # AUTO-SYNC from version.py
     "blender": (4, 0, 0),
     "location": "3D View > 侧边栏 > BA Mod",
     "description": "提取游戏模型、可视化编辑挂载点、构建写回（全类型模型）",
@@ -55,12 +60,13 @@ except ImportError:
 import bpy
 import glob
 import os
+import sys          # ★ 2026-10 补：默认路径兜底/迁移要用 sys.path（原来没导入 ⇒ 一跑到就 NameError ✗）
 import time
 
 from mathutils import Matrix, Quaternion, Vector, Euler
 
 # Unity Y-up -> Blender Z-up 的基变换：C @ [x,y,z]^T = [x,-z,y]^T（正交，C^-1 = C^T）
-_UNITY_TO_BLENDER_M = Matrix(((1, 0, 0, 0), (0, 0, -1, 0), (0, 1, 0, 0), (0, 0, 0, 1)))
+_UNITY_TO_BLENDER_M = Matrix(((-1, 0, 0, 0), (0, 0, -1, 0), (0, 1, 0, 0), (0, 0, 0, 1)))  # ★㓓：det=−1（Unity 左手 ↔ Blender 右手之间必须差一个翻轴）
 
 from . import unitypy_bridge
 from . import mount_dict
@@ -209,6 +215,100 @@ def _on_auto_backup_update(self, context):
     b = _bp()
     if b is not None:
         b.set_backup_enabled(bool(self.auto_backup))
+
+
+def _migrate_paths_off_c(prefs=None, log=print):
+    r"""[路径-02] 启动时把**落在 C 盘 / 插件目录内**的输出路径自动迁到 D 盘。
+
+    为什么（用户反馈）：`out_bundle` / `unitypy_dir` 这些**旧值**一旦是 C 盘（或者指向插件安装目录
+    内部），用户会在 C 盘上堆出 GB 级产物（实测被白占 6.95 GB），而且插件升级/重装后路径就失效 ✗
+    v2.7.113 只改了**默认值**，**已存在的老值不会被自动修** ⇒ 本条补上"启动时迁移一次"。
+
+    判据（只动**输出类**路径，**绝不碰用户手选的游戏文件路径**）：
+      · 路径以 `C:` 开头（Windows），**或**位于插件安装目录内部 ⇒ 认定为"该迁"
+      · 迁到当前默认值（`_default_export_dir()`，D 盘优先）✓
+      · **原有的值先记进日志**（迁了什么、从哪到哪），随时能看 ✓
+    ⛔ 只迁空值/坏值之外的那些 **输出**字段：`bundle` 是**输入**（游戏文件），**不动** ✓
+    `prefs` 不给就去 `bpy.context.preferences` 里取 —— **留参数是为了可测**（无界面自测里插件可能
+    还没"启用"，拿不到偏好设置就完全没法验这条）✓
+    返回迁移过的字段列表。
+    """
+    p = prefs
+    try:
+        if p is None:
+            import bpy
+            add = bpy.context.preferences.addons.get(__name__)
+            p = add.preferences if add is not None else None
+        if p is None:
+            return []
+    except Exception:                                            # noqa: BLE001
+        return []
+    addon_dir = os.path.dirname(os.path.abspath(__file__))
+    # ⛔ "插件目录"取**产品根目录**（`blender_addon` 的上一级），不只 `blender_addon/`：
+    #   用户的输出落进产品目录里同样会被"升级/重装"冲掉，而且 `_rev_tools`/缓存都在那一层 ✗
+    prod_dir = os.path.dirname(addon_dir)
+    default_out = _default_export_dir()
+    moved = []
+    for field in ("out_bundle", "unitypy_dir", "rev_dir"):
+        try:
+            cur = getattr(p, field, "") or ""
+        except Exception:                                        # noqa: BLE001
+            continue
+        if not cur:
+            continue
+        ap = os.path.abspath(cur)
+        # ⛔ 用 `splitdrive` 而不是 `ap[1:3]`：`"C:\x"` 的 `[1:3]` 是 `":\\"`（第一版就错在这里，
+        #    结果"C 盘判定"恒为 False ⇒ 迁移**静默什么也不做**，测试当场报红）✗
+        drv = os.path.splitdrive(ap)[0].upper()
+        on_c = (drv == "C:")
+        inside_addon = (ap.lower().startswith(addon_dir.lower())
+                        or ap.lower().startswith(prod_dir.lower()))
+        if not (on_c or inside_addon):
+            continue
+        # 目标：out_bundle 是**文件**，其余是目录
+        new = os.path.join(default_out, "mod.bamod") if field == "out_bundle" else os.path.dirname(
+            default_out)
+        try:
+            setattr(p, field, new)
+        except Exception as e:                                   # noqa: BLE001
+            log("⚠ 路径迁移失败（%s）：%s" % (field, e))
+            continue
+        moved.append(field)
+        log("路径已迁移 %s：%s → %s（%s）"
+            % (field, cur, new, "在 C 盘" if on_c else "在插件目录内"))
+    return moved
+
+
+def _default_export_dir():
+    """插件导出的默认目录 —— **绝不落 C 盘**（2026-10 用户反馈修）
+
+    优先级：`BAMOD_HOME` → 产品统一入口 `mod_paths.exports()`（D 盘优先）→
+    游戏所在盘 `\\BrokenArrow_Mods\\exports` → `~\\BrokenArrow_Mods\\exports`
+    """
+    try:
+        # ★ 先试**同目录**（`mod_paths.py` 随插件一起装 ⇒ 发布包里也在）✓
+        try:
+            import mod_paths as _mp                         # noqa: PLC0415
+            return _mp.exports()
+        except ImportError:
+            pass
+        _prod = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if _prod not in sys.path:
+            sys.path.insert(0, _prod)
+        import mod_paths                                     # noqa: PLC0415
+        return mod_paths.exports()
+    except Exception:                                        # noqa: BLE001
+        env = os.environ.get("BAMOD_HOME")
+        if env:
+            return env
+        try:
+            g = detect_game_dir()
+        except Exception:                                    # noqa: BLE001
+            g = None
+        drv = os.path.splitdrive(os.path.abspath(g))[0] if g else ""
+        if drv and drv.upper() != "C:":
+            return os.path.join(drv + os.sep, "BrokenArrow_Mods", "exports")
+        return os.path.join(os.path.expanduser("~"), "BrokenArrow_Mods", "exports")
 
 
 class BAModPreferences(bpy.types.AddonPreferences):
@@ -392,8 +492,35 @@ class BAMOD_OT_AutoDetect(bpy.types.Operator):
             msg.append("输出目录")
         if not prefs.out_bundle:
             ext = ".bamod" if prefs.build_pack else ".bundle"
-            prefs.out_bundle = os.path.join(outdir or os.path.dirname(os.path.abspath(__file__)),
-                                            "units_turret_mod" + ext)
+            # ⛔ 2026-10 修：原先是 `outdir or os.path.dirname(__file__)` —— 后者是**插件自己的目录**，
+            #   而插件装在 `C:\Users\...\AppData\Roaming\Blender Foundation\Blender\<版本>\scripts\addons\…`
+            #   ⇒ 导出的 .bamod/.bundle（几十 MB）默认全落 **C 盘**（用户反馈"默认路径怎么都去 C 盘了"）✗
+            #   ⇒ 改成：**非 C 盘的** outdir 优先，否则用产品统一入口 `mod_paths`（D 盘优先）✓
+            out_dir = outdir
+            if out_dir and os.path.splitdrive(os.path.abspath(out_dir))[0].upper() == "C:":
+                out_dir = None
+            if not out_dir:
+                out_dir = None
+                try:                                   # 产品目录下的统一入口（发布包里也带）
+                    _prod = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                    if _prod not in sys.path:
+                        sys.path.insert(0, _prod)
+                    import mod_paths                       # noqa: PLC0415
+                    out_dir = mod_paths.exports()
+                except Exception:                          # noqa: BLE001
+                    # 兜底：环境变量 → 游戏盘的 \BrokenArrow_Mods → 用户目录
+                    out_dir = os.environ.get("BAMOD_HOME")
+                    if not out_dir:
+                        _g = detect_game_dir()
+                        _drv = os.path.splitdrive(os.path.abspath(_g))[0] if _g else ""
+                        out_dir = os.path.join(_drv + os.sep, "BrokenArrow_Mods", "exports") \
+                            if _drv and _drv.upper() != "C:" \
+                            else os.path.join(os.path.expanduser("~"), "BrokenArrow_Mods", "exports")
+                try:
+                    os.makedirs(out_dir, exist_ok=True)
+                except OSError:
+                    pass
+            prefs.out_bundle = os.path.join(out_dir, "units_turret_mod" + ext)
         if msg:
             self.report({"INFO"}, "已填充：" + "、".join(msg))
         else:
@@ -586,8 +713,16 @@ class BAMOD_OT_ImportPrefab(bpy.types.Operator):
         mesh_objs = []
         n_mesh = 0
         n_vert = 0
+        n_skip_lod = 0
+        skip_names = []
         for m in meshes:
             if prefs.only_lod0 and not m["is_lod0"]:
+                # ★★ v1.11.0（★⑯ 补充）：以前**静默跳过** ⇒ 用 `copy_full` 新加的零件（本例旋翼
+                #   `Ah_1z`）不在 prefab 的 LODGroup 里 ⇒ 默认根本导不进来、用户"找不到那个网格、
+                #   没法选中"，却看不到任何提示 ✗ ⇒ 至少**明确说一句**（跳过几个、叫什么、
+                #   怎么让它们出来）✓
+                n_skip_lod += 1
+                skip_names.append(tree[m["go"]]["name"] if m.get("go") in tree else "?")
                 continue
             try:
                 geo = extract_model.extract_mesh_geometry(prefs.bundle, m["mesh"])
@@ -633,6 +768,9 @@ class BAMOD_OT_ImportPrefab(bpy.types.Operator):
             # 注意：pid 是 int64（可能为负），Blender 的 ID 属性 int 只有 32 位 → 必须存字符串
             obj["ba_renderer_pid"] = str(m["renderer"])
             obj["ba_materials"] = [str(x) for x in (m.get("materials") or [])]
+            # ★v1.12.5（★㉖-续·B·甲）：记下**源材质的来历包** —— 导出时若它与"当前 bundle"不同
+            #   （＝跨包情形），就把该材质与其贴图的**源字节**一起带进清单（见 `_collect_mat_srcs`）
+            obj["ba_src_bundle"] = prefs.bundle or ""
             context.collection.objects.link(obj)
             for bn in bone_names:
                 if bn not in obj.vertex_groups:
@@ -686,6 +824,40 @@ class BAMOD_OT_ImportPrefab(bpy.types.Operator):
         #      且后面的「导入完成」提示与 `return {"FINISHED"}` 都跑不到 ✗
         #   ⇒ 整块已删除 ✓（步兵动画功能已下线，本就无需再收集剪辑列表 ✓）
         self.report({"INFO"}, "导入完成：%d 挂载点 / %d 网格 / %d 顶点" % (n_mounts, n_mesh, n_vert))
+        if n_skip_lod:
+            # ★⑯ 补充：把"被 LOD0 过滤掉"的零件**明说出来**（否则用户以为模型没导进来）
+            msg = ("有 %d 个网格因**不在 prefab 的 LODGroup 里**被「只导入 LOD0」跳过了：%s%s"
+                   " ⇒ 若其中就有你要改的零件（例如移植过来的旋翼），到插件偏好里**关掉"
+                   "「只导入 LOD0」**再导入一次即可（它们本来就不是 LOD 层级的一部分）"
+                   % (n_skip_lod, "、".join(skip_names[:6]),
+                      "…" if n_skip_lod > 6 else ""))
+            print("[导入] ⚠ " + msg)
+            self.report({"WARNING"}, msg)
+        # ★★ 追加令「甲」：**导入时消偏** —— 把父级逆变换整条链折平（自顶向下、连同子孙）
+        #   ⇒ `matrix_parent_inverse` 恒为单位 ⇒ **视图位置从第一步就等于游戏位置** ✓
+        #   ⛔ 只动 mpi（`game_matrix` ＝导出器口径逐对象不变）⇒ ⛔ 不改导出器行为（硬要求 a）
+        #   ⛔ 逐对象核算，任何一处对不上就回滚并点名（⛔ 不静默）
+        try:
+            _nrm = normalize_parent_inverse_topdown(
+                list(bpy_objs.values()) + list(mesh_objs) + ([arm_obj] if arm_obj else []))
+            import json as _json
+            context.scene["ba_import_normalize"] = _json.dumps(
+                {"checked": _nrm["checked"],
+                 "fixed": len(_nrm["fixed"]),
+                 "fixed_names": [x[0] for x in _nrm["fixed"]],
+                 "moved_m": [[x[0], round(x[3], 6)] for x in _nrm["fixed"]],
+                 "skipped": [[n, w] for n, w in _nrm["skipped"]]}, ensure_ascii=False)
+            if _nrm["fixed"] or _nrm["skipped"]:
+                print("[导入] 父级逆变换折平：检查 %d 个对象 ⇒ 折平 %d 处%s"
+                      % (_nrm["checked"], len(_nrm["fixed"]),
+                         ("" if not _nrm["skipped"] else
+                          "，跳过 %d 处（%s）" % (len(_nrm["skipped"]),
+                                                 "; ".join("%s：%s" % (n, w) for n, w in _nrm["skipped"][:3])))))
+                for _nm, _vb, _va, _mv in _nrm["fixed"]:
+                    print("      · %-28s 视图移动 %.4f m ⇒ 现在等于游戏位置" % (_nm, _mv))
+        except Exception as _e:                               # noqa: BLE001
+            print("[导入] ⚠ 父级逆变换折平失败（%s: %s）⇒ 视图可能与游戏不一致，请跑一次『一致性自检』"
+                  % (type(_e).__name__, _e))
         return {"FINISHED"}
 
 # ---------------------------------------------------------------------------
@@ -907,6 +1079,27 @@ class BAMOD_OT_TransferWeights(bpy.types.Operator):
 # ---------------------------------------------------------------------------
 # 面板
 # ---------------------------------------------------------------------------
+class BAMOD_OT_CopyPath(bpy.types.Operator):
+    """把 ① 面板里选中 prefab 的完整容器路径复制到剪贴板。"""
+
+    bl_idname = "ba_mod.copy_path"
+    bl_label = "复制路径"
+    bl_description = ("复制 ① 里所选 prefab 的完整容器路径到剪贴板"
+                      "（可直接粘到「新 prefab 内部路径」）")
+    bl_options = {"REGISTER"}
+
+    text: bpy.props.StringProperty(default="")
+
+    def execute(self, context):
+        t = (self.text or "").strip()
+        if not t:
+            self.report({"WARNING"}, "没有可复制的路径")
+            return {"CANCELLED"}
+        context.window_manager.clipboard = t
+        self.report({"INFO"}, "已复制路径：%s" % t)
+        return {"FINISHED"}
+
+
 class BAMOD_PT_Import(bpy.types.Panel):
     bl_label = "① 模型导入"
     bl_space_type = "VIEW_3D"
@@ -927,7 +1120,10 @@ class BAMOD_PT_Import(bpy.types.Panel):
             it = scene.bamod_prefabs[scene.bamod_prefab_index]
             if it.path:
                 box = layout.box()
-                box.label(text="实际路径：", icon="FILE_TEXT")
+                r = box.row(align=True)
+                r.label(text="实际路径：", icon="FILE_TEXT")
+                _op = r.operator("ba_mod.copy_path", text="复制路径", icon="COPYDOWN")
+                _op.text = it.path
                 box.label(text=it.path)
         layout.operator("ba_mod.import_prefab", icon="IMPORT")
 
@@ -961,11 +1157,731 @@ class BAMOD_PT_Mounts(bpy.types.Panel):
             cat = next((c for c in MOUNT_CATEGORIES if c["id"] == it.cat), None)
             box = layout.box()
             box.label(text="%s  —  %s" % (it.name, cat["name"] if cat else it.cat))
+        # ★⑬ 挑挂载点时最需要"游戏坐标"（视图不可信时的唯一依据）✓
+        layout.separator()
+        _draw_game_coord(layout, context)
+
+
+# ---------------------------------------------------------------------------
+# ★⑫/★⑬ 游戏坐标（父链复合后的位置）—— 显示 / 编辑 / 摊平父级逆变换
+#
+# 为什么需要（飞行ACV 实机教训，都是**实测**结论）：
+#   · Blender 视图里的"位置"是**局部 `loc`**；游戏读的是**沿父链复合后**的坐标。
+#     导出器**只累加各级 `loc`、完全忽略 `matrix_parent_inverse`**
+#     （实测：`Rotorangle_0` 的逆变换偏移 = `-body.loc`，构建产物里该节点世界位置 = `body.loc + loc`）
+#     ⇒ 两者只有在"链条无旋转 + 无父级逆变换"时才相等 ✗
+#   · 后果：**视图里在 A 处、游戏里在 B 处** —— "旋翼绕隐藏轴转"那轮排查全程被它误导
+#     （改完数值看视图，永远判不出对错）。
+#   · 网格还有一层：网格位置由导入时记下的 `obj["ba_mesh_export_matrix"]` 决定（不是 `matrix_world`）
+#     ⇒ 面板对网格必须显示**这个属性**，否则会给出让人误判的数。
+# ---------------------------------------------------------------------------
+def _basis_matrix(obj):
+    """对象的 `matrix_basis`（= loc/rot/scale 本身；**不含** `matrix_parent_inverse`）。"""
+    return obj.matrix_basis.copy()
+
+
+def game_matrix(obj):
+    r"""从根到 `obj` 沿父链连乘 `matrix_basis`（**不含** `matrix_parent_inverse`）。
+
+    ⛔ 通用式是**矩阵连乘**，不是"各级 loc 相加" —— 只有"全链无旋转"时两者才相等
+      （本项目恰好如此，所以早期用 Σloc 也得到同样结果）✓
+    """
+    chain = []
+    o = obj
+    while o is not None:
+        chain.append(o)
+        o = o.parent
+    m = Matrix.Identity(4)
+    for o in reversed(chain):
+        m = m @ _basis_matrix(o)
+    return m
+
+
+def game_coord(obj):
+    """★ 游戏里读到该节点的世界位置 = `game_matrix(obj).translation`。"""
+    if obj is None:
+        return None
+    return game_matrix(obj).translation.copy()
+
+
+def parent_game_matrix(obj):
+    """父链（到父级为止）复合后的矩阵 —— 反算 `loc` 就用它。"""
+    m = Matrix.Identity(4)
+    chain = []
+    o = obj.parent if obj is not None else None
+    while o is not None:
+        chain.append(o)
+        o = o.parent
+    for o in reversed(chain):
+        m = m @ _basis_matrix(o)
+    return m
+
+
+def has_nonuniform_scale_ancestor(obj):
+    """祖先链里有没有**非均匀缩放**（→ 摊平会把剪切丢掉，实测误差可达 0.2466）。
+
+    返回第一个有问题的对象名（没有则 None）。
+    """
+    o = obj
+    while o is not None:
+        s = o.scale
+        if abs(s[0] - s[1]) > 1e-4 or abs(s[1] - s[2]) > 1e-4 or abs(s[0] - s[2]) > 1e-4:
+            return o.name
+        o = o.parent
+    return None
+
+
+def has_nonidentity_parent_inverse(obj):
+    """这个对象自己有没有非单位 `matrix_parent_inverse`（→ 视图不可信）。"""
+    if obj is None:
+        return False
+    m = obj.matrix_parent_inverse
+    for r in range(4):
+        for c in range(4):
+            want = 1.0 if r == c else 0.0
+            if abs(m[r][c] - want) > 1e-6:
+                return True
+    return False
+
+
+def normalize_parent_inverse_topdown(objs, verify=True):
+    r"""把父级逆变换**折平**：自顶向下遍历给定子树，逐个把 `matrix_parent_inverse` 置为单位。
+
+    ★ 为什么要在**导入时**做（追加令「甲」）：导出器**只累加各级 loc、完全忽略
+      `matrix_parent_inverse`** ⇒ 链上只要有一处非单位逆变换，Blender 里看到的**位置**就与游戏不一致；
+      导入时把这条链折平 ⇒ **视图从第一步就等于游戏位置** ✓（用户原话要的就是这个）。
+
+    ⛔ 语义（与硬要求 (d) 对齐）：**只把 `mpi` 置单位，⛔ 不动 `loc/rot/scale`**
+      ⇒ `game_matrix()`（＝导出器口径）**逐对象逐元素不变** ✓，变的只是"视图位置"，而那正是要修的。
+      ⚠ 另一种写法（`basis := mpi @ basis; mpi := I`）会**保住视图**、却把游戏位置改掉 ⇒ ⛔ 不是本函数语义。
+
+    ⛔ 全链：给定对象**连同其全部子孙**一起遍历（父级有偏移时子级也一并处理，⛔ 不只平一层），
+      执行顺序＝**父先子后**。
+    ⛔ 跳过规则沿用现成算子：祖先链里有**非均匀缩放**时跳过（逆变换可能含剪切）并点名。
+    ⛔ 任何时候都不静默：`verify=True` 时逐对象核算"折前/折后 `game_matrix` 相同"，
+      对不上就**回滚该对象**并记进 skipped。
+
+    返回 dict：{"checked": N, "fixed": [(名, 折前视图, 折后视图, 位移量 m)], "skipped": [(名, 原因)]}
+    """
+    seen, stack = [], list(objs or [])
+    while stack:
+        o = stack.pop()
+        if o is None or o in seen:
+            continue
+        seen.append(o)
+        stack.extend([c for c in (list(getattr(o, "children", []) or []))])
+
+    def _depth(o):
+        d, p = 0, o.parent
+        while p is not None:
+            d += 1
+            p = p.parent
+        return d
+
+    seen.sort(key=_depth)                      # 父先子后
+    fixed, skipped = [], []
+    for o in seen:
+        if not has_nonidentity_parent_inverse(o):
+            continue
+        bad = has_nonuniform_scale_ancestor(o)
+        if bad:
+            skipped.append((o.name, "祖先 %s 是非均匀缩放 ⇒ 逆变换可能含剪切，跳过" % bad))
+            continue
+        keep = o.matrix_parent_inverse.copy()
+        gm_before = game_matrix(o)
+        view_before = o.matrix_world.translation.copy()
+        o.matrix_parent_inverse = Matrix.Identity(4)          # ★ 就是这一笔：只动 mpi
+        try:
+            bpy.context.view_layer.update()
+        except Exception:                                     # noqa: BLE001
+            pass
+        view_after = o.matrix_world.translation.copy()
+        if verify:
+            gm_after = game_matrix(o)
+            if not all(abs(gm_before[r][c] - gm_after[r][c]) <= 1e-9
+                       for r in range(4) for c in range(4)):
+                o.matrix_parent_inverse = keep                # ⛔ 回滚：绝不静默留错
+                skipped.append((o.name, "折平后 game_matrix 变了（已回滚）"))
+                continue
+        fixed.append((o.name, tuple(view_before), tuple(view_after),
+                      float((view_after - view_before).length)))
+    return {"checked": len(seen), "fixed": fixed, "skipped": skipped}
+
+
+
+
+
+def mesh_geo_center(obj):
+    r"""网格的**几何中心**（全部顶点世界坐标的平均，再按 `ba_mesh_export_matrix` 变换）。
+
+    ★ 这就是用户 `Shift+S → 游标 → 选中项` 量到的那个数；
+    ⛔ 网格的**对象原点根本不是几何中心**（实测：`Ah_1z.001` 的原点在 `(0,0,0)`，而桨盘顶点重心
+      在 z=3.78 处，差 3.78 m）⇒ 只显示"对象原点"会把用户带偏。
+    """
+    if obj is None or obj.type != "MESH" or not obj.data:
+        return None
+    em = obj.get("ba_mesh_export_matrix")
+    if em and len(em) == 16:
+        m = Matrix((em[0:4], em[4:8], em[8:12], em[12:16]))
+    else:
+        m = obj.matrix_world
+    n = len(obj.data.vertices)
+    if not n:
+        return None
+    acc = Vector((0.0, 0.0, 0.0))
+    for v in obj.data.vertices:
+        acc += m @ v.co
+    return acc / n
+
+
+def subtree_root_for_align(obj):
+    r"""★⑬ 的"对齐要加到哪个节点"：沿父链往上找**宿主骨骼**，返回**接缝节点**。
+
+    判定（与 `自制mod\_tools\spin_axis_check.py` 同一套）：沿父链往上走，
+    第一个拥有 ≥2 个子物体的节点 = 宿主骨骼 ⇒ **它的下一个节点**就是接缝节点（移植子树的最顶）。
+    ⛔ **别加到更下面的节点** —— 会双倍/反向偏（旋翼那轮就踩过）。
+    """
+    o = obj
+    prev = obj
+    while o is not None:
+        if len(o.children) >= 2:
+            return prev
+        prev = o
+        o = o.parent
+    return obj
+
+
+def _draw_game_coord(layout, context, node_name=None, box=None):
+    r"""★⑬ 画「游戏坐标」板块（**只读显示 + 一键编辑按钮**）。
+
+    ⛔ 为什么编辑用**算子弹窗**而不是面板里的三个数字框：`draw()` 里若每次都把存储属性从
+      `obj` 重新读一遍，用户正在输入的数字会被**立刻回弹覆盖**（Blender 面板经典坑）✗
+      ⇒ 算子 + `invoke_props_dialog` 天然没有这个问题，而且能按对象自动预填当前值 ✓
+    返回：`(文本, 是否一致)`。
+    """
+    obj = context.active_object
+    if obj is None:
+        return None, True
+    col = box or layout.box()
+    g = game_coord(obj)
+    view = obj.matrix_world.translation
+    mesh = mesh_geo_center(obj)
+    # ★[界面-02] ① 对齐：三行**必须同 icon**。原实现首行带 `icon="ORIENTATION_GLOBAL"`、
+    #   后两行不带 ⇒ 首行文字整体右移**一个图标宽**，三列数字在视觉上对不齐（用户点名）。
+    #   ⇒ 三行统一同一个 icon（同宽 ⇒ 文字左边界对齐）＋ 数字一律**定宽 `%+9.4f`**
+    #   （含符号位、宽度固定 ⇒ 小数点与 X/Y/Z 三列都对齐）。
+    _ci = "ORIENTATION_GLOBAL"
+    col.label(text="游戏坐标: X %+9.4f  Y %+9.4f  Z %+9.4f" % (g[0], g[1], g[2]), icon=_ci)
+    col.label(text="视图坐标: X %+9.4f  Y %+9.4f  Z %+9.4f" % (view[0], view[1], view[2]), icon=_ci)
+    if mesh is not None:
+        col.label(text="网格几何中心: X %+9.4f  Y %+9.4f  Z %+9.4f" % (mesh[0], mesh[1], mesh[2]),
+                  icon=_ci)
+    # ★[界面-02] ② 置灰**原因写进界面本身**，并把**已有入口挪到数字正下方**（数字视线内）。
+    #   产品不是"改不动"，而是**故意不在这三行做内联输入**：`draw()` 每次都会从 `obj` 重读，
+    #   用户正在输入的数字会被**立刻回弹覆盖**（Blender 面板经典坑，见本函数 docstring）。
+    #   ⇒ 编辑能力走算子弹窗 `ba_mod.set_game_coord`（`invoke_props_dialog`，按对象自动预填当前值）；
+    #   本次改写只负责让用户**看见它**（能力本来就有，只是原来被压在三条告警之后 = 看不见）。
+    col.label(text="（三行只读：面板内直接编辑会被 draw() 回弹覆盖 ⇒ 改坐标用下面按钮）", icon="INFO")
+    row = col.row(align=True)
+    row.operator("ba_mod.set_game_coord", text="✏ 输入游戏坐标…", icon="DRIVER")
+    if mesh is not None:
+        row.operator("ba_mod.align_to_mesh_center", text="对齐到网格中心", icon="SNAP_ON")
+    same = (g - view).length < 1e-4
+    if not same:
+        col.label(text="⚠ 两者不等 ⇒ 视图不可信（该对象带父级逆变换）", icon="ERROR")
+        if has_nonuniform_scale_ancestor(obj):
+            col.label(text="⚠ 祖先链里有非均匀缩放 ⇒ 摊平会丢剪切、已禁用", icon="ERROR")
+        else:
+            col.operator("ba_mod.flatten_parent_inverse", icon="MODIFIER")
+    col.label(text="（游戏坐标 = 父链复合后的位置，和「位置」那个 loc 不是一个东西）",
+              icon="INFO")
+    # ★25（v1.12.4 候选）：一键**场景级**一致性自检 —— 与上面的『摊平父级逆变换』**同面板并排**
+    #   （同族问题一次给用户：先自检看有几个不一致，再逐个摊平）
+    col.separator()
+    col.operator("ba_mod.selfcheck_xform", icon="CHECKMARK")
+    # ★㉔ 档1(1-d)：自检结果**在 UI 里可见**（汇总 ＋ 前 N 条明细 ＋ 判不了 ＋ 边界句）
+    _sr = None
+    try:
+        import json as _json2
+        _raw2 = context.scene.get(XFORM_SELFCHECK_KEY)
+        _sr = _json2.loads(_raw2) if _raw2 else None
+    except Exception:                                               # noqa: BLE001
+        _sr = None
+    if _sr:
+        _n_bad, _n_unk = _sr.get("bad", 0), _sr.get("unknown", 0)
+        _n_disp = _sr.get("disp_export", 0)
+        col.label(text="自检：一致 %d ／ 显示≠导出 %d ／ 不一致 %d ／ 判不了 %d（分母 %d）"
+                  % (_sr.get("clean", 0), _n_disp, _n_bad, _n_unk, _sr.get("total", 0)),
+                  icon=("ERROR" if _n_bad else ("QUESTION" if (_n_unk or _n_disp) else "CHECKMARK")))
+        for _di in (_sr.get("disp_items") or [])[:5]:
+            col.label(text="  ◐ %s：%s（**需人判**）" % (_di.get("name"), _di.get("worst") or ""),
+                      icon="QUESTION")
+        for _it in (_sr.get("items") or [])[:5]:
+            col.label(text="  ✗ %s：%s" % (_it.get("name"), _it.get("worst") or ""), icon="DOT")
+        if _n_unk:
+            col.label(text="  ? 判不了：%s" % ", ".join(_sr.get("unknown_names") or []),
+                      icon="QUESTION")
+        col.label(text="⛔ Blender 侧口径一致 ≠ 实机一致（约束/动画不复现）", icon="INFO")
+    return ("X %.4f  Y %.4f  Z %.4f" % (g[0], g[1], g[2])), same
+
+
+class BAMOD_OT_SetGameCoord(bpy.types.Operator):
+    """★⑬ 输入**游戏坐标**（父链复合后的位置），插件内部反算 `loc`。"""
+    bl_idname = "ba_mod.set_game_coord"
+    bl_label = "设置游戏坐标（父链复合后的位置）"
+    bl_description = ("输入的目标是**游戏里读到的世界位置**；插件用父链矩阵反算 loc。"
+                      "⚠ 父级逆变换没清空时视图仍会对不上 ⇒ 先点「摊平父级逆变换」")
+    bl_options = {"REGISTER", "UNDO"}
+
+    gx: bpy.props.FloatProperty(name="X", default=0.0)
+    gy: bpy.props.FloatProperty(name="Y", default=0.0)
+    gz: bpy.props.FloatProperty(name="Z", default=0.0)
+    apply_to_seam: bpy.props.BoolProperty(
+        name="整额加到「接缝节点」", default=False,
+        description="勾上则把 Δ=(目标−当前) 整额加到移植子树最顶那个节点（宿主骨骼的下一个），"
+                    "而不是只改这一个节点")
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def invoke(self, context, event):
+        obj = context.active_object
+        g = game_coord(obj) or Vector((0, 0, 0))
+        self.gx, self.gy, self.gz = g[0], g[1], g[2]
+        return context.window_manager.invoke_props_dialog(self, width=320)
+
+    def execute(self, context):
+        obj = context.active_object
+        target = Vector((self.gx, self.gy, self.gz))
+        tgt_obj = subtree_root_for_align(obj) if self.apply_to_seam else obj
+        cur = game_coord(tgt_obj) or Vector((0, 0, 0))
+        delta = target - cur
+        if delta.length < 1e-9:
+            self.report({"INFO"}, "游戏坐标没变")
+            return {"FINISHED"}
+        wp = parent_game_matrix(tgt_obj)
+        try:
+            new_loc = wp.inverted() @ (game_coord(tgt_obj) + delta)
+        except ValueError:
+            self.report({"ERROR"}, "父链矩阵不可逆（含退化缩放？）⇒ 没法反算 loc")
+            return {"CANCELLED"}
+        tgt_obj.location = new_loc
+        # ⛔ 直写 `obj.location` 会覆盖约束/驱动的结果 ⇒ 带约束时要提示（不静默）
+        if len(tgt_obj.constraints):
+            self.report({"WARNING"}, "该对象有 %d 个约束：直接写 location 会覆盖约束结果"
+                                     % len(tgt_obj.constraints))
+        self.report({"INFO"}, "已设 %s 的游戏坐标 = (%.4f, %.4f, %.4f)"
+                    % (tgt_obj.name, target[0], target[1], target[2]))
+        return {"FINISHED"}
+
+
+class BAMOD_OT_AlignToMeshCenter(bpy.types.Operator):
+    """★⑬ 一键：把节点轴心对齐到**选中网格的几何中心**。"""
+    bl_idname = "ba_mod.align_to_mesh_center"
+    bl_label = "把节点轴心对齐到选中网格的几何中心"
+    bl_description = ("Δ = 网格几何中心 − 节点游戏坐标，整额加到移植子树最顶那个节点"
+                      "（⛔ 别加到更下面的节点，会双倍/反向偏）")
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.active_object is not None
+                and any(o.type == "MESH" for o in context.selected_objects))
+
+    def execute(self, context):
+        meshes = [o for o in context.selected_objects if o.type == "MESH"]
+        if not meshes:
+            self.report({"ERROR"}, "先选中一个网格")
+            return {"CANCELLED"}
+        c = mesh_geo_center(meshes[0])
+        if c is None:
+            self.report({"ERROR"}, "这个网格没有顶点（算不出几何中心）")
+            return {"CANCELLED"}
+        node = context.active_object if context.active_object.type != "MESH" else subtree_root_for_align(meshes[0])
+        tgt = subtree_root_for_align(node)
+        cur = game_coord(tgt)
+        delta = c - cur
+        tgt.location = parent_game_matrix(tgt).inverted() @ (cur + delta)
+        self.report({"INFO"}, "已把 %s 对齐到 %s 的几何中心（Δ=(%.4f, %.4f, %.4f)）"
+                    % (tgt.name, meshes[0].name, delta[0], delta[1], delta[2]))
+        return {"FINISHED"}
+
+
+class BAMOD_OT_FlattenParentInverse(bpy.types.Operator):
+    r"""★⑫ **摊平父级逆变换**：让 Blender 视图坐标 = 游戏坐标（**纯显示层，不改导出结果**）。
+
+    ⛔ 千万别用 Blender 的「物体 → 应用 → 父级逆变换」(`object.parent_inverse_apply`)：
+      它把逆变换**烧进 `loc`** ⇒ 视图是对齐了，但**导出结果跟着变 ⇒ 实机反而会偏** ✗
+    ✓ 正确做法 = `parent_clear(type='CLEAR_INVERSE')` 的等价操作：**只把 `matrix_parent_inverse`
+      归零、`loc` 一个字节都不动** ⇒ 导出器本来就不读它 ⇒ **构建产物完全不变** ✓
+    ⚠ 代价（实测，用户要知情）：**视图里对象会跳到游戏里的位置** —— 那正是这次操作的目的 ✓
+    ⚠ 安全阀：祖先链里有**非均匀缩放**时**跳过并警告**（逆变换含剪切，`loc/rot/scale` 表达不了，
+      实测误差 0.2466）✗
+    ⛔ 只对**选中对象**生效（不全局改）：那些部件本来就是新对象、无历史包袱 ✓
+    """
+    bl_idname = "ba_mod.flatten_parent_inverse"
+    bl_label = "摊平父级逆变换（让视图 = 游戏坐标）"
+    bl_description = ("把选中对象的『父级逆变换』归零（不改 loc）⇒ 视图位置从此等于游戏位置。"
+                      "导出结果不受影响（导出器本来就不读它）")
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return any(has_nonidentity_parent_inverse(o) for o in context.selected_objects)
+
+    def execute(self, context):
+        done, skipped, jumped = [], [], []
+        for o in list(context.selected_objects):
+            if not has_nonidentity_parent_inverse(o):
+                continue
+            bad = has_nonuniform_scale_ancestor(o)
+            if bad:
+                skipped.append("%s（祖先 %s 是非均匀缩放 ⇒ 逆变换可能含剪切，跳过）" % (o.name, bad))
+                continue
+            before_view = o.matrix_world.translation.copy()
+            o.matrix_parent_inverse = Matrix.Identity(4)
+            after_view = o.matrix_world.translation.copy()
+            if (after_view - before_view).length > 1e-6:
+                jumped.append("%s（视图跳了 %.4f m ⇒ 现在视图=游戏）"
+                              % (o.name, (after_view - before_view).length))
+            done.append(o.name)
+        for m in skipped:
+            self.report({"WARNING"}, m)
+        for m in jumped:
+            self.report({"INFO"}, m)
+        if not done:
+            self.report({"WARNING"}, "选中的对象里没有带父级逆变换的（没改任何东西）")
+            return {"CANCELLED"}
+        self.report({"INFO"}, "已摊平 %d 个对象：%s（loc 未改动 ⇒ 导出结果不变）"
+                    % (len(done), ", ".join(done[:6])))
+        return {"FINISHED"}
+
+
+# ★㉔ 档1：自检算子口径常量（⛔ 只读算子；三项阈值写在这里 ⇒ 引用时连口径一起引）
+XFORM_SELFCHECK_KEY = "ba_xform_selfcheck"          # 1-d：UI 明细落点（场景属性，JSON 串）
+XFORM_THRESH = {"pos_m": 1e-4, "rot_deg": 0.05, "scale_ratio": 1e-4}   # 位置 m ／ 朝向 ° ／ 缩放比
+XFORM_BOUNDARY = ("⛔ 边界：约束驱动节点（Aim/RotationConstraint）与动画在 Blender 侧**不复现** ⇒ "
+                  "本条只证「**Blender 侧口径一致**」，≠ 实机一致（最终姿态以游戏内为准）")
+
+
+def xform_delta(obj):
+    r"""★㉔ 档1(1-a)：逐对象算「视图」与「将写回的值」的**三项**偏差（⛔ 只读）。
+
+    返回 `(delta, why)`：
+      delta = {"pos_m": 米, "rot_deg": 度, "scale_ratio": 最大比值偏差}（单项算不出 ⇒ 该项 None）
+      why   = **算不出**时的原因串 ⇒ 调用方必须把这类对象计进「判不了 N」（⛔ 不静默丢）
+    ⛔ 不改任何 loc/rot/scale、不动 `matrix_parent_inverse`。
+    """
+    try:
+        gm = game_matrix(obj)
+    except Exception as e:                                            # noqa: BLE001
+        return None, "%s: %s" % (type(e).__name__, e)
+    view = obj.matrix_world
+    d = {"pos_m": None, "rot_deg": None, "scale_ratio": None}
+    try:
+        d["pos_m"] = float((gm.translation - view.translation).length)
+    except Exception:                                                 # noqa: BLE001
+        pass
+    try:
+        q = gm.to_quaternion().rotation_difference(view.to_quaternion())
+        a = float(q.angle)
+        d["rot_deg"] = float((a if a <= 3.14159265358979 else (6.28318530717959 - a)) * 57.29577951308232)
+    except Exception:                                                 # noqa: BLE001
+        pass
+    try:
+        sv, sg = view.to_scale(), gm.to_scale()
+        d["scale_ratio"] = float(max(abs(sg[i] - sv[i]) / max(abs(sg[i]), 1e-9) for i in range(3)))
+    except Exception:                                                 # noqa: BLE001
+        pass
+    return d, None
+
+
+def xform_display_export_delta(obj):
+    r"""★㉔ 档1(1-b·**甲**)：只对**带 `ba_mesh_export_matrix` 的网格**算「**显示 ≠ 导出**」三项差。
+
+    为什么单列一类：网格的**显示**矩阵 `matrix_world` 与**导出**用的矩阵 `ba_mesh_export_matrix`
+      在"带 root_bone 的网格"上**本来就不同**（导入时按 `world[rb] @ Mb` 做了**仅供显示**的调整）——
+      实测 AH-1Z 旋翼 `Ah_1z` 差 **0.014238 m**，而 `lod_0`／US-ACV 网格**等价**。
+    ⇒ 若照字面把它算进"不一致"，**原版模型（D1）会变红**；若直接忽略，又**把真差异吞掉**。
+    ⇒ 甲：**单列一类 M ＝「需人判的显示偏差」**（⛔ 本函数**不**、任何地方也**不许**自动判"设计内"）：
+      只有"**件内显式登记**"或"**人逐条判**"才能把它当设计内（见 doc 与本件说明页）。
+
+    返回 `(delta, why, has_export_matrix)`：没有 `ba_mesh_export_matrix` ⇒ `(None, None, False)`（不参与 M）。
+    ⛔ 只读。
+    """
+    em = None
+    try:
+        em = obj.get("ba_mesh_export_matrix")
+    except Exception:                                                 # noqa: BLE001
+        em = None
+    if not em or len(em) != 16:
+        return None, None, False
+    try:
+        from mathutils import Matrix as _M
+        m = _M((em[0:4], em[4:8], em[8:12], em[12:16]))
+        view = obj.matrix_world
+        d = {"pos_m": None, "rot_deg": None, "scale_ratio": None}
+        d["pos_m"] = float((m.translation - view.translation).length)
+        try:
+            q = m.to_quaternion().rotation_difference(view.to_quaternion())
+            a = float(q.angle)
+            d["rot_deg"] = float((a if a <= 3.14159265358979 else (6.28318530717959 - a)) * 57.29577951308232)
+        except Exception:                                             # noqa: BLE001
+            pass
+        try:
+            sv, se = view.to_scale(), m.to_scale()
+            d["scale_ratio"] = float(max(abs(se[i] - sv[i]) / max(abs(se[i]), 1e-9) for i in range(3)))
+        except Exception:                                             # noqa: BLE001
+            pass
+        return d, None, True
+    except Exception as e:                                            # noqa: BLE001
+        return None, "%s: %s" % (type(e).__name__, e), True
+
+
+class BAMOD_OT_SelfcheckXform(bpy.types.Operator):
+    """★25 一键一致性自检：**逐对象**比「视图」与「导出器将写进产物的值」。
+
+    判据（★25 定的硬项）：
+        `obj.matrix_world`  **vs**  `game_matrix(obj)`（＝从根沿父链连乘 `matrix_basis`，**不含**
+        `matrix_parent_inverse` —— 与导出器同口径）
+    ⇒ **逐项 diff 必须 = 0**；只要有一处 > 1e-4 m 就**点名**该对象并给出偏差与修法（旁边那个
+      「摊平父级逆变换」按钮），⛔ **不许全绿**。
+    ★ 负向对照＝任何一个带非单位 `matrix_parent_inverse` 的对象（例如 `Rotorangle_0`）都必须被抓出来。
+    ⛔ 本算子**只读**：不修改任何对象的 loc/rot/scale，也不动父级逆变换。
+    """
+    bl_idname = "ba_mod.selfcheck_xform"
+    bl_label = "一致性自检（视图 = 将写回的值？）"
+    bl_description = ("逐对象比『视图位置』与『导出器会写进产物的位置』（★24/★25 同族）："
+                      "不一致就点名，并提示用旁边『摊平父级逆变换』。⛔ 不修改任何东西")
+    bl_options = {"REGISTER"}
+
+    def execute(self, context):
+        import json as _json
+        rows, bad, unknown, disp = [], [], [], []
+        for o in bpy.data.objects:
+            d, why = xform_delta(o)
+            if d is None:
+                unknown.append((o.name, why))
+                print("[xform-selfcheck] ⚠ %s **算不出**（%s）⇒ 计进「判不了」（⛔ 不静默丢）"
+                      % (o.name, why))
+            else:
+                rows.append((o.name, d))
+                worst = None
+                if d["pos_m"] is not None and d["pos_m"] > XFORM_THRESH["pos_m"]:
+                    worst = "位置 %.4f m" % d["pos_m"]
+                if d["rot_deg"] is not None and d["rot_deg"] > XFORM_THRESH["rot_deg"]:
+                    worst = (worst + " ／ " if worst else "") + "朝向 %.3f°" % d["rot_deg"]
+                if d["scale_ratio"] is not None and d["scale_ratio"] > XFORM_THRESH["scale_ratio"]:
+                    worst = (worst + " ／ " if worst else "") + "缩放比偏差 %.6f" % d["scale_ratio"]
+                if worst:
+                    bad.append((o.name, d, worst))
+            # ★1-b(甲)：网格的「显示 ≠ 导出」单列一类（M）—— ⛔ 不算进"不一致"，但也**不许藏**
+            de, dwhy, has_em = xform_display_export_delta(o)
+            if has_em:
+                if de is None:
+                    disp.append((o.name, None, "读不出（%s）⇒ 需人判" % (dwhy or "未知")))
+                else:
+                    dw = None
+                    if de["pos_m"] is not None and de["pos_m"] > XFORM_THRESH["pos_m"]:
+                        dw = "位置差 %.4f m" % de["pos_m"]
+                    if de["rot_deg"] is not None and de["rot_deg"] > XFORM_THRESH["rot_deg"]:
+                        dw = (dw + " ／ " if dw else "") + "朝向差 %.3f°" % de["rot_deg"]
+                    if de["scale_ratio"] is not None and de["scale_ratio"] > XFORM_THRESH["scale_ratio"]:
+                        dw = (dw + " ／ " if dw else "") + "缩放比差 %.6f" % de["scale_ratio"]
+                    if dw:
+                        disp.append((o.name, de, dw))
+        total = len(rows) + len(unknown)          # ★1-c：**判不了计入分母**（⛔ 不许静默丢）
+        _row_names = {r[0] for r in rows}
+        # ★(a)：一致 N ＝ **既不是不一致、也不是"显示≠导出"、也不是判不了**（三计数互斥、与分母可加：
+        #   N + M + K + 判不了 = 分母）—— 第一版没扣 M，导致 AH-1Z 出现「一致 129 ｜ 显示≠导出 1」（129+1≠129）✗
+        n_clean = len(rows) - len(bad) - len([1 for n, _d, _w in disp if n in _row_names])
+        # ⚠ 措辞必须保住门禁解析器认的形状：`比较对象 N 个 ｜ 不一致 N 个`（**带「个」**）
+        print("[xform-selfcheck] 比较对象 %d 个 ｜ 不一致 %d 个 ｜ 一致 %d ｜ 显示≠导出 %d（需人判）｜ "
+              "判不了 %d ｜ 分母 %d"
+              % (total, len(bad), n_clean, len(disp), len(unknown), total))
+        print("[xform-selfcheck] 口径＝位置>%.0e m／朝向>%.2f°／缩放比>%.0e ｜ ⛔ 显示≠导出**不自动判设计内**"
+              % (XFORM_THRESH["pos_m"], XFORM_THRESH["rot_deg"], XFORM_THRESH["scale_ratio"]))
+        for n, d, w in sorted(bad, key=lambda x: -(x[1]["pos_m"] or 0.0))[:24]:
+            print("   ✗ %-30s %s ⇒ 用『摊平父级逆变换』修（先选中它）" % (n, w))
+        for n, _d, w in disp[:12]:
+            print("   ◐ %-30s 显示≠导出：%s ⇒ **需人判**（⛔ 不自动当设计内）" % (n, w))
+        for n, why in unknown[:12]:
+            print("   ? %-30s **判不了**：%s" % (n, why))
+        if unknown:
+            print("   ⓘ 判不了 %d 个（分母已含）⇒ ⛔ 不得据此判绿其余部分" % len(unknown))
+        rep = {"total": total, "clean": n_clean, "bad": len(bad), "unknown": len(unknown),
+               "disp_export": len(disp), "thresh": dict(XFORM_THRESH), "boundary": XFORM_BOUNDARY,
+               "items": [{"name": n, "worst": w, "pos_m": d["pos_m"], "rot_deg": d["rot_deg"],
+                          "scale_ratio": d["scale_ratio"]} for n, d, w in bad[:5]],
+               "disp_items": [{"name": n, "worst": w} for n, _d, w in disp[:5]],
+               "unknown_names": [n for n, _w in unknown[:5]]}
+        try:
+            context.scene[XFORM_SELFCHECK_KEY] = _json.dumps(rep, ensure_ascii=False)
+        except Exception as e:                                          # noqa: BLE001
+            print("⚠ [xform-selfcheck] 结果写场景属性失败（UI 明细会看不到）：%s: %s"
+                  % (type(e).__name__, e))
+        if total == 0:
+            # ★㉔ D4 空集守卫：0 对象 ⇒ **判不了**，⛔ 不许报绿
+            self.report({"WARNING"}, "一致性自检：**0 个对象 ⇒ 判不了**（空场景／没有可比对象；⛔ 不报绿）")
+            return {"FINISHED"}
+        _disp_txt = "；".join("%s（%s）" % (n, w) for n, _d, w in disp[:5])
+        if bad or unknown:
+            # ⚠ 只有"不一致 / 判不了"才走 WARNING；**M（显示≠导出）不影响是否报绿** ——
+            #   但按中枢收紧(a)：**M 必须在结论行里点数＋点名**（⛔ 不许藏，也⛔ 不许自动当设计内）
+            parts = ["比较对象 %d 个 ｜ 一致 %d ｜ **显示≠导出 %d** ｜ **不一致 %d 个**"
+                     % (total, n_clean, len(disp), len(bad))]
+            if unknown:
+                parts.append("**判不了 %d 个**（分母 %d）" % (len(unknown), total))
+            if bad:
+                parts.append("不一致：%s" % "；".join("%s（%s）" % (n, w) for n, _d, w in bad[:5]))
+            if disp:
+                parts.append("显示≠导出（**需人判**，⛔ 不自动当设计内）：%s" % _disp_txt)
+            if unknown:
+                parts.append("判不了：%s" % ", ".join(n for n, _w in unknown[:5]))
+            self.report({"WARNING"}, "一致性自检：" + "。".join(parts))
+            return {"FINISHED"}
+        self.report({"INFO"}, "一致性自检：**全绿**（比较对象 %d 个 ｜ 一致 %d ｜ 显示≠导出 %d ｜ 不一致 0；"
+                    "位置/朝向/缩放三项一致）%s  ⓘ 全部对象都可判"
+                    % (total, n_clean, len(disp),
+                       ("；**显示≠导出（需人判，⛔ 不自动当设计内）**：" + _disp_txt) if disp else ""))
+        return {"FINISHED"}
+
+
 
 
 # ---------------------------------------------------------------------------
 # ④ 构建写回（场景 -> prefab）
 # ---------------------------------------------------------------------------
+_SRC_ENV_CACHE = {}       # ★v1.12.5：源 bundle 路径 -> (env, objs, by_pid)（⛔ 只在本进程内复用）
+
+
+def _src_env(bundle):
+    r"""按需加载"源 bundle"并缓存（跨包带源时才用；⛔ 不写盘、⛔ 不改包）。"""
+    if bundle in _SRC_ENV_CACHE:
+        return _SRC_ENV_CACHE[bundle]
+    import UnityPy
+    env = UnityPy.load(bundle)
+    objs = list(list(env.objects)[0].assets_file.objects.values()) if list(env.objects) else []
+    _SRC_ENV_CACHE[bundle] = (env, objs, {o.path_id: o for o in objs})
+    return _SRC_ENV_CACHE[bundle]
+
+
+def _read_src_material_bytes(src_bundle, pid, name):
+    r"""★v1.12.5（★㉖-续·B·甲）：从**源 bundle** 读出该材质 raw ＋ 每张图的 raw ＋ **真实 resS 字节**。
+
+    返回 dict（可直接当 `mat_srcs` 的一项）：成功含 `raw_b64`；失败含 `why`（⛔ 不静默）。
+    ⚠ 贴图是**流式**的（`m_StreamData → archive:/CAB-…/….resS`）⇒ 必须连带**字节**，
+      只带对象 raw 的话目标包里没有那个 CAB ⇒ 游戏里照样缺图（这是本作最容易踩的坑）。
+    """
+    import base64 as _b64
+    out = {"pid": int(pid), "name": name}
+    try:
+        _env, objs, by_pid = _src_env(src_bundle)
+    except Exception as _e:                                            # noqa: BLE001
+        out["why"] = "源 bundle 打不开（%s: %s）" % (type(_e).__name__, _e)
+        return out
+    o = by_pid.get(int(pid))
+    if o is None and name:
+        for _o in objs:
+            if getattr(_o.type, "name", "") != "Material":
+                continue
+            try:
+                if getattr(_o.read(), "m_Name", None) == name:
+                    o = _o
+                    break
+            except Exception:                                          # noqa: BLE001
+                continue
+    if o is None:
+        out["why"] = "源 bundle 里找不到该材质（pid=%s / 名 %r）" % (pid, name)
+        return out
+    try:
+        out["name"] = getattr(o.read(), "m_Name", None) or name
+        out["raw_b64"] = _b64.b64encode(o.get_raw_data()).decode("ascii")
+    except Exception as _e:                                            # noqa: BLE001
+        out["why"] = "源材质 raw 取不出（%s: %s）" % (type(_e).__name__, _e)
+        return out
+    texs = []
+    try:
+        _env2, _objs2, by_pid2 = _src_env(src_bundle)
+        d = o.read()
+        sp = getattr(d, "m_SavedProperties", None)
+        envs = list(getattr(sp, "m_TexEnvs", []) or []) if sp is not None else []
+        import tex_stream as _TS
+        for te in envs:
+            try:
+                t = te[1].m_Texture
+                tp = int(getattr(t, "m_PathID", 0) or 0) if t is not None else 0
+            except Exception:                                          # noqa: BLE001
+                tp = 0
+            if not tp:
+                continue
+            row = {"prop": str(te[0]), "src_pid": tp, "name": None, "raw_b64": None,
+                   "bytes_b64": None, "why": None}
+            to = by_pid2.get(tp)
+            if to is None:
+                row["why"] = "源 bundle 里没有这张图"
+                texs.append(row)
+                continue
+            try:
+                row["name"] = getattr(to.read(), "m_Name", None)
+                row["raw_b64"] = _b64.b64encode(to.get_raw_data()).decode("ascii")
+            except Exception as _e:                                    # noqa: BLE001
+                row["why"] = "图 raw 取不出（%s: %s）" % (type(_e).__name__, _e)
+                texs.append(row)
+                continue
+            try:
+                info = _TS.stream_info(to)
+                nb = _TS.read_stream_bytes(src_bundle, info, sf=to.assets_file)
+                if nb:
+                    row["bytes_b64"] = _b64.b64encode(bytes(nb)).decode("ascii")
+                else:
+                    row["why"] = "该图没有流式字节可取（可能本来就是内联图）"
+            except Exception as _e:                                    # noqa: BLE001
+                row["why"] = "流式字节读取失败（%s: %s）" % (type(_e).__name__, _e)
+            texs.append(row)
+    except Exception as _e:                                            # noqa: BLE001
+        out["why"] = "列源材质的贴图依赖失败（%s: %s）" % (type(_e).__name__, _e)
+        return out
+    out["texs"] = texs
+    return out
+
+
+def _collect_mat_srcs(obj, pids, names):
+    r"""★v1.12.5（★㉖-续·B·甲）→ `mat_srcs` 列表（**向后兼容**：同包时只有 pid/名，老消费方不用管）。"""
+    try:
+        prefs = _prefs(bpy.context)
+        cur = prefs.bundle or ""
+    except Exception:                                                  # noqa: BLE001
+        cur = ""
+    src = ""
+    try:
+        src = obj.get("ba_src_bundle") or bpy.context.scene.get("ba_copy_source_bundle") or ""
+    except Exception:                                                  # noqa: BLE001
+        src = ""
+    out = []
+    for i, pid in enumerate(pids or []):
+        nm = names[i] if i < len(names) else None
+        # ★★ v1.12.9（★㉖-续·D **第二处根因**）：**同包也必须带字节**
+        #   旧写法（本条修前）：`if not src or not cur or normcase(src)==normcase(cur): out.append({pid,name}); continue`
+        #     ⇒ 「导入包 ＝ 构建包」时**只带 pid/名、⛔ 不带字节** ⇒ 消费侧拿不到材质 raw ⇒ 产物 `m_Materials` 可能悬空。
+        #   新写法：源包为空（来历不明/同包）⇒ **退回当前包当源**，**一律**经 `_read_src_material_bytes` 现场取「材质 raw ＋ 其贴图」。
+        _s = src or cur
+        if not _s:
+            out.append({"pid": int(pid), "name": nm})                  # 连当前包都没有 ⇒ 只带 pid/名（消费侧安全网仍在）
+            continue
+        ent = _read_src_material_bytes(_s, pid, nm)
+        if ent.get("why"):
+            print("⚠ 跨包源材质 %r（pid=%s）带源失败：%s ⇒ 清单里已标注（copy_full 会走安全网）"
+                  % (nm, pid, ent["why"]))
+        else:
+            print("✓ 跨包源材质 %r（pid=%s）已带源：材质 raw ＋ 图 %d 张（含流式字节 %d 张）"
+                  % (ent.get("name"), pid, len(ent.get("texs") or []),
+                     sum(1 for x in (ent.get("texs") or []) if x.get("bytes_b64"))))
+        out.append(ent)
+    return out
+
+
 class BAMOD_OT_BuildModel(bpy.types.Operator):
     bl_idname = "ba_mod.build_model"
     bl_label = "构建写回（挂载点树 + 网格 → prefab）"
@@ -1043,7 +1959,7 @@ class BAMOD_OT_BuildModel(bpy.types.Operator):
         weights = []
         for v in me.vertices:
             p = mw @ v.co
-            positions.append((p.x, p.z, -p.y))
+            positions.append((-p.x, p.z, -p.y))  # ★㓓：导入映射的逆（同 det=−1 那一套）
             vg = sorted([(g.group, g.weight) for g in v.groups if g.group in gname_to_bone],
                         key=lambda kv: -kv[1])
             if len(vg) >= 2:
@@ -1071,10 +1987,32 @@ class BAMOD_OT_BuildModel(bpy.types.Operator):
         bone_names = [tree[i][0] for i in used]
         remap = {old: new for new, old in enumerate(used)}
         bones = [(remap[b0], remap[b1]) for b0, b1 in bones]
+        # ★26 完整修法：源材质 pid/名（供 copy_full 按 pid 绑定；读不到就留空并由打包侧出声）
+        _src_mat_pids, _src_mat_names = [], []
+        try:
+            for _x in (obj.get("ba_materials") or []):
+                try:
+                    _src_mat_pids.append(int(_x))
+                except Exception as _e:                                 # noqa: BLE001
+                    print("⚠ %s 的源材质 pid 读不出（%s）⇒ 略过该项" % (obj.name, type(_e).__name__))
+            for _slot in (obj.material_slots or []):
+                if _slot.material is None:
+                    continue
+                _nm = _slot.material.name
+                _src_mat_names.append(_nm.split("_", 1)[1] if _nm.startswith("SKIN0_") else _nm)
+        except Exception as _e:                                         # noqa: BLE001
+            print("⚠ 收集 %s 的源材质失败（%s: %s）⇒ 该网格材质将按缺失处理" % (obj.name, type(_e).__name__, _e))
         return {
             "name": _normalize_name(obj.name),
             "positions": positions, "triangles": triangles, "uv": uv,
             "bones": bones, "weights": weights, "bone_names": bone_names,
+            # ★26 完整修法（2026-09-18 中枢批准）：把**源材质的 pid/名**随网格带入清单
+            #   ⇒ copy_full 侧据此**按 pid 绑定**（⛔ 不再继承"本车材质"）。
+            #   `ba_materials` = 导入时记下的源包材质 pid；材质名去掉插件的 `SKIN0_` 前缀即源名。
+            "mats": _src_mat_pids, "mat_names": _src_mat_names,
+            # ★v1.12.5（★㉖-续·B·甲）：**导出侧带源** —— 跨包时把源材质与其贴图依赖的源字节一并带上
+            #   （同包只带 pid/名；copy_full 侧按 pid 命中 ⇒ ⛔ 不重复带入）
+            "mat_srcs": _collect_mat_srcs(obj, _src_mat_pids, _src_mat_names),
         }
 
     def _collect_meshes(self, root, tree):
@@ -1201,6 +2139,8 @@ class BAMOD_PT_Tools(bpy.types.Panel):
         prefs = _prefs(context)
         layout.prop(prefs, "build_pack")
         layout.prop(prefs, "copy_full")
+        # ★ 过渡说明（2026-09-18 中枢令）：整块复制/构建这一族的迁移预告，运行期在面板可见
+        layout.label(text=TRANSITION_NOTE, icon="INFO")
         layout.operator("ba_mod.build_model", icon="EXPORT")
         # v1.8.75：写回前会不会多出一份 GB 级 .bak —— 一眼可见（与 BA_Mod_Maker 共享配置）
         _buf = _bp()
@@ -3235,7 +4175,7 @@ class BAMOD_OT_ExportAnim(bpy.types.Operator):
     def invoke(self, context, event):
         import os
         if not self.filepath:
-            self.filepath = os.path.join(os.path.expanduser("~"), "anim_set.baanim")
+            self.filepath = os.path.join(_default_export_dir(), "anim_set.baanim")
         context.window_manager.fileselect_add(self)
         return {"RUNNING_MODAL"}
 
@@ -3712,6 +4652,10 @@ def _draw_anim_item_body(layout, context, i, b):
         op.index = i
         if b.target and b.target not in mount_names:
             col.label(text="⚠ 场景里没有节点 %s（挂接会失败）" % b.target, icon="ERROR")
+        # ★⑬ 这里才是真正"选自转轴 / 选挂点"的地方（本次旋翼踩坑就在这儿）⇒ 显示游戏坐标 ✓
+        tgt_obj = next((o for o in bpy.data.objects if _normalize_name(o.name) == b.target), None)
+        if tgt_obj is not None:
+            _draw_game_coord(col, context, box=col.box())
         r = ce.row(align=True)
         r.prop(b, "dir_x")
         r.prop(b, "dir_y")
@@ -4172,6 +5116,25 @@ class SKIN_Item(bpy.types.PropertyGroup):
     label: bpy.props.StringProperty(name="说明")
 
 
+class STREAMTEX_Item(bpy.types.PropertyGroup):
+    r"""★⑮ 候选贴图（**流式引用**那条路的贴图池）的一行。"""
+    name: bpy.props.StringProperty(name="贴图名")
+    detail: bpy.props.StringProperty(name="规格")
+    refs: bpy.props.IntProperty(name="材质引用数", default=0)
+
+
+class STREAMTEX_UL(bpy.types.UIList):
+    bl_idname = "BA_MOD_UL_stream_texts"
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            # ⛔ 0 引用的那张**可能**是死数据 —— KB 卡坑 3 纠正过："解码失败 ≠ 死数据"，
+            #   判死活要看**有没有材质引用**（`US_AH-1Z_3_BaseMap` 就被误判过：它其实是冬季迷彩）
+            #   ⇒ 行上直接把引用数摆出来，别让用户猜 ✓
+            layout.label(text=item.name, icon="IMAGE_DATA" if item.refs else "ERROR")
+            layout.label(text=item.detail)
+
+
 class SKIN_UL(bpy.types.UIList):
     bl_idname = "BA_MOD_UL_skins"
 
@@ -4502,7 +5465,10 @@ class BAMOD_OT_PackSkin(bpy.types.Operator):
                     textures.append({"name": tex["name"], "png": fp})
                 slots.append({"slot": tex["slot"], "png": fp})
             if slots:
-                replace_mats.append({"orig": mpid, "texs": slots})
+                # ★[★㉖-续·D P16] 皮肤包也要带**材质名**：消费侧才能在"自建包 pid 全变"时按名定位
+                #   （与 matswap 路 L5706 同口径；⛔ 既有键 `orig`/`texs` 语义不动 ⇒ 旧消费侧照样读）
+                replace_mats.append({"orig": mpid, "orig_name": m.get("name"),
+                                     "texs": slots})
         if not replace_mats:
             self.report({"ERROR"}, "贴图目录里没有与该皮肤材质匹配的 PNG（先导出皮肤贴图再编辑）")
             return {"CANCELLED"}
@@ -4521,10 +5487,16 @@ class BAMOD_OT_PackSkin(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def _model_default_mat_bindings(scene, by_pid):
-    """当前导入模型（枪械等无皮肤桥）的默认材质绑定：{mat_pid: {pid,name,tex}}。"""
+def _model_default_mat_bindings(scene, by_pid, objects=None):
+    """当前导入模型（枪械等无皮肤桥）的默认材质绑定：{mat_pid: {pid,name,tex}}。
+
+    ★ v1.9.1（★⑮）：`objects` 给定时只统计**这些物体**的材质 —— 勾了「只对选中对象生效」
+      就必须连材质一起收窄，否则车身材质也会被写进 manifest（虽然渲染器过滤保证了车身不会被改，
+      但包里会多出无用的材质克隆）✓
+    """
+    src = objects if objects is not None else scene.objects
     mat_pids = set()
-    for o in scene.objects:
+    for o in src:
         if "ba_renderer_pid" not in o:
             continue
         for x in (o.get("ba_materials") or []):
@@ -4554,6 +5526,51 @@ def _model_default_mat_bindings(scene, by_pid):
     return out
 
 
+class BAMOD_OT_ScanStreamTextures(bpy.types.Operator):
+    r"""★⑮：列出游戏包里可当「零件原机贴图」的**流式** `Texture2D`（不搬像素那条路）。"""
+    bl_idname = "ba_mod.scan_stream_textures"
+    bl_label = "列出候选贴图"
+    bl_description = ("从游戏包里列出**流式**贴图（★⑮：把它指给选中网格 ⇒ 包只大几十 KB，不搬像素）")
+    bl_options = {"REGISTER", "UNDO"}
+
+    def execute(self, context):
+        import tex_stream as ts
+        prefs = _prefs(context)
+        scene = context.scene
+        bundle = prefs.bundle
+        if not bundle or not os.path.isfile(bundle):
+            self.report({"ERROR"}, "请先在偏好里检测游戏目录（.bundle）")
+            return {"CANCELLED"}
+        q = (scene.bamod_stream_query or "").strip()
+        if not q:
+            self.report({"ERROR"}, "先填「搜索」—— 贴图名的一部分（例如 AH-1Z_viper）")
+            return {"CANCELLED"}
+        try:
+            cands = ts.list_textures(bundle, grep=q, streamed_only=True, limit=200)
+        except Exception as e:  # noqa: BLE001
+            self.report({"ERROR"}, "列候选失败：%s" % e)
+            return {"CANCELLED"}
+        scene.bamod_stream_texts.clear()
+        for c in cands:
+            it = scene.bamod_stream_texts.add()
+            it.name = c["name"]
+            it.refs = int(c.get("refs", 0))
+            it.detail = "%dx%d fmt=%d %.0fKB%s" % (
+                c["w"], c["h"], c["fmt"], c["size"] / 1024.0,
+                ("·引用%d" % it.refs) if it.refs else "·**无引用**")
+        if not cands:
+            self.report({"WARNING"}, "没找到名字带 %r 的**流式**贴图 —— 换个词，"
+                                     "或者那张图是内嵌的（那就用「PNG」那条路）" % q)
+            return {"CANCELLED"}
+        scene.bamod_stream_tex_index = 0
+        n_dead = sum(1 for c in cands if not c.get("refs"))
+        self.report({"INFO"}, "候选 %d 张%s —— 点一条，打包时把选中网格的基准色槽指向它"
+                    % (len(cands),
+                       ("（其中 %d 张**没有任何材质引用**，可能是死数据，慎重）" % n_dead)
+                       if n_dead else ""))
+        return {"FINISHED"}
+
+
 class BAMOD_OT_PackMatSwap(bpy.types.Operator):
     bl_idname = "ba_mod.pack_matswap"
     bl_label = "打包贴图替换包"
@@ -4563,49 +5580,217 @@ class BAMOD_OT_PackMatSwap(bpy.types.Operator):
     def execute(self, context):
         import pack_model as pm
         import skin_data as sd
+        import tex_stream as ts
         prefs = _prefs(context)
         scene = context.scene
         bundle = prefs.bundle
-        tex_dir = scene.bamod_skin_tex_dir
-        if not tex_dir or not os.path.isdir(tex_dir):
-            self.report({"ERROR"}, "请先填写贴图目录（先导出贴图再编辑）")
-            return {"CANCELLED"}
         out_path = scene.bamod_matswap_pack_path
-        if not out_path:
-            out_path = os.path.join(prefs.output_dir or tex_dir, "MATSWAP.bamod")
-        _, _objs, by_pid = sd._load_env(bundle)
-        mats = _model_default_mat_bindings(scene, by_pid)
-        if not mats:
+        sel_only = bool(scene.bamod_matswap_selected_only)
+        source = scene.bamod_matswap_tex_source or "png"
+        # ---- ① 目标渲染器：★⑮ 勾了「只对选中对象生效」就只取选中网格；不勾 = 整车 ----
+        host = [o for o in scene.objects if "ba_renderer_pid" in o]
+        if sel_only:
+            host = [o for o in host if o.select_get()]
+            if not host:
+                self.report({"ERROR"},
+                            "勾了「只对选中对象生效」，但视口里没选中任何已导入的网格 —— "
+                            "先在视口里选中要换材质的网格（例如旋翼），或者取消勾选（=整车一起换）")
+                return {"CANCELLED"}
+        renderer_pids = [int(o["ba_renderer_pid"]) for o in host]
+        if not renderer_pids:
             self.report({"ERROR"}, "场景里没有导入的模型（① 先导入枪械/模型）")
             return {"CANCELLED"}
-        renderer_pids = [int(o["ba_renderer_pid"]) for o in scene.objects
-                         if "ba_renderer_pid" in o]
+        _, _objs, by_pid = sd._load_env(bundle)
+        mats = _model_default_mat_bindings(scene, by_pid, objects=host)
+        if not mats:
+            self.report({"ERROR"}, "这些网格没有可换的材质（① 先导入模型并「默认材质」）")
+            return {"CANCELLED"}
+        # ★★ v1.11.0（★⑯）：`ba_renderer_pid`/`ba_materials` 是**源包**（units）的 pid，而导入目标
+        #   常常是**自建包**（`copy_full` 导入时**重分配过 pid**）⇒ 目标包里按 pid 一个都查不到 ✗
+        #   ⇒ 打包时把**网格名 + 材质名**一起写进 manifest，导入端才能按名字定位（而且抗重建）✓
+        renderer_info = []
+        for o in host:
+            mnames = []
+            for x in (o.get("ba_materials") or []):
+                info = mats.get(int(x))
+                if info and info.get("name") and info["name"] != "?":
+                    mnames.append(info["name"])
+            renderer_info.append({"pid": int(o["ba_renderer_pid"]), "go": o.name, "mats": mnames})
+        # ★★ ★⑰ 整车覆盖面：不勾「只对选中对象生效」时，**不只**取场景里那几个网格，
+        #   还要把 prefab 子树里**构建期生成**的渲染器（各级 LOD 克隆等）一起认进来 ——
+        #   它们不在 `.blend` 里，以前整车也换不到 ⇒ 用户**拉远/切低 LOD 时还是旧贴图** ✗
+        #   ⛔ 归属判不出来的一律**不动**并逐条打印原因（猜错=把 A 部件的图贴到 B 部件，更难发现）
+        #   ⛔⛔ **不许静默降级**（插件线 2026-09-16 只读核对指出的口子）：以前展开失败只 print 一行
+        #      "不影响建包" ⇒ 用户拿到的是"看着成功、覆盖面却退回旧行为"的包 ✗
+        #      ⇒ 现在三条一起做：① 明确 **WARNING 报告**（不是埋在日志里的 print）
+        #                      ② 失败/未换的原因**写进 manifest 的 `matswap.scope`**（随包留证，
+        #                         导入端与自检都读得到）③ 逐条列出"没换哪些 + 为什么" ✓
+        scope_used = {"mode": "scene_only", "reason": "未跑子树展开（勾了「只对选中对象生效」）"}
+        scope_warn = ""
+        if not sel_only:
+            try:
+                import matswap_scope as mss
+                res = mss.expand_owners(prefs.bundle, scene.get("ba_copy_source_path", ""),
+                                        [{"name": o.name} for o in host], log=print)
+                if res["assigned"]:
+                    have = set(renderer_pids)
+                    for a in res["assigned"]:
+                        if a["pid"] in have:
+                            continue
+                        renderer_pids.append(a["pid"])
+                        have.add(a["pid"])
+                        own = next((o for o in host if o.name == a["owner"]), None)
+                        om = []
+                        for x in ((own.get("ba_materials") if own else None) or []):
+                            info = mats.get(int(x))
+                            if info and info.get("name") and info["name"] != "?":
+                                om.append(info["name"])
+                        renderer_info.append({"pid": a["pid"], "go": a["go"], "mats": om})
+                    scope_used = {"mode": "subtree", "assigned": len(res["assigned"]),
+                                  "total": len(res["renderers"]),
+                                  "skipped": [{"go": s["go"], "mesh": s.get("mesh", ""),
+                                               "reason": s["reason"]} for s in res["skipped"]]}
+                    print("[★⑰] 整车覆盖面：prefab 子树 %d 个渲染器 ⇒ 归属 %d、按保守规则不动 %d"
+                          % (len(res["renderers"]), len(res["assigned"]), len(res["skipped"])))
+                    for s in res["skipped"]:
+                        print("[★⑰]   未换：%-24s 原因：%s" % (s["go"], s["reason"]))
+                    if res["skipped"]:
+                        scope_warn = ("★⑰ 整车覆盖面：这 %d 个渲染器**没换**（逐条原因见日志与包的 "
+                                      "matswap.scope.skipped）：%s"
+                                      % (len(res["skipped"]),
+                                         "；".join("%s（%s）" % (s["go"], s["reason"])
+                                                   for s in res["skipped"][:6])))
+                else:
+                    why = res.get("error") or "子树里没有可归属的渲染器"
+                    scope_used = {"mode": "scene_only", "reason": why,
+                                  "total": len(res.get("renderers") or [])}
+                    scope_warn = ("⛔ ★⑰ 本次**未能**展开构建期渲染器 ⇒ 覆盖面**退回旧行为**"
+                                  "（只改场景里的网格）：%s；**这台车 prefab 子树里不在 .blend 的那些"
+                                  "渲染器仍保持原材质**（远看 / 切低 LOD 可能还是旧贴图）" % why)
+                    print("[★⑰] " + scope_warn)
+            except Exception as e:  # noqa: BLE001
+                why = "%s: %s" % (type(e).__name__, e)
+                scope_used = {"mode": "scene_only", "reason": why}
+                scope_warn = ("⛔ ★⑰ 子树展开**出错** ⇒ 覆盖面**退回旧行为**（只改场景里的网格）：%s；"
+                              "**这台车 prefab 子树里不在 .blend 的渲染器仍保持原材质**"
+                              "（远看 / 切低 LOD 可能还是旧贴图）" % why)
+                print("[★⑰] " + scope_warn)
+        tex_dir = scene.bamod_skin_tex_dir
         replace_mats = []
         textures = []
         tex_seen = set()
-        for mpid, m in mats.items():
-            slots = []
-            for tex in m.get("tex") or []:
-                fp = os.path.join(tex_dir, tex["name"] + ".png")
-                if not os.path.isfile(fp):
+        if source == "stream":
+            # ---- ② 贴图来源 = 流式引用：把材质**基准色槽**指向游戏里已有的那张贴图 ----
+            idx = scene.bamod_stream_tex_index
+            if not (0 <= idx < len(scene.bamod_stream_texts)):
+                self.report({"ERROR"}, "先在「候选贴图」列表里点一条"
+                                       "（没有就先填搜索词 → 列出候选贴图）")
+                return {"CANCELLED"}
+            tex_name = scene.bamod_stream_texts[idx].name
+            cand_refs = int(scene.bamod_stream_texts[idx].refs)
+            if not cand_refs:
+                # ⛔ 不拦，但**必须说清楚**：这张在当前包里没有任何材质引用 —— 可能是死数据，
+                #   也可能只是"还没被谁用上"（我们本来就是要把它指给一个原本不引用它的零件）
+                #   KB 卡坑 3 的规矩：判死活看引用，不看解码成不成功 ✓
+                print("[★⑮] ⚠ 候选 %s 在当前包里**没有材质引用**（可能是死数据）—— "
+                      "若打进包后进游戏看不到图，就换一张有引用的" % tex_name)
+                self.report({"WARNING"}, "⚠ %s 在当前包里没有任何材质引用（可能是死数据）；"
+                                         "进游戏看不到图就换一张" % tex_name)
+            try:
+                item = ts.make_stream_item(bundle, tex_name)
+            except Exception as e:  # noqa: BLE001
+                self.report({"ERROR"}, "取流式引用失败：%s" % e)
+                return {"CANCELLED"}
+            textures.append({"name": tex_name, "stream": item["stream"]})
+            manual = (scene.bamod_matswap_stream_slot or "").strip()
+            skipped = []
+            for mpid, m in mats.items():
+                envs = [(t["slot"], t["name"]) for t in (m.get("tex") or [])]
+                slots = [manual] if manual else ts.pick_base_slots(envs)
+                slots = [s for s in slots if any(s == e[0] for e in envs)]
+                if not slots:
+                    skipped.append("%s(%s)" % (mpid, m.get("name")))
                     continue
-                if os.path.abspath(fp) not in tex_seen:
-                    tex_seen.add(os.path.abspath(fp))
-                    textures.append({"name": tex["name"], "png": fp})
-                slots.append({"slot": tex["slot"], "png": fp})
-            if slots:
-                replace_mats.append({"orig": mpid, "texs": slots})
-        if not replace_mats:
-            self.report({"ERROR"}, "贴图目录里没有与模型材质匹配的 PNG（先导出贴图再编辑）")
-            return {"CANCELLED"}
+                replace_mats.append({"orig": mpid, "orig_name": m.get("name"),
+                                     "texs": [{"slot": s, "name": tex_name, "stream": True}
+                                              for s in slots]})
+            if not replace_mats:
+                self.report({"ERROR"}, "这些材质里挑不出基准色槽（%s）—— 在「槽名」里手工填一个"
+                                       "（槽名见 ⑤→导出贴图 出来的文件名，或材质面板）"
+                             % "、".join(skipped[:4]))
+                return {"CANCELLED"}
+            if skipped:
+                print("[★⑮] 这些材质没挑出基准色槽、已跳过：%s" % "、".join(skipped))
+        else:
+            # ---- ② 贴图来源 = PNG 内嵌：贴图目录里文件名 == 槽的贴图名 ----
+            if not tex_dir or not os.path.isdir(tex_dir):
+                self.report({"ERROR"}, "请先填写贴图目录（先导出贴图再编辑）")
+                return {"CANCELLED"}
+            for mpid, m in mats.items():
+                slots = []
+                for tex in m.get("tex") or []:
+                    fp = os.path.join(tex_dir, tex["name"] + ".png")
+                    if not os.path.isfile(fp):
+                        continue
+                    if os.path.abspath(fp) not in tex_seen:
+                        tex_seen.add(os.path.abspath(fp))
+                        textures.append({"name": tex["name"], "png": fp})
+                    slots.append({"slot": tex["slot"], "png": fp})
+                if slots:
+                    replace_mats.append({"orig": mpid, "orig_name": m.get("name"), "texs": slots})
+            if not replace_mats:
+                self.report({"ERROR"}, "贴图目录里没有与这些材质匹配的 PNG（先「导出贴图」，"
+                                       "把图按**槽的贴图名**命名后放进该目录）")
+                return {"CANCELLED"}
+        if not out_path:
+            base = prefs.output_dir or tex_dir or os.path.dirname(bundle)
+            out_path = os.path.join(base, "MATSWAP.bamod")
         try:
             pm.create_matswap_pack(out_path, replace_mats, textures, renderer_pids,
-                                   scene.get("ba_copy_source_path", ""))
+                                   scene.get("ba_copy_source_path", ""),
+                                   tex_source=source, renderer_info=renderer_info,
+                                   scope=scope_used)          # ★⑰：整车按子树展开的标记
         except Exception as e:  # noqa: BLE001
             self.report({"ERROR"}, "打包失败：%s" % e)
             return {"CANCELLED"}
-        self.report({"INFO"}, "已打包 %s（%d 材质 / %d 贴图 / %d 渲染器）" % (
-            out_path, len(replace_mats), len(textures), len(renderer_pids)))
+        self.report({"INFO"}, "已打包 %s（%d 材质 / %d 贴图 / %d 渲染器%s%s）%s"
+                    % (out_path, len(replace_mats), len(textures), len(renderer_pids),
+                       "，只改选中的网格" if sel_only else "，整车",
+                       ("（含 prefab 子树里构建期生成的 %d 个）" % scope_used["assigned"])
+                       if scope_used.get("mode") == "subtree" else "",
+                       "；流式引用（不搬像素）" if source == "stream" else ""))
+        # ★★ ★⑰ 覆盖面**必须可见**（不许静默降级）：要么报"没换哪几个 + 为什么"，
+        #   要么报"这次没展开成 ⇒ 覆盖面退回旧行为"——都用 WARNING 报告（不是埋在日志的一行）✓
+        #   面板也留一份（`ba_matswap_last_scope_*`）：用户不看日志、只看面板也能看到 ✓
+        try:
+            if scope_used.get("mode") == "subtree":
+                _lines = ["★⑰ 整车覆盖面：prefab 子树 %s 个 ⇒ 归属 %s 个"
+                          % (scope_used.get("total"), scope_used.get("assigned"))]
+                for _s in (scope_used.get("skipped") or []):
+                    _lines.append("★⑰ 未换：%s —— %s" % (_s.get("go"), _s.get("reason")))
+                if len(_lines) == 1:
+                    _lines[0] += "（子树里的都归属上了）"
+                scene["ba_matswap_last_scope_text"] = "\n".join(_lines)[:900]
+                scene["ba_matswap_last_scope_bad"] = False
+            elif not sel_only:
+                scene["ba_matswap_last_scope_text"] = (
+                    "⛔ ★⑰ 本次**没展开** prefab 子树 ⇒ 覆盖面**退回旧行为**（只改场景里 %d 个网格）；"
+                    "原因：%s" % (len(renderer_pids), scope_used.get("reason", "?")))[:900]
+                scene["ba_matswap_last_scope_bad"] = True
+            else:
+                scene["ba_matswap_last_scope_text"] = ""
+                scene["ba_matswap_last_scope_bad"] = False
+        except Exception:  # noqa: BLE001
+            pass
+        if scope_warn:
+            self.report({"WARNING"}, scope_warn)
+        if scope_used.get("mode") != "subtree" and not sel_only:
+            self.report({"WARNING"},
+                        "本次**没有**按 prefab 子树展开（原因：%s）⇒ 只换了场景里那 %d 个网格；"
+                        "构建期生成的渲染器（LOD 各级克隆等）仍是原材质"
+                        % (scope_used.get("reason", "?"), len(renderer_pids)))
+        print("[★⑯] 包里已带网格名/材质名 ⇒ 导入到**自建包**（pid 被重分配）也能按名字定位：%s"
+              % "、".join(e["go"] for e in renderer_info[:6]))
         return {"FINISHED"}
 
 
@@ -4681,6 +5866,40 @@ class BAMOD_PT_Skin_Pack(bpy.types.Panel):
         box = layout.box()
         box.label(text="枪械/无皮肤模型：默认材质 → 导出贴图 → 改图 → 打包替换包", icon="INFO")
         box.prop(scene, "bamod_matswap_pack_path", text="替换包 .bamod")
+        # ★★ v1.9.1（★⑮）：把「只对选中对象生效」做成显式开关 —— 移植过来的零件
+        #   （例：ACV 上的 AH-1Z 旋翼）用它原机贴图，车身一个渲染器都不动 ✓
+        box.prop(scene, "bamod_matswap_selected_only", text="只对选中对象生效（不勾=整车）")
+        n_all = 0
+        n_sel = 0
+        for o in scene.objects:
+            if "ba_renderer_pid" not in o:
+                continue
+            n_all += 1
+            if o.select_get():
+                n_sel += 1
+        box.label(text="已导入网格 %d 个 / 选中 %d 个 ⇒ %s"
+                       % (n_all, n_sel,
+                          ("只换选中的那 %d 个" % n_sel) if scene.bamod_matswap_selected_only
+                          else "整车 %d 个一起换" % n_all),
+                  icon="RESTRICT_SELECT_OFF" if scene.bamod_matswap_selected_only else "INFO")
+        # ★★ ★⑰（插件线要求：**降级必须在面板上也看得见**，不能只躺在日志里）：
+        #   上次打包的覆盖面结果留在这两个 scene 属性里，面板直接显示 —— 用户不看日志也能看到
+        #   "整车到底换到几个 / 哪几个没换 / 是不是没展开成（退回旧行为）" ✓
+        _sc_txt = scene.get("ba_matswap_last_scope_text", "")
+        if _sc_txt:
+            _bad = scene.get("ba_matswap_last_scope_bad", False)
+            for _ln in _sc_txt.split("\n"):
+                box.label(text=_ln, icon="ERROR" if _bad else "CHECKMARK")
+        box.prop(scene, "bamod_matswap_tex_source", text="贴图来源")
+        if scene.bamod_matswap_tex_source == "stream":
+            box.prop(scene, "bamod_stream_query", text="搜索")
+            box.operator("ba_mod.scan_stream_textures", icon="VIEWZOOM")
+            box.template_list("BA_MOD_UL_stream_texts", "", scene, "bamod_stream_texts",
+                              scene, "bamod_stream_tex_index", rows=4)
+            box.prop(scene, "bamod_matswap_stream_slot", text="槽名（留空=自动挑基准色槽）")
+            box.label(text="流式引用：不搬像素，包只大几十 KB", icon="INFO")
+        else:
+            box.label(text="PNG：导出的图按**槽的贴图名**命名放进上面「贴图目录」", icon="INFO")
         box.operator("ba_mod.pack_matswap", icon="FILE_ARCHIVE")
 
 
@@ -5924,6 +7143,9 @@ class BAMOD_PT_Components(bpy.types.Panel):
     bl_region_type = "UI"
     bl_category = "BA Mod"
     bl_order = 11
+    # ★ 2026-10 第 74 轮（用户反馈）：**所有折叠栏默认都该是折叠的** ⇒ ⑧ 之前漏了这一行、
+    #   全插件只有它默认展开 ✗（用 `技术资料\scripts\audit_addon_panels.py` 在真 Blender 里扫出来的）
+    bl_options = {"DEFAULT_CLOSED"}
 
     def draw(self, context):
         layout = self.layout
@@ -6031,6 +7253,9 @@ CLASSES = [
     BAMOD_OT_RefreshPrefabs, BAMOD_OT_ImportPrefab,
     BAMOD_OT_RefreshMounts, BAMOD_OT_SelectMount,
     BAMOD_OT_AddMount, BAMOD_OT_RemoveMount,
+    # ★⑫/★⑬ v2.7.118：游戏坐标（显示 / 输入反算 loc / 对齐网格中心 / 摊平父级逆变换）
+    BAMOD_OT_SetGameCoord, BAMOD_OT_AlignToMeshCenter, BAMOD_OT_FlattenParentInverse,
+    BAMOD_OT_SelfcheckXform,        # ★25 v1.12.4 候选：一键一致性自检（与摊平按钮同一面板并排）
     BAMOD_OT_ComputeCRC, BAMOD_OT_TransferWeights,
     BAMOD_OT_BuildModel, BAMOD_OT_ReadAnimation,
     BAMOD_OT_AddAnimation, BAMOD_OT_RemoveAnimation,
@@ -6044,6 +7269,8 @@ CLASSES = [
     BAMOD_OT_SyncAnimText, BAMOD_OT_ValidateAnim,
     BAMOD_OT_ScanSkins, BAMOD_OT_ApplyDefaultMats, BAMOD_OT_ApplySkin,
     BAMOD_OT_ExportSkinTextures, BAMOD_OT_PackSkin, BAMOD_OT_PackMatSwap,
+    # ★ v1.9.1（★⑮）：候选贴图（流式引用那条路）
+    STREAMTEX_Item, STREAMTEX_UL, BAMOD_OT_ScanStreamTextures,
     # ⛔ v1.8.52：`BAMOD_OT_RefreshPoseBones` 已随 ⑥ 步兵姿势整段删除 ✓（此处引用一并移除 ✓）
     # ⛔ v1.8.51 已注销（步兵动画导入下线 ✓）：
     #   BAMOD_OT_ImportAnimation（导入动画到时间轴 ✗）
@@ -6072,6 +7299,7 @@ CLASSES = [
 
 
 def register():
+    bpy.utils.register_class(BAMOD_OT_CopyPath)
     import importlib
     import sys
     for mod in ("blender_addon.unitypy_bridge", "blender_addon.mount_dict"):
@@ -6100,6 +7328,14 @@ def register():
         _anim_rebuild_panels(bpy.context)
     except Exception as e:  # noqa: BLE001
         print("[BA Mod] 启动时重建行为子面板失败（忽略）：%s" % e)
+    # ★[路径-02] v2.7.118：把**落在 C 盘 / 插件目录内**的**输出**路径迁到 D 盘
+    #   （v2.7.113 只改了默认值，**已存在的老值不会被自动修** ⇒ 用户 C 盘上会攒 GB 级产物）
+    try:
+        _moved = _migrate_paths_off_c()
+        if _moved:
+            print("[BA Mod] 已自动迁移输出路径（%s）—— 原来在 C 盘/插件目录里" % ", ".join(_moved))
+    except Exception as e:  # noqa: BLE001
+        print("[BA Mod] 路径迁移失败（忽略，不影响使用）：%s" % e)
     if not hasattr(bpy.types.Scene, "bamod_prefabs"):
         bpy.types.Scene.bamod_prefabs = bpy.props.CollectionProperty(type=PREFAB_Item)
     bpy.types.Scene.bamod_prefab_index = bpy.props.IntProperty()
@@ -6127,6 +7363,24 @@ def register():
     bpy.types.Scene.bamod_matswap_pack_path = bpy.props.StringProperty(
         name="贴图替换包路径", subtype="FILE_PATH",
         description="枪械/模型贴图替换 .bamod 输出路径（在 BA_Mod_Maker 里导入）")
+    # ★★ v1.9.1（★⑮）：只对选中对象生效 + 贴图来源两条路
+    bpy.types.Scene.bamod_matswap_selected_only = bpy.props.BoolProperty(
+        name="只对选中对象生效", default=False,
+        description="勾上 = 只改**视口里选中**的那些网格的材质（移植零件的场景）；"
+                    "**不勾 = 整车**一起换（默认，与旧版一致）")
+    bpy.types.Scene.bamod_matswap_tex_source = bpy.props.EnumProperty(
+        name="贴图来源", default="png",
+        items=[("png", "PNG 内嵌（编辑过的贴图）", "把导出/编辑好的 PNG 打进包（RGBA32，占体积）"),
+               ("stream", "流式引用（原机贴图，包最小）",
+                "只建一个 Texture2D，m_StreamData 指向游戏 .resS 里的那一段 —— 不搬像素，包只大几十 KB")],
+        description="★⑮ 的两条贴图来源")
+    if not hasattr(bpy.types.Scene, "bamod_stream_texts"):
+        bpy.types.Scene.bamod_stream_texts = bpy.props.CollectionProperty(type=STREAMTEX_Item)
+    bpy.types.Scene.bamod_stream_tex_index = bpy.props.IntProperty()
+    bpy.types.Scene.bamod_stream_query = bpy.props.StringProperty(
+        name="搜索", description="按名字的一部分搜游戏包里的**流式**贴图（例如 AH-1Z_viper）")
+    bpy.types.Scene.bamod_matswap_stream_slot = bpy.props.StringProperty(
+        name="槽名", description="要换的纹理槽名；留空 = 自动挑基准色槽（贴图名带 BaseMap 的那个）")
     bpy.types.Scene.bamod_paint_stamp = bpy.props.StringProperty(
         name="印章图片", subtype="FILE_PATH",
         description="要贴到车上的图片（⑥ 涂装 → ③ 贴图片到车上）")
@@ -6234,6 +7488,10 @@ def unregister():
                  "bamod_anims", "bamod_anim_index", "bamod_skins", "bamod_skin_index",
                  "bamod_skin_tex_dir", "bamod_skin_new_id", "bamod_skin_pack_path",
                  "bamod_matswap_pack_path", "bamod_paint_stamp", "bamod_paint_fill",
+                 # ★ v1.9.1（★⑮）：只对选中对象生效 / 贴图来源 / 候选贴图池
+                 "bamod_matswap_selected_only", "bamod_matswap_tex_source",
+                 "bamod_stream_texts", "bamod_stream_tex_index",
+                 "bamod_stream_query", "bamod_matswap_stream_slot",
                  "bamod_paint_stamp_x", "bamod_paint_stamp_y", "bamod_paint_stamp_scale",
                  "bamod_paint_stamp_rot", "bamod_paint_stamp_alpha",
                  "bamod_paint_stamp_feather",

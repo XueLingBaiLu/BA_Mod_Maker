@@ -2,6 +2,1935 @@
 更新日志 · Changelog · Журнал изменений
 ================================================================================
 
+## v1.12.9
+
+**本版重点：界面那几处「一闪就没／白条／跳变」一次修净 —— 窗口从出现的第一眼就是正确的样子，不再有「先白后深」的过程。**
+（本版 exe v1.12.9 ＋ 插件 v2.12.9，两者请配套更新。）
+（★ **本版一并含未单独发布的 v1.12.8** —— 若你上次装的是 v1.12.7，这次会把两版一起带上；**v1.12.8 那一段就在下面**，细则看那里。）
+
+### 一、界面：一次修净，不再「先显示、再修正」
+- ★ **检索栏下面的候选列表不再一闪就消失**：以前它出现后会自己消失（还能看到白条变深的动画）；现在**出现就是最终的样子**，不会再自己走掉。
+- ★ **暗色是「一上来就是暗的」**：窗口第一次出现时**就已经是深色**，⛔ 不再有「先亮一下再变深」的过程。
+### 二、缺陷修复
+- ★ **同包时也会把材质的字节一并带上**：以前「导入包和构建包是同一个」时，材质**只记了名字、没带字节** ⇒ 产物里的材质引用会**指到包里没有的东西**；现在会**从源包现场把字节取来**，**引用不再悬空**。
+- ★ **悬浮小提示不再压住你正在看的那一行**：它现在**贴在被悬停那一行的旁边**（⛔ 不再盖住该行），且**同一时刻只留一个提示**。
+
+【English】
+**Highlights: the interface problems that made things flash away or leave a white strip, and the “white then dark” step, are fixed in one go — a window now looks right from the very first frame.**
+(This release ships exe v1.12.9 + addon v2.12.9 — please update both.)
+(★ This release also includes **v1.12.8, which was never published on its own** — if you last installed v1.12.7, you get both at once; **the v1.12.8 section is right below**, see there for details.)
+
+### 1. Interface: fixed in one go, no more “show first, correct later”
+- ★ **The suggestion list under the search bar no longer vanishes right after it appears**: it used to show up and then disappear on its own (you could even see the white strip turn dark); now it **appears in its final form** and stays.
+- ★ **Dark means dark from the start**: the window is **already dark the first time it appears** — there is no “bright then dark” step any more.
+### 2. Defect fixes
+- ★ **Material bytes are now carried over when the source and the build package are the same**: the material used to be recorded **by name only, with no bytes attached** ⇒ references in the output pointed at **something the package did not contain**; the bytes are now read from the source package on the spot, so **references no longer dangle**.
+- ★ **Hover tooltips no longer cover the row you are reading**: a tooltip now **sits beside the row you are hovering** (instead of covering it), and **only one tooltip is shown at a time**.
+
+【Русский】
+**Главное: проблемы интерфейса, из-за которых что-то мигало и исчезало, оставалась белая полоса, а также шаг «сначала белое, потом тёмное», исправлены разом — окно теперь выглядит правильно с первого кадра.**
+(В выпуске exe v1.12.9 + аддон v2.12.9 — обновляйте оба.)
+(★ В этот выпуск также входит **v1.12.8, который отдельно не выпускался** — если у вас был установлен v1.12.7, вы получите сразу оба; **раздел v1.12.8 идёт сразу ниже**, подробности там.)
+
+### 1. Интерфейс: исправлено разом, без «сначала показать, потом поправить»
+- ★ **Список подсказок под строкой поиска больше не исчезает сразу после появления**: раньше он появлялся и сам пропадал (было видно, как белая полоса становится тёмной); теперь он **появляется сразу в окончательном виде** и остаётся.
+- ★ **Тёмное — значит тёмное с самого начала**: окно **уже тёмное при первом появлении**, шага «сначала светлое, потом тёмное» больше нет.
+### 2. Исправление дефектов
+- ★ **Байты материала теперь переносятся и тогда, когда исходный пакет и пакет сборки — один и тот же**: раньше материал записывался **только по имени, без байтов** ⇒ ссылки в результате указывали на **то, чего в пакете нет**; теперь байты берутся из исходного пакета на месте, и **ссылки больше не висят**.
+- ★ **Всплывающая подсказка больше не закрывает строку, которую вы читаете**: теперь она **появляется рядом с той строкой, на которую наведён курсор** (а не поверх неё), и **одновременно показывается только одна подсказка**.
+
+## v1.12.8
+
+**本版重点：安装包里只剩一个模板了（它天生带图标骨架），建完包直接就能换图标；「我的 bundle」会记住你上次用的目录。**
+（本版 exe v1.12.8 ＋ 插件 v2.12.8，两者请配套更新。本版一并含 v1.12.7 的**系统标题栏改暗**与**产物侧校验假报警修复** —— 若你已装 v1.12.7，那两项已在。）
+
+### 一、不用再选模板了，交付件也少一件
+- ★ **不用再选模板**：以前建包时要选「用哪个模板」，图标骨架还是**单独一份**；现在安装包/源码包**只带一个模板**，它**天生带图标骨架** ⇒ **建完包直接就能换图标**（那个下拉**不再是空的**）。
+- ★ **模板里缺的 16 个脚本已补齐**：以前那份模板**自查就报「引用了包里没有的脚本」** ⇒ 那些组件会**悄悄失效**；现在补齐了，模板**不再有悬空引用**。
+- ★ **建包时不会再"自动长出一个模板"**：默认直接用模板里已带的那份骨架；万一找不到，会**明确告诉你**，而不是悄悄另造一个放进产品目录。
+### 二、记住上次选的目录
+- ★ **记住上次选的目录**：打开「我的 bundle」时会**自动填回你上次用的目录** ⇒ **不用每次重选**。
+### 三、命令行走批处理时，游戏目录必须显式给
+- ★ **必须显式写明游戏目录**：命令行那四个入口现在**要求**你给出游戏目录；**不给就直接拒绝**（不会再"悄悄"去写你正在玩的游戏目录）—— 这样工具就**不可能**在你玩游戏时动到游戏文件。
+### 四、合并包 / 皮肤包的几处修复
+- ★ **改过内部 id 的模型，皮肤包仍能对上**：皮肤包现在会记住材质的原始名字 ⇒ 即使 id 全变了也能按名定位。
+- ★ **合并「贴图替换包」时不再报"找不到原材质"**（这条以前会让合并直接失败）。
+- ★ **极少数情况下不再直接报错中断**：那种情况现在给出可读的处理指引；★ 指引里**不再写死版本号**（免得叫你去装一个还没发布的版本）。
+### 五、界面上的几处小修
+- ★ **检索栏的候选浮层不再被撑开**，也不会被挂上最大化按钮、或被迫套用暗色标题栏（它本来就没有标题栏）。
+- ★ **词典窗口的标题栏不再被反复设置**（以前会一遍遍补，看着像"打地鼠"），图标与文案风格也统一了。
+### 六、工具侧与门禁侧（随包）
+- 图标/文案风格统一、若干内部"兜底改为出声或记账"的分级改进、以及构建/打包脚本与只读审计工具的调整，随包发出。
+
+【English】
+**Highlights: the installer now ships a single template that already includes the icon skeleton (so you can swap icons right after creating a bundle), and the “My bundle” dialog remembers the folder you used last.**
+(This release ships exe v1.12.8 + addon v2.12.8 — please update both. It also includes the v1.12.7 changes — dark system title bars and the product-side check fix; if you already installed v1.12.7, those two are already in.)
+
+- ★ **No more template picking, and one less file to ship**: previously you had to choose which template to use, and the icon skeleton was a separate file; the installer/source package now ships a **single template** that **already includes the icon skeleton** ⇒ you can **swap icons right after creating the bundle** (that dropdown is no longer empty).
+- ★ **The 16 scripts the template was missing are now included**: the old template **failed its own self-check with “references scripts that are not inside the package”** ⇒ those components **silently did nothing**; they are now included, so the template **has no dangling references**.
+- ★ **No more “an extra template appears by itself”**: by default the tool uses the skeleton already inside the template; if it really cannot be found, it **tells you plainly** instead of quietly creating another copy inside the product folder.
+- ★ **Remembers your last folder**: the “My bundle” dialog now **pre-fills the folder you used last time** ⇒ no need to pick it again every time.
+- ★ **When driving the tool from the command line, the game folder must be given explicitly**: the four command-line entry points now **require** it; if you omit it, they **refuse to run** (they will no longer quietly write to the game folder you are playing from) — so the tool **cannot** touch your game files while you are playing.
+- ★ **Models with changed internal ids still match their skin packs**: a skin pack now remembers the material’s original name ⇒ it can be located by name even when every id has changed.
+- ★ **Merging a “texture replacement pack” no longer fails with “original material not found”** (this used to abort the merge).
+- ★ **In rare cases it no longer stops with a raw error**: you now get readable guidance instead; ★ the guidance **no longer hard-codes a version number** (so it will not tell you to install a build that is not out yet).
+- ★ **The search bar’s suggestion popup is no longer stretched**, and it no longer gets a maximise button or a dark title bar forced onto it (it has no title bar to begin with).
+- ★ **The dictionary window’s title bar is no longer set over and over** (it used to be re-applied repeatedly, which looked like whack-a-mole), and icon/text styling is now consistent.
+- Icons/text styling consistency, several internal “silent fallbacks now speak up or are accounted for” refinements, and adjustments to the build/packaging scripts and read-only audit tools ship with this release.
+
+【Русский】
+**Главное: в установочном пакете теперь один шаблон, который уже включает скелет иконок (менять иконки можно сразу после создания пакета), а диалог «Мой bundle» запоминает последнюю использованную папку.**
+(В выпуске exe v1.12.8 + аддон v2.12.8 — обновляйте оба. Сюда также входят изменения v1.12.7 — тёмные системные заголовки и исправление ложных срабатываний проверки; если v1.12.7 уже установлен, эти два пункта уже на месте.)
+
+- ★ **Больше не нужно выбирать шаблон, и на один файл меньше**: раньше при создании пакета нужно было выбрать, какой шаблон использовать, а скелет иконок шёл отдельным файлом; теперь установочный/исходный пакет содержит **один шаблон**, который **уже включает скелет иконок** ⇒ **менять иконки можно сразу после создания пакета** (этот выпадающий список больше не пустой).
+- ★ **16 отсутствовавших в шаблоне скриптов добавлены**: старый шаблон **не проходил самопроверку — «ссылается на скрипты, которых нет в пакете»** ⇒ такие компоненты **молча не работали**; теперь они включены, и в шаблоне **нет висячих ссылок**.
+- ★ **Больше не «появляется лишний шаблон сам собой»**: по умолчанию используется скелет, уже встроенный в шаблон; если его действительно не найти, инструмент **прямо об этом сообщит**, а не станет тихо создавать ещё одну копию в папке продукта.
+- ★ **Запоминает последнюю папку**: диалог «Мой bundle» теперь **подставляет папку, которую вы использовали в прошлый раз** ⇒ не нужно выбирать её заново каждый раз.
+- ★ **При запуске из командной строки папку игры нужно указывать явно**: четыре точки входа командной строки теперь **требуют** её; если не указать — они **откажутся работать** (больше не будут тихо писать в папку игры, из которой вы играете) ⇒ инструмент **не может** тронуть файлы игры, пока вы играете.
+- ★ **Модели с изменёнными внутренними id по-прежнему совпадают со своими скин-паками**: скин-пак теперь запоминает исходное имя материала ⇒ его можно найти по имени, даже если все id изменились.
+- ★ **Объединение «пака замены текстур» больше не падает с «исходный материал не найден»** (раньше это прерывало объединение).
+- ★ **В редких случаях больше нет грубого прерывания**: вместо этого выводится понятная подсказка; ★ в подсказке **больше не указан конкретный номер версии** (чтобы не отправлять вас ставить ещё не выпущенную сборку).
+- ★ **Всплывающий список подсказок в строке поиска больше не растягивается**, на него больше не вешают кнопку разворота и не навязывают тёмный заголовок (у него заголовка изначально нет).
+- ★ **Заголовок окна словаря больше не задаётся снова и снова** (раньше он применялся повторно, что выглядело как «игра в крота»), а стиль иконок и текста теперь единообразен.
+- Единообразие иконок/текста, несколько внутренних улучшений класса «тихие заглушки теперь сообщают о себе или учитываются», а также правки сборочных/упаковочных скриптов и инструментов только для чтения — входят в этот выпуск.
+
+## v1.12.7
+
+**本版重点：两条对话框的系统标题栏也改成暗色（浅色系统主题下不再是一条白条）；修掉「产物侧校验」在"导入后直接导出、不新增任何东西"那条真实路径上的假报警。**
+（本版 exe v1.12.7 ＋ 插件 v2.12.7，两者请配套更新。）
+
+### 一、系统标题栏改为暗色（你截图里的两条：「我的 bundle」／「数据库词典」）
+- ★ 以前只有**客户区**跟深色主题走：ttk 主题管不到**系统标题栏**（那是 Windows 的 DWM 画的）
+  ⇒ 在**浅色系统主题**下，这两处窗口顶部会是一条**白条**（你截图里的两条）。
+- ★ 现在**「我的 bundle」对话框**与**「数据库词典」**两条标题栏都切暗色。
+  同类对话框（含主窗口）走同一实现一并生效。
+- ★ 判据是**回读**出来的（不是"代码里写了"就算）：窗口建好后**读回 DWM 的暗色状态**必须为真；
+  另有**负向对照**（没处理过的窗口必须仍是亮的）⇒ 证明这条判据**能失败**。
+- ⚠ 这条只改**外观**：⛔ 不涉任何导出/打包行为。
+
+### 二、修掉「产物侧校验」的一条**假报警**（"没有新增任何东西"的真实路径）
+- ★ 症状：**导入后直接导出、什么都不新增**时，产物侧校验会**整体退化** ⇒ 报出
+  **一堆"读不出/不一致"（实测 43 条伪 mismatch、检查数 = 0）**，看起来像"产物坏了"。
+- ★ 根因（如实说）：**是回归夹具把它掩盖了** —— 原夹具**每次都塞一个新网格** ⇒ 永远走"有新增"那条分支；
+  而**真实路径**走的是另一条、那个变量**从未赋值** ⇒ 校验腿整体失效。
+- ★ 已修：**补上零覆盖守卫**（"有期望却检查 0 个"时**不许静默**）＋ 新增一条**专门跑这条真实路径**的回归
+  （**改前必须红、改后必须绿**，两向都验）。
+- ⇒ 影响：这条路径上的**假报警**没有了；真有问题时仍会**如实点名**。
+- ★ **若你以前见过这类假报警 ⇒ 那是工具的问题，不是你的模型。**
+
+### 三、工具侧与门禁侧（随包）
+- 门禁驱动器识别、KB-WARN 判据、冻结扫描的**归属分类**（把"出件链自己的产物"与"他人/异常写入"分开判）等若干改进随包。
+
+### 四、升级提示
+- ★ **先重装插件**：若你同时用 exe 与 Blender 插件，请**先更新 Blender 插件 v2.12.7** 再用 exe。
+- 插件请装发布目录里的 **`BA_Mod_Maker_blender_addon.zip`**。
+
+【English】
+**Highlights: the system title bars of two dialog windows are now dark as well (no more white strip under a light Windows theme); the product-side check no longer raises false alarms on the real “import then export, add nothing” path.**
+(This release ships exe v1.12.7 + addon v2.12.7 — please update both.)
+
+- ★ **Dark system title bar** for the two windows in your screenshot — the “My bundle” dialog and the “Database dictionary”: the ttk theme only covers the client area, while the title bar is drawn by Windows (DWM) ⇒ under a light system theme it showed as a **white strip**. Both title bars now switch to dark; dialogs of the same kind (including the main window) use the same implementation and take effect together.
+- ★ The criterion is a **read-back** (not “the code says dark”): after the window is created we query the DWM dark state and require it to be true, plus a **negative control** (an untouched window must still be light) ⇒ proof that the criterion **can fail**. ⚠ Appearance only — no change to export/packaging behaviour.
+- ★ **False alarms fixed in the product-side check**: when you **import and export without adding anything**, the check used to **degrade as a whole** and report a pile of “unreadable/mismatch” entries (measured: 43 spurious mismatches, checked = 0). Root cause, stated plainly: the **regression fixture hid it** — the fixture always injected a new mesh, so it only ever exercised the “something was added” branch, while the real path leaves that variable unset. Fixed with a **zero-coverage guard** (no silent pass when there are expectations but zero checks) plus a **dedicated regression** for that real path (**red before, green after**). ★ **If you have seen false alarms like these before, it was the tool, not your model.**
+- ★ **Upgrade tip**: install the **Blender add-on v2.12.7 first**, then the exe (use `BA_Mod_Maker_blender_addon.zip` from the release folder).
+
+【Русский】
+**Главное: системные заголовки двух окон тоже стали тёмными (под светлой темой Windows больше нет белой полосы); проверка на стороне продукта больше не даёт ложных срабатываний на реальном пути «импорт → экспорт без добавления».**
+(В выпуске exe v1.12.7 + аддон v2.12.7 — обновляйте оба.)
+
+- ★ **Тёмный системный заголовок** у двух окон с вашего скриншота — диалога «Мой bundle» и «Словарь базы данных»: тема ttk покрывает только клиентскую область, а заголовок рисует Windows (DWM) ⇒ под светлой системной темой он выглядел **белой полосой**. Оба заголовка теперь переключаются в тёмный; диалоги того же типа (включая главное окно) используют ту же реализацию и срабатывают вместе.
+- ★ Критерий — **обратное чтение** (а не «в коде написано тёмный»): после создания окна мы запрашиваем состояние DWM и требуем «истина», плюс **негативный контроль** (необработанное окно обязано остаться светлым) ⇒ доказательство, что критерий **может упасть**. ⚠ Только внешний вид — поведение экспорта/упаковки не меняется.
+- ★ **Устранены ложные срабатывания проверки на стороне продукта**: при **импорте и экспорте без добавления чего-либо** проверка **деградировала целиком** и выдавала массу записей «не читается/несовпадение» (измерено: 43 ложных несовпадения, проверено = 0). Причина как есть: **регрессионная оснастка это маскировала** — она всегда добавляла новый меш, поэтому всегда шла по ветке «что-то добавлено», а реальный путь оставлял переменную незаданной. Исправлено: **страж нулевого покрытия** (нет тихого «успеха», когда ожидания есть, а проверок ноль) плюс **отдельная регрессия** для этого пути (**до — красный, после — зелёный**). ★ **Если вы уже видели такие ложные срабатывания раньше — это была ошибка инструмента, а не вашей модели.**
+- ★ **Совет по обновлению**: сначала установите **аддон Blender v2.12.7**, затем exe (`BA_Mod_Maker_blender_addon.zip` из папки выпуска).
+
+## v1.12.6
+
+**本版重点：「一致性自检」从"只看位置"扩到位置＋朝向＋缩放三个维度；拿不到可比值的项如实报「判不了」（不再静默放过）；"显示≠导出"的情况单列出来请你判断。**
+（本版 exe v1.12.6 ＋ 插件 v2.12.6，两者请配套更新。）
+
+### 一、「一致性自检」扩面：位置 ＋ 朝向 ＋ 缩放
+- ★ 以前只逐对象比**位置**；现在每个对象都比 **位置、朝向、缩放**三项（网格对象按导出器**同一套矩阵口径**比）。
+- ★ **算不出来的不放过**：拿不到可比值的项**计入「判不了」并在界面上如实报出**（⛔ 不再静默跳过 —— 静默跳过是"看起来全绿"的假象来源）。
+- ★ **界面给前 N 条明细**：不一致的、判不了的，都**点名到对象**（超出前 N 条只报总数，避免刷屏）。
+- ★ **单列「显示 ≠ 导出（需人判）」**：有些对象在 Blender 里的**显示值**与导出器**写回的值**本来就不同
+  （例如由约束/驱动决定的那类）⇒ 这类**单独一栏列出**，**请你判断是否正常**；⛔ 工具**不替你**把它当成"错"。
+
+### 二、怎么用（步骤不变）
+- **② 挂载点 → 一致性自检（视图 = 将写回的值？）**：**全绿**＝没有"不一致"；若同时列出「**显示≠导出**」的条目，那是**请你判断**的项（**不算错**）。有**明细**＝按点名去看那个对象（需要时点旁边的「摊平父级逆变换」再自检一次）。
+
+### 三、文档两处与实物对齐
+- 《使用教程-Blender插件》「**位置/摆放**」节**补了两条替代凭据**（怎么确认"导入时折平"确实跑过）。
+- **本版《装机说明》**的**小结行改成条件式**：**没有那一行**＝本次没有任何对象需要折平（**正常**，⛔ 不是"没生效"）。
+
+### 四、升级提示
+- ★ **先重装插件**：若你同时用 exe 与 Blender 插件，请**先更新 Blender 插件 v2.12.6** 再用 exe。
+- 插件请装发布目录里的 **`BA_Mod_Maker_blender_addon.zip`**。
+
+【English】
+**Highlights: the “consistency self-check” now covers three axes — position, orientation and scale; anything that cannot be compared is reported as “undetermined” instead of being silently skipped; cases where what you see differs from what is exported are listed separately for you to judge.**
+(This release ships exe v1.12.6 + addon v2.12.6 — please update both.)
+
+- ★ **Self-check widened**: every object is now compared on **position, orientation and scale** (mesh objects use the exporter's own matrix convention).
+- ★ **No more silent pass**: items without a comparable value are counted as **“undetermined”** and shown in the UI (a silent skip used to look like “all green”).
+- ★ **Details in the UI**: mismatching and undetermined objects are **named** (beyond the first N only the total is shown, so the list stays readable).
+- ★ **“Visible ≠ exported (needs your call)”**: some objects legitimately differ between Blender's display value and the value the exporter writes back (constraint/driver-driven ones, for example) ⇒ these are **listed separately** for you to judge; the tool does **not** silently treat them as errors.
+- ★ **Docs**: the Blender add-on tutorial's “position/placement” section gained **two alternative pieces of evidence**; the install guide's summary line became **conditional** (no line = nothing needed flattening, which is normal).
+- ★ **Upgrade tip**: install **Blender add-on v2.12.6 first**, then the exe (use `BA_Mod_Maker_blender_addon.zip` from the release folder).
+
+【Русский】
+**Главное: «самопроверка согласованности» теперь охватывает три оси — положение, ориентацию и масштаб; то, что нельзя сравнить, сообщается как «не определено» вместо тихого пропуска; случаи «видно ≠ экспортируется» вынесены отдельно — решать вам.**
+(В выпуске exe v1.12.6 + аддон v2.12.6 — обновляйте оба.)
+
+- ★ **Самопроверка расширена**: каждый объект сверяется по **положению, ориентации и масштабу** (для мешей — по той же матричной конвенции, что у экспортёра).
+- ★ **Больше нет тихого «всё зелёное»**: элементы без сравнимого значения считаются **«не определено»** и показываются в интерфейсе (раньше тихий пропуск выглядел как успех).
+- ★ **Подробности в интерфейсе**: несовпадающие и неопределённые объекты **называются по имени** (сверх первых N — только итог, чтобы список оставался читаемым).
+- ★ **«Видно ≠ экспортируется (решать вам)»**: у части объектов значение на экране и значение, записываемое экспортёром, различаются законно (например, управляемые ограничениями/драйверами) ⇒ они **выводятся отдельно** для вашего решения; инструмент **не** считает их ошибкой молча.
+- ★ **Документация**: в разделе «положение/размещение» руководства по аддону добавлены **две альтернативные проверки**; итоговая строка в руководстве по установке стала **условной** (строки нет = выпрямлять было нечего, это нормально).
+- ★ **Совет по обновлению**: сначала установите **аддон Blender v2.12.6**, затем exe (`BA_Mod_Maker_blender_addon.zip` из папки выпуска).
+
+## v1.12.5
+
+**本版重点：Blender 里看到的位置等于游戏里的位置（导入时消偏）、跨包带入源材质与其贴图、不再静默丢件（无骨骼名那类）、贴图依赖缺失与产物回读都会点名。**
+（本版 exe v1.12.5 ＋ 插件 v2.12.5，两者请配套更新。）
+
+### 一、Blender 里看到的位置 ＝ 游戏里的位置（导入时消偏）
+- ★ 导入模型时，工具会把**父级逆变换整条链折平**（连同全部子孙，父先子后）⇒ `matrix_parent_inverse` 恒为单位
+  ⇒ **视图位置从第一步就等于游戏位置**（用户诉求：「切实在 Blender 里面看到和游戏里面一致的位置」）。
+- ⛔ **只动"父级逆变换"这一个量**：导出器口径**逐对象不变**（同一对象的游戏侧矩阵逐元素相同）
+  ⇒ 改的是**你看到的**，⛔ 不是你导出的。
+- ⚠ 如实写两条边界：① 祖先链里有**非均匀缩放**时**跳过并点名**（逆变换可能含剪切）；
+  ② 每一步都**逐对象核算**，对不上就**当场回滚**该对象并点名（⛔ 不静默留错）。
+- 导入结束打印一行小结（检查了几个对象、折平了几处、跳过几处）。
+
+### 二、跨包带入：源材质和它的贴图一起搬进来
+- ★ 合并/复制零件时，若**源材质不在目标包里**，工具会把该材质**连同它引用的贴图**（含真实流式字节）
+  一起**带入目标包并重映射**（随包清单记为 `mat_injected`）。
+- 材质**本来就在目标包里**时**不会重复带入**（包不增长）；**老清单**（没有源字节）**照旧可用**。
+- ⛔ **没带字节时不再静默**：点名 `mat_src_unresolved` 并走保件安全网（零件不会消失）。
+
+### 三、不再静默丢件：完全无骨骼名那一类（保件安全网第二步）
+- 上一版保住了"**骨骼名找不到**"那一类；本版补上"**完全无骨骼名**（`bn` 为空）"那一类：
+  以前是**悄悄跳过**（连一行日志都没有），现在 ⇒ **出声提示 ＋ 按骨骼树建占位骨骼 ＋ 保住该网格 ＋ 清单标记**
+  （`node_skips`，含 `mode: no_bone_names`）。
+- ⇒ 最坏情况是"形变按占位骨骼"，**⛔ 不会再出现"零件不见了"**。
+
+### 四、以前不报的，现在点名：贴图依赖缺失 ＋ 产物回读
+- ★ **贴图依赖缺失检查**：材质在包里、它引用的贴图**不在**包里时，以前**零告警**；
+  现在**逐条点名**（清单 `tex_missing`：网格／材质／属性／贴图 pid）并在日志里出声。
+- ★ **产物侧回读**：导出后**回读产物**，逐对象对拍**世界变换**与**材质绑定**，不一致就点名列字段；
+  正常导出时为"**0 条不一致**"。
+- ⚠ 边界照录：**产物回读不能替代实机验证**（最终姿态以游戏内为准）。
+
+### 五、升级提示
+- ★ **先重装插件**：若你同时用 exe 与 Blender 插件，请**先更新 Blender 插件 v2.12.5** 再用 exe。
+- 插件请装发布目录里的 **`BA_Mod_Maker_blender_addon.zip`**。
+
+【English】
+**Highlights: the position you see in Blender now equals the in-game position (de-bias on import); cross-bundle materials come in with their textures; no more silent part loss (meshes without bone names); missing texture dependencies and product read-back are now reported by name.**
+(This release ships exe v1.12.5 + addon v2.12.5 — please update both.)
+
+- ★ **De-bias on import**: when importing a model the add-on now **flattens the whole parent-inverse chain**
+  (including all descendants, parents first) so `matrix_parent_inverse` is identity ⇒ **the viewport position
+  equals the game position from step one**.
+  · ⛔ **Only that one quantity is touched**: the exporter's per-object values are **unchanged element-wise**
+    (what you *export* is untouched; only what you *see* is corrected).
+  · ⚠ Two boundaries, stated as they are: ① ancestors with **non-uniform scale** are **skipped and named**
+    (their inverse may contain shear); ② every step is **verified per object** and **rolled back on the spot**
+    with the object named if it does not match (never a silent wrong result).
+- ★ **Cross-bundle materials**: if the **source material is not in the target bundle**, it is now **injected
+  together with the textures it references** (including real streamed bytes) and remapped
+  (manifest key `mat_injected`). Materials already present are **not duplicated** (the bundle does not grow),
+  and **older lists** (no source bytes) keep working. When bytes are missing it is no longer silent:
+  `mat_src_unresolved` is named and the safety net keeps the part.
+- ★ **No more silent part loss (step 2)**: meshes with **no bone names at all** used to be **skipped silently**
+  (not even a log line). Now they are **reported, given placeholder bones, kept in the bundle and flagged in the
+  manifest** (`node_skips`, `mode: no_bone_names`) ⇒ worst case is placeholder-driven deformation, never a
+  missing part.
+- ★ **Now reported by name**: ① **missing texture dependencies** (material inside the bundle, its Texture2D
+  outside) — previously **zero warning**, now listed one by one (`tex_missing` with mesh/material/property/pid);
+  ② **product read-back** after export — world transforms and material bindings are compared per object and
+  mismatches are named; a normal export reports **0 mismatches**.
+  · ⚠ Stated boundary: product read-back **does not replace in-game verification**.
+- ★ **Upgrade tip**: install the **Blender add-on v2.12.5 first**, then the exe. Use
+  `BA_Mod_Maker_blender_addon.zip` from the release folder.
+
+【Русский】
+**Главное: положение, которое вы видите в Blender, теперь совпадает с игровым (снятие смещения при импорте); материалы из другого бандла переносятся вместе с текстурами; больше нет тихой потери частей (меши без имён костей); отсутствующие зависимости текстур и обратное чтение продукта теперь называются по имени.**
+(В выпуске exe v1.12.5 + аддон v2.12.5 — обновляйте оба.)
+
+- ★ **Снятие смещения при импорте**: при импорте модели аддон **выпрямляет всю цепочку обратных родительских
+  преобразований** (включая всех потомков, сначала родители) ⇒ `matrix_parent_inverse` становится единичной
+  ⇒ **положение в окне просмотра с первого шага равно игровому**.
+  · ⛔ **Меняется только эта величина**: значения экспортёра по объектам **не изменяются поэлементно**
+    (то, что вы *экспортируете*, не тронуто; исправлено только то, что вы *видите*).
+  · ⚠ Две границы, как есть: ① предки с **неравномерным масштабом** **пропускаются с указанием имени**
+    (их обратное преобразование может содержать сдвиг); ② каждый шаг **проверяется по объектам** и
+    **откатывается на месте** с указанием имени при несовпадении (никаких тихих ошибок).
+- ★ **Материалы из другого бандла**: если **исходного материала нет в целевом бандле**, он теперь
+  **переносится вместе с текстурами**, на которые ссылается (включая реальные потоковые байты), и
+  перепривязывается (ключ манифеста `mat_injected`). Материалы, уже присутствующие, **не дублируются**
+  (бандл не растёт), **старые списки** (без исходных байтов) продолжают работать. Если байтов нет —
+  это больше не тихо: указывается `mat_src_unresolved`, и деталь сохраняется страховкой.
+- ★ **Больше нет тихой потери частей (шаг 2)**: меши, у которых **вообще нет имён костей**, ранее
+  **пропускались молча** (даже без строки в журнале). Теперь они **озвучиваются, получают кости-заглушки,
+  сохраняются в бандле и отмечаются в манифесте** (`node_skips`, `mode: no_bone_names`)
+  ⇒ худший случай — деформация по костям-заглушкам, но деталь **никогда не исчезает**.
+- ★ **Теперь называется по имени**: ① **отсутствующие зависимости текстур** (материал в бандле, его
+  Texture2D — вне) — раньше **ноль предупреждений**, теперь перечисляются по одной
+  (`tex_missing`: меш/материал/свойство/pid); ② **обратное чтение продукта** после экспорта —
+  мировые трансформации и привязки материалов сверяются по объектам, несовпадения называются;
+  нормальный экспорт даёт **0 несовпадений**.
+  · ⚠ Граница как есть: обратное чтение продукта **не заменяет проверку в игре**.
+- ★ **Совет по обновлению**: сначала установите **аддон Blender v2.12.5**, затем exe. Используйте
+  `BA_Mod_Maker_blender_addon.zip` из папки выпуска.
+
+## v1.12.4
+
+**本版重点：保件安全网扩到骨骼维度（第一步）、「位置/摆放」一键自检、「还原 catalog」的提示更明确、上一版一处措辞更正。**
+（本版 exe v1.12.4 ＋ 插件 v2.12.4，两者请配套更新。）
+
+### 一、保件安全网扩到骨骼维度（第一步）
+- ★ 保件安全网扩到**骨骼维度**（第一步）：当网格引用的骨骼名在当前包里找不到时，不再"跳过该网格"
+  （等于零件消失），而是**出声提示 ＋ 按骨骼树建占位骨骼 ＋ 保住该网格 ＋ 在清单里标记**
+  （`bone_fallbacks`）。⇒ 最坏情况是"形变按占位骨骼"，**⛔ 不会再出现"零件不见了"**。
+- ⛔ 边界（如实写）：本次**只覆盖"骨骼名缺失"**这一类；**完全无骨骼名**（`bn` 为空）那类仍走原行为，
+  安排在下一版。
+
+### 二、新增「位置/摆放」一键自检
+- ★ 新增「位置/摆放」一键自检：导出后自动回读产物，逐个对象比对 Blender 视图里的世界变换
+  与游戏侧算法（沿父级链累乘得到的值），**逐项必须一致**；不一致会**点名是哪一个对象**。
+- ★ 配套新增「摊平父级逆变换」算子（解决枢轴偏移那类问题），与本自检**并排**在同一面板。
+- ⛔ 说明：**约束驱动节点（AimConstraint / RotationConstraint）与动画、行为**在 Blender 侧
+  **不复现**，其最终姿态**以游戏内为准**。
+
+### 三、行为更明确：「还原 catalog」按钮的提示更明确了
+- **当你没有可用的 catalog 备份时**，按「还原 catalog」会**明确告诉你「本次什么都没做」**，并给出两条退路：
+  ① Steam → 该游戏「属性 → 已安装文件 → 验证游戏文件完整性」会把 catalog 还原成原版；
+  ② 以后自己留副本 —— 装之前先把 `aa/catalog.json` 复制一份到别处（或保持「安装到游戏（先备份）」的勾选）。
+- **⛔ 本按钮不会用别的东西顶替、也不会假装还原成功。**
+- ⚠ 如实说明：**「能自动还原」本身本次未做** ⇒ 下一版安排。
+
+### 四、更正上一版的一处措辞
+- v1.12.3 里那句"该功能下一版会迁到 Blender 插件里"**不再成立**（迁移方案仍在评估、暂不安排）；
+  该功能**一切照旧、可正常使用**。
+
+### 五、升级提示
+- ★ **先重装插件**：若你同时用 exe 与 Blender 插件，请**先更新 Blender 插件 v2.12.4** 再用 exe。
+- 插件请装发布目录里的 **`BA_Mod_Maker_blender_addon.zip`**。
+
+## v1.12.3
+
+**本版重点：贴图另存的可见化与"防丢件"安全网、若干"静默漏判"改成点名报错、两处界面过渡说明、工具侧 8 件随包。**
+（本版 exe v1.12.3 ＋ 插件 v2.12.3，两者请配套更新。）
+
+### 一、贴图另存：看得见 ＋ 不会悄悄丢件
+- **按原物件的材质把贴图带过去**，并且**每一件都在日志里点名**（做了什么、带了几张）。
+- ★ **映射不到的时候不再静默跳过**：会**明确报出来是哪一件**，**件一件都不会丢**，并在随包清单里留下标记。
+- ⚠ **本版还未做到"真终点"**：把**源材质及其贴图依赖整套搬进目标包**仍**留给下一版**（本版只做到"看得见 ＋ 不丢件"）。
+
+### 二、把"静默漏判"改成"点名 ＋ 判不了就说判不了"
+- **图纸/柜体类检查的阈值**：以前"差一点点"会被悄悄放过；现在**逐条点名**，判不了就写"判不了"，该判红就判红。
+- **"现盘 vs 出件内容"的核对**：以前**空集**（没有可比的件）会被当成通过；现在**显式判"判不了"**，不再给你一个假的绿。
+
+### 三、界面与插件
+- **补后坐力节点工具**里加了**过渡说明**（该功能下一版会迁到 Blender 插件里）。
+- **Blender 插件**里同样加了一条**过渡提示**，说明功能迁移的安排。
+
+### 四、工具侧随包（本版把已做但没随包的 8 件一起带上）
+- 之前只在源码里、没进包的一批修复与工具，这次**一起随包发出**（含贴图/材质相关修复与几条配方入口）。
+
+### 五、升级提示
+- ★ **先重装插件**：若你同时用 exe 与 Blender 插件，请**先更新 Blender 插件 v2.12.3** 再用 exe，避免两边版本不一致。
+- 插件请装发布目录里的 **`BA_Mod_Maker_blender_addon.zip`**。
+
+### 六、本版**不含**（下一版安排，如实标注）
+- 贴图另存的**"真终点"**（源材质 ＋ 其贴图依赖一并带入目标包）。
+- 菜单项调整、以及另外三项界面/决策项 ⇒ **下一版**。
+
+## v1.12.2
+
+**本版重点：贴图远景清晰度、模组包写入一致性、两处界面改进、安装包更干净。**
+（本版 exe v1.12.2 ＋ 插件 v2.12.2，两者请配套更新。）
+
+### 一、贴图与模型
+- **贴图远景不再发糊**：生成的贴图现在带**完整的多级清晰度链**（与游戏自带贴图同级），拉远视角时不会提前变成糊块。
+- **贴图导入的资源包更贴近游戏自己的写法**，减少"包在、但游戏看着不对"的情况。
+
+### 二、建包与写入
+- **模组包的"清单式索引"写法统一**，并修好一处**重复同步时会多写内容**的问题 —— 同一份包连续处理多次，
+  结果**逐字节一致**，不会越处理越大。
+- **旧包不会再被悄悄改坏**：写入前会先确认，异常情况下会明确报错而不是静默写坏。
+
+### 三、界面改进
+- **补后坐力节点工具：日志栏改成暗色底**，夜里盯着看不刺眼。
+- **新增"能反查"**：既可以从建出来的物件查到它在包里的**对应路径**，也可以从路径**反查回物件** —— 不用再靠猜或翻目录。
+
+### 四、安装包
+- **给会跑脚本的读者用的三支自检脚本，这次会随包发出**（在**源码包／工作区树**里可用）。
+  ⚠ **只装 exe 的读者不需要它们**（那三支是脚本，只在有 Python 解释器的形态下用得上）。
+- **安装包更干净**：源码包不再夹带**只对某一种 Python 版本有用的缓存文件**。
+- **安装"体检"脚本更可靠**：能分清"版本资源没打进 exe"与"这一版还没重新打包"，不会再误报。
+
+### 五、升级提示
+- ★ **先重装插件**：若你同时用 exe 与 Blender 插件，请**先更新 Blender 插件（v2.12.2）**再用 exe，
+  避免两边版本不一致导致的报错。
+
+## v1.12.1（BA_Mod_Maker v1.12.1 + Blender 插件 v2.12.1）—— 🛠 新增「补后坐力节点」GUI 入口（★⑳ 产品化收口）+ 🎨 两处界面修复 + 📦 ★⑱/★⑲ 随包发出（v1.12.0 的那句限定作废）
+
+【中文】
+- 🛠 **新增 GUI 入口「工具 → 补后坐力节点（让某件武器有后坐力动画）…」**（`recoil_mod.py`）：
+  doc17 ★⑳「`[配方-04]` 产品化缺口」收口 —— **只装 exe 的用户不再需要源码包或逆向工作台素材**：
+  缺 `dump.cs` 走**免 dump 读法**、缺 DB 导出报「**未判定**」、缺纯净包则**回退游戏目录只读包**（⛔ 不猜、不静默退化）✓
+  · 随包带上最小闭包三只：`_rev_tools\add_recoil_point.py` / `add_turret.py` / `component_edit.py`
+  （`build_exe.py` 的 `--add-data` 与 `auto_build.py` 的 `WATCH_FILES` **两边同步**，由 `测试\test_revtools_wiring.py` 守着）
+  ⇒ `_internal\_rev_tools` 模块数 **24 → 27** ✓
+- 📦 **★⑱ / ★⑲ 两条修复自本版起随包发出**（v1.12.0 的发布件**不含**它们）：
+  ① PNG 重导入丢色彩空间 ⇒ 颜色发白；② 同名目标材质只克隆一份 ⇒ 反复合并后**旋翼看着没换**。
+  ⇒ v1.12.0 说明里那句「现发布件不含 ★⑱/★⑲」**自本版起作废**；照 `S17-01` 做时若**再**出现这两种现象，
+  请报中枢归因（不再是「包是旧的」这个已知原因）✓
+- 🎨 **`[界面-01]`「我的 bundle」面板有一整行控件完全不可见**：`bundle 内路径`＋输入框、`资产类型`＋下拉
+  与上一行**同格覆盖**（Tk 不报错，后放者盖住先放者）⇒ **整行下移**（`row=5`，按钮顺延 `row=6`），
+  并写明「**地址留空即不注册**」✓
+  · 判据：`probe_gui_grid_collisions.py` 由 **4 处 / exit 1** ⇒ **0 处 / exit 0**（整仓只有它有冲突）
+- 🎨 **`[界面-02]` 插件挂载点三行数字对不齐、可编辑入口看不见**：三行里有一行多/少 `icon=`
+  （首行整体右移**一个图标宽**）＋ `%.4f` **无符号位、宽度随值浮动** ⇒ 改成 **三行同 icon ＋ 数字定宽 `%+9.4f`**；
+  `✏ 输入游戏坐标…` 被压在 `⚠` 告警之后 ⇒ **移进数字视线**（能力本来就有，只是用户没看见）✓
+  · ⛔ **没有**硬做"面板内可编辑"：`draw()` 每次重读会**回弹覆盖**正在输入的数字 ⇒ 保留原本的输入入口 ✓
+  · 判据：`probe_coord_label_align.py` ⇒ **PASS exit 0**（三行 icon 一致 / 字段宽度恒 9 / 三行骨架逐字符相同 / 入口在数字之后、告警之前）
+- 🧾 **发版侧（用户能直接感知的两条）**：
+  ① **exe 现在带 Win32 版本资源** ⇒ 右键「属性 → 详细信息」能直接看到版本号（此前是**空白**，认不出手上是哪个 exe）✓
+  ② **旧版本保留策略已拍板并落地：保留最近 3 版，其余整体移入 `_archive\旧版本发布件`；实现件 `clean_old_releases.py`
+  （8,883 B / `AE6C3032FB463CE9`）；删除改为移入归档 ⇒ 可回滚**（此前旧版是**直接删除、不可恢复**的）✓
+  · 实现细节：动作由 `shutil.rmtree`/`os.remove` 换成 `shutil.move`；归档件**保持原名（带版本号）**、
+  工作区根那份副本进 `根副本\` 子层；**归档目标已存在则拒绝且不覆盖**；成功时打印《移档台账》✓
+  · ⚠ 本版实际**不会移档任何东西**（盘上只有 v1.12.0 与新的 v1.12.1 ⇒ 保留集 = 这两版）✓
+- ✅ **回归（本版定版上实测）**：`test_recoil_mod_gui` **20/20**、`test_add_recoil_point` **13/13**、
+  `test_recoil_point_nodump` **14/14**、`test_revtools_wiring` **9/9**、`product_lint` exit 0；
+  发布件体检 **PASS**、出件前预检全绿、**「现盘 == 出件内容」两对漂移 0**（★⑱/★⑲ 随包发出后归零）✓
+
+【English】
+- 🛠 **New GUI entry “Tools → Add recoil node (give a weapon a recoil animation)…”** (`recoil_mod.py`):
+  closes doc17 ★⑳ (the `[配方-04]` productization gap) — **users who only install the exe no longer need the source
+  package or reverse-engineering bench assets**: a missing `dump.cs` falls back to the **dump-free** path, a missing
+  DB export is reported as “**undetermined**”, and a missing clean bundle falls back to the game folder **read-only** ✓
+  · Ships the minimal closure of three modules: `_rev_tools\add_recoil_point.py` / `add_turret.py` / `component_edit.py`
+  (kept in sync in both `build_exe.py`'s `--add-data` and `auto_build.py`'s `WATCH_FILES` by `测试\test_revtools_wiring.py`);
+  the `_internal\_rev_tools` module count goes **24 → 27** ✓
+- 📦 **The ★⑱ / ★⑲ fixes now ship with the package** (the v1.12.0 release did **not** contain them):
+  ① PNG re-import lost the color space ⇒ colors looked washed out; ② same-named target materials were cloned only
+  once ⇒ after repeated merges the **rotor appeared unchanged**. The v1.12.0 note “the current release does not
+  contain ★⑱/★⑲” is **void as of this version** ✓
+- 🎨 **`[界面-01]` one entire row of the “My bundle” panel was invisible**: `bundle 内路径` + its entry and
+  `资产类型` + its dropdown were **gridded onto the same cell** as the row above (Tk does not complain; the later
+  widget covers the earlier one) ⇒ the row was **moved down** (`row=5`, buttons follow at `row=6`), and the panel now
+  says “**leave the address empty to skip registration**” ✓ Criterion: `probe_gui_grid_collisions.py` goes from
+  **4 places / exit 1** to **0 places / exit 0** ✓
+- 🎨 **`[界面-02]` the three mount-point number rows did not line up and the editable entry was invisible**:
+  one row had an extra/missing `icon=` (shifting that row right by **one icon width**) and `%.4f` had **no sign slot
+  and a value-dependent width** ⇒ now **the same icon on all three rows and a fixed-width `%+9.4f`**; the
+  `✏ 输入游戏坐标…` entry was buried after the `⚠` warning ⇒ **moved into the numbers' sight line** ✓
+  · ⛔ We deliberately did **not** make the panel inline-editable: `draw()` re-reads the values every redraw and would
+  **snap back over** whatever is being typed ✓
+  · Criterion: `probe_coord_label_align.py` ⇒ **PASS exit 0** ✓
+- 🧾 **Release side (two things you can feel directly)**:
+  ① the exe now carries a **Win32 version resource** ⇒ “Properties → Details” shows the version (it used to be **blank**,
+  so you could not tell which exe you had); ② the **old-version retention policy is decided and implemented: keep the
+  latest 3 versions and move the rest into `_archive\旧版本发布件`**, implementation `clean_old_releases.py`
+  (8,883 B / `AE6C3032FB463CE9`) ⇒ **deletion became archiving, so rollback is possible** ✓
+- ✅ **Regressions (measured on this version)**: `test_recoil_mod_gui` **20/20**, `test_add_recoil_point` **13/13**,
+  `test_recoil_point_nodump` **14/14**, `test_revtools_wiring` **9/9**, `product_lint` exit 0; release hygiene
+  **PASS**, pre-release preflight all green, and **“working tree == shipped contents” shows 0 drift on both pairs** ✓
+
+【Русский】
+- 🛠 **Новый пункт GUI «Инструменты → Добавить узел отдачи (дать оружию анимацию отдачи)…»** (`recoil_mod.py`):
+  закрывает doc17 ★⑳ (пробел продукта `[配方-04]`) — **пользователям, ставящим только exe, больше не нужен пакет
+  исходников или материалы реверс-стенда**: при отсутствии `dump.cs` используется **путь без dump**, при отсутствии
+  выгрузки БД сообщается «**не определено**», при отсутствии чистого bundle — **только чтение** из папки игры ✓
+  · В пакет входят три модуля минимального замыкания: `_rev_tools\add_recoil_point.py` / `add_turret.py` /
+  `component_edit.py` (синхронно в `--add-data` файла `build_exe.py` и в `WATCH_FILES` файла `auto_build.py`,
+  за этим следит `测试\test_revtools_wiring.py`); число модулей `_internal\_rev_tools`: **24 → 27** ✓
+- 📦 **Исправления ★⑱ / ★⑲ теперь входят в пакет** (в выпуске v1.12.0 их **не было**):
+  ① при повторном импорте PNG терялось цветовое пространство ⇒ цвета выглядели блёклыми; ② одноимённые целевые
+  материалы клонировались только один раз ⇒ после повторных слияний **казалось, что винт не заменился**.
+  Фраза из v1.12.0 «текущий выпуск не содержит ★⑱/★⑲» **с этой версии недействительна** ✓
+- 🎨 **`[界面-01]` целая строка панели «Мой bundle» была невидима**: поле `bundle 内路径` и список `资产类型`
+  стояли **в той же ячейке grid**, что и строка выше (Tk не жалуется; более поздний виджет закрывает ранний) ⇒
+  строка **сдвинута вниз** (`row=5`, кнопки — `row=6`), и добавлена надпись «**пустой адрес = не регистрировать**» ✓
+  Критерий: `probe_gui_grid_collisions.py` — с **4 мест / exit 1** до **0 мест / exit 0** ✓
+- 🎨 **`[界面-02]` три строки чисел точки крепления не выравнивались, а вход редактирования был не виден**:
+  в одной строке был лишний/отсутствующий `icon=` (сдвиг строки на **ширину одной иконки**), а `%.4f` не имел
+  места под знак и «плавал» по ширине ⇒ теперь **одинаковые иконки во всех трёх строках и фиксированная ширина
+  `%+9.4f`**; вход `✏ 输入游戏坐标…` был погребён под предупреждением `⚠` ⇒ **перенесён в зону видимости чисел** ✓
+  · ⛔ Мы **намеренно не** сделали панель редактируемой на месте: `draw()` перечитывает значения при каждой
+  перерисовке и **откатил бы** вводимое число ✓
+  · Критерий: `probe_coord_label_align.py` ⇒ **PASS exit 0** ✓
+- 🧾 **Сторона выпуска (два заметных напрямую пункта)**:
+  ① exe теперь несёт **ресурс версии Win32** ⇒ в «Свойства → Подробно» видна версия (раньше было **пусто**, нельзя
+  было понять, какой exe перед вами); ② **политика хранения старых версий принята и реализована: хранить
+  последние 3 версии, остальные переносить в `_archive\旧版本发布件`**, реализация `clean_old_releases.py`
+  (8,883 B / `AE6C3032FB463CE9`) ⇒ **удаление заменено переносом в архив, поэтому откат возможен** ✓
+- ✅ **Регрессии (измерено на этой версии)**: `test_recoil_mod_gui` **20/20**, `test_add_recoil_point` **13/13**,
+  `test_recoil_point_nodump` **14/14**, `test_revtools_wiring` **9/9**, `product_lint` exit 0; проверка гигиены
+  выпуска **PASS**, предварительная проверка перед выпуском — всё зелёное, и **«рабочее дерево == содержимое
+  выпуска» — 0 расхождений в обеих парах** ✓
+
+## v1.12.0（BA_Mod_Maker v1.12.0 + Blender 插件 v2.12.0）—— 🧭 词典窗口扩到 5 页（新增「故障排查」「格式与要点」）+ 🚁 ★⑰ 整车替换覆盖构建期 LOD 与克隆渲染器 + 🛠 两处写盘类稳定性修复
+
+【中文】
+- 🧭 **词典窗口新增第 4 页「故障排查」**：**18 对「症状行 → 真因行」**，每条给「中文真因 / 怎么改 / 产品内入口 / 出处」；
+  其中 **16 条**是日志里能直接搜到的原文，**2 条是静默症状（标红）**——那种"游戏不报错、东西就是不生效"的情况 ✓
+  带搜索框；搜一个**编造的词**什么都不会命中（负向对照钉住，不假装）✓
+- 📚 **「数据库词典」全文并入内置词典并分层**：词典窗口新增**第 5 页「格式与要点」**
+  （格式层正文 / ★跨表 / 引用层 / 常量 / 挂载与组件，可关键词搜）；「数据库词典」页**每个字段下面**新增两行：
+  **引用层**（这个值是 loc 键 / Addressables 键 / 字面量 / 外键）与**反推公式**（值 ⇒ 资产路径）✓
+  · 对账（实测）：字段层 **24 表 / 407 字段行**（逐表与 `clean_baseline.json` 去重字段数相等）、枚举层 **12**、
+    格式层 **11 主题**、铁律 **3 小节**、★跨表 地址映射 **12 行** + 挂载 **11** + 组件 **18**、常量 **11**、引用层 **19 条** ✓
+  · 反推公式只给 **8 个有实例可对**的字段写（如肖像 `Assets/Resources_moved/Images/UnitPortraits/` + `PortraitFileName` + `.png`），
+    **11 个没有实例的留空**——⛔ 不猜 ✓
+  · `数据库词典.md` **1185 行 / 130,123 B**、`database_glossary.json` **188,331 B**（都走生成器重生成，未手改）；
+    顺手修正 **1 处过期事实**：`常量速查` 里写死的旧包名与体积 ⇒ 改成实测的
+    `units_assets_all_1e6c04ce…（3,381,248,409 字节 = 3.15 GiB）` ✓
+- 🚁 **★⑰ 整车替换覆盖面扩大**（这是本版**行为变化**最明显的一条）：⑤ 皮肤 →「打包贴图替换包」在**不勾**
+  「只对选中对象生效」（= 整车）时，manifest 现在按 **prefab 子树**展开（多写一个**可选**字段 `matswap.scope`）；
+  导入端对**同名目标渲染器全部重指**——实测构建期克隆 `000_skinned_Chassis` ×2，老逻辑"同名取第一个"
+  会漏一个 ⇒ **那一级 LOD 还是旧贴图** ✓
+  · 操作符 Report 会显示「（含 prefab 子树里构建期生成的 N 个）」，日志**逐条打印「会换 / 不动 + 为什么」**✓
+  · 整车替换（不勾「只对选中对象生效」）不再只覆盖 `.blend` 里那几个网格 —— 现在按 **prefab 子树**把**构建期生成**的
+    LOD/克隆渲染器一起认进来（实测那台飞行 ACV：子树 **8** 个渲染器里 **6** 个各换各的图 = 3 个场景网格 +
+    3 个构建期克隆，**2** 个判不出归属的**不动并逐条说明原因**；整包 **154** 个渲染器里其余 **148** 个一个没动）。
+    判不出归属时**绝不猜**，并且"本次没展开成"会在**面板与包内 `matswap.scope` 留证**，不会静默退回旧行为 ✓
+  · **判不出归属就明确不动并打印原因**（实测两个：`lod_1x1x1` 没有 `m_Mesh`；`Armored` 的 mesh 叫 `Uparmored`）；
+    目标包异常时**降级、不阻断建包**（给原因）✓
+  · 新增模块 `blender_addon/_rev_tools/matswap_scope.py`，**随插件包自动带上**；
+    ⛔ 它**有意不进 exe**（exe 侧不 import 它 ⇒ `_internal\_rev_tools` 仍是 24 个模块）✓
+- 🛠 **两处写盘类稳定性修复**（上一轮保留、本批带上）：
+  ① `my_bundle.new_bundle()` 收尾 `os.replace` 曾**确定性**报 `PermissionError [WinError 32]` ——
+  根因是 `fix_scripts()` 里 `release_env()` 时 `env/senv/ssf` 局部名**还活着**，那次 `gc.collect()`
+  收不掉引用环 ⇒ 改成**先断名再 collect**，收尾改用 `atomic_replace()`（gc + 有界重试）；
+  顺带把 `hashlib.md5(open(...).read())` 改成 `with open(...)` ✓
+  ② `stream_save._release_source_handle()` 顺着 `raw`/`stream` **多走一层**
+  （fsspec `LocalFileOpener` → `BufferedReader` → `FileIO`；老版只关 `reader.stream`，句柄常年不释放）✓
+- ⚠ **兼容性（没有破坏性变更）**：**没有** `matswap.scope` 字段的**老 `.bamod` 包行为与 v1.11.1 完全一致**
+  （同名仍取第一个）✓；唯一副作用出现在**跨版本混用**：「新版打的包 + 老版工具导入」时，
+  重名克隆只能换到一个（`matswap.scope` 对老版是**未知字段**，json 读取会忽略 ⇒ **不崩**）✓
+- ⚠ **需要你进游戏确认一条**：★⑰ 整车替换之后，**把镜头拉远 / 切到低 LOD**——车身与旋翼应当**都是新贴图**
+  （此前拉远会回到旧图）。若某个 LOD 部件**仍是旧图**，请把**那个部件的名字**告诉我
+  （工具日志里会逐条列出「会换 / 不动 + 原因」，按它就能定位）✓
+- ✅ **回归**：本批 **15 项**定向回归全过（含 ★⑰ 20 条、词典合并 29 条、故障排查 18 条）；
+  ★⑯ E2E **8 pass / 0 fail**、★⑮ GUI **11 pass / 0 fail**；快跑套件与秒级门禁全绿 ✓
+
+【English】
+- 🧭 **New 4th page in the glossary window — “故障排查” (Troubleshooting)**: **18 symptom-line → real-cause-line pairs**,
+  each with “the Chinese root cause / how to fix / where in the tool / the source”. **16 of them** are lines you can
+  literally find in the game log; **2 are silent symptoms (shown in red)** — the “the game reports nothing, it just
+  does not work” kind ✓ There is a search box, and searching an **invented word** matches nothing
+  (a negative control pins this down — it never pretends to have checked) ✓
+- 📚 **The whole `数据库词典` document is now merged into the built-in glossary and layered**: a new **5th page
+  “格式与要点” (Format & Essentials)** (format-layer text / ★cross-table / reference layer / constants / mounts &
+  components, keyword-searchable); and on the “数据库词典” page **every field** now has two extra lines:
+  the **reference layer** (is this value a loc key / an Addressables key / a literal / a foreign key?) and a
+  **reverse formula** (value ⇒ asset path) ✓
+  · Counts (measured): field layer **24 tables / 407 field rows** (per-table equal to the deduplicated field count in
+    `clean_baseline.json`), enum layer **12**, format layer **11 topics**, iron rules **3 sections**,
+    ★cross-table address map **12 rows** + mounts **11** + components **18**, constants **11**, reference layer **19** ✓
+  · Reverse formulas are written only for the **8 fields that have a real instance** to check against; the
+    **11 without one are left blank** — ⛔ no guessing ✓
+  · `数据库词典.md` is now **1185 lines / 130,123 B** and `database_glossary.json` **188,331 B** (both regenerated by the
+    generator, never hand-edited); one **stale fact** was corrected on the way: the hard-coded old bundle name/size in
+    `常量速查` now reads the measured `units_assets_all_1e6c04ce… (3,381,248,409 bytes = 3.15 GiB)` ✓
+- 🚁 **★⑰ whole-vehicle texture replacement now covers more** (the most visible **behaviour** change in this release):
+  in ⑤ Skin → “打包贴图替换包”, when “只对选中对象生效” (selected objects only) is **not** ticked (i.e. whole vehicle),
+  the manifest is now expanded over the **prefab subtree** (writing one **optional** field `matswap.scope`), and the
+  import side **re-points every renderer with a matching name** — measured: the build-time clone `000_skinned_Chassis`
+  appears **twice**, and the old “take the first match by name” logic missed one ⇒ **that LOD level kept the old texture** ✓
+  · The operator Report shows “(including N generated at build time in the prefab subtree)” and the log
+    **prints, item by item, “will replace / left alone + why”** ✓
+  · Whole-vehicle replacement (checkbox "selected objects only" unticked) no longer stops at the meshes present in the
+    `.blend`: it now walks the **prefab subtree** and picks up the renderers generated at build time (measured on the
+    flying ACV: of **8** subtree renderers **6** get their own texture — 3 scene meshes + 3 build-time clones — while
+    **2** that cannot be attributed are left untouched with a printed reason; the other **148** of the bundle's **154**
+    renderers stay unchanged). Attribution is never guessed, and a failed expansion is recorded in the panel and inside
+    the package (`matswap.scope`) instead of silently falling back ✓
+  · **When attribution cannot be determined it stays untouched and prints the reason** (two real cases:
+    `lod_1x1x1` has no `m_Mesh`; `Armored`’s mesh is called `Uparmored`); if the target bundle is broken it
+    **degrades instead of blocking the build** (and tells you why) ✓
+  · New module `blender_addon/_rev_tools/matswap_scope.py`, **shipped automatically inside the addon zip**;
+    ⛔ it is **deliberately not** put into the exe (the exe side never imports it ⇒ `_internal\_rev_tools` stays at 24 modules) ✓
+- 🛠 **Two write-path stability fixes** (carried over from the previous round, shipped now):
+  ① `my_bundle.new_bundle()` used to fail **deterministically** with `PermissionError [WinError 32]` on the closing
+  `os.replace` — the root cause was that in `fix_scripts()`/`release_env()` the local names `env/senv/ssf` were **still
+  alive**, so that `gc.collect()` could not break the reference cycle ⇒ now the names are **dropped before** collecting and
+  the close uses `atomic_replace()` (gc + bounded retries); `hashlib.md5(open(...).read())` also became `with open(...)` ✓
+  ② `stream_save._release_source_handle()` now walks **one level deeper** along `raw`/`stream`
+  (fsspec `LocalFileOpener` → `BufferedReader` → `FileIO`; the old code only closed `reader.stream`, so the handle
+  was never released) ✓
+- ⚠ **Compatibility (no breaking change)**: **old `.bamod` packages without** `matswap.scope` behave **exactly as in
+  v1.11.1** (first match by name) ✓; the only side effect appears when **mixing versions**: with “a package made by the
+  new version + imported by an old tool”, only one of the same-named clones gets replaced (`matswap.scope` is an
+  **unknown field** to the old tool; json reading ignores it ⇒ **no crash**) ✓
+- ⚠ **One thing to confirm in game**: after a ★⑰ whole-vehicle replacement, **zoom out / switch to a lower LOD** —
+  hull and rotor should **both** show the new texture (previously zooming out fell back to the old one). If some LOD part
+  **still shows the old texture**, tell me **the name of that part** (the tool log lists “will replace / left alone + why”
+  item by item, which pins it down) ✓
+- ✅ **Regressions**: all **15** targeted regressions pass (including ★⑰ 20 criteria, glossary merge 29, troubleshooting 18);
+  ★⑯ E2E **8 pass / 0 fail**, ★⑮ GUI **11 pass / 0 fail**; the fast suite and the second-level gates are all green ✓
+
+【Русский】
+- 🧭 **Новая 4-я страница в окне глоссария — «故障排查» (Диагностика)**: **18 пар «строка симптома → строка истинной
+  причины»**, в каждой — «причина по-китайски / как исправить / где в инструменте / источник». **16 из них** — строки,
+  которые можно буквально найти в логе игры; **2 — «тихие» симптомы (выделены красным)**, то есть случаи «игра ничего не
+  сообщает, просто не работает» ✓ Есть строка поиска: поиск **выдуманного слова** не находит ничего
+  (негативный контроль это фиксирует — инструмент не делает вид, что проверил) ✓
+- 📚 **Весь документ `数据库词典` влит во встроенный глоссарий и разложен по слоям**: новая **5-я страница
+  «格式与要点» (Формат и главное)** (текст слоя формата / ★кросс-таблицы / слой ссылок / константы / крепления и
+  компоненты, поиск по ключевым словам); а на странице «数据库词典» **под каждым полем** появились две строки:
+  **слой ссылок** (это значение — loc-ключ / ключ Addressables / литерал / внешний ключ?) и **обратная формула**
+  (значение ⇒ путь к ассету) ✓
+  · Подсчёт (измерено): слой полей **24 таблицы / 407 строк полей** (по каждой таблице совпадает с числом уникальных
+    полей в `clean_baseline.json`), слой перечислений **12**, слой формата **11 тем**, железные правила **3 раздела**,
+    ★кросс-табличная карта адресов **12 строк** + крепления **11** + компоненты **18**, константы **11**, слой ссылок **19** ✓
+  · Обратные формулы написаны только для **8 полей, у которых есть реальный пример** для сверки;
+    **11 без примера оставлены пустыми** — ⛔ без догадок ✓
+  · `数据库词典.md` теперь **1185 строк / 130 123 Б**, `database_glossary.json` — **188 331 Б** (оба перегенерированы
+    генератором, вручную не правились); попутно исправлен **один устаревший факт**: жёстко вписанные старое имя бандла
+    и объём в `常量速查` теперь показывают измеренное `units_assets_all_1e6c04ce… (3 381 248 409 байт = 3,15 ГиБ)` ✓
+- 🚁 **★⑰ Замена текстур всей машины теперь покрывает больше** (самое заметное **изменение поведения** в этом выпуске):
+  в ⑤ Кожа → «打包贴图替换包», когда галочка «只对选中对象生效» (только выбранные объекты) **не** стоит (то есть вся машина),
+  манифест теперь разворачивается по **поддереву prefab** (пишется одно **необязательное** поле `matswap.scope`),
+  а сторона импорта **перенаправляет все рендереры с совпадающим именем** — измерено: клон, созданный на этапе сборки,
+  `000_skinned_Chassis` встречается **дважды**, и старая логика «взять первое совпадение по имени» пропускала один
+  ⇒ **этот уровень LOD оставался со старой текстурой** ✓
+  · В отчёте оператора видно «(включая N сгенерированных на этапе сборки в поддереве prefab)», а лог
+    **построчно печатает «заменим / не трогаем + почему»** ✓
+  · Замена на всю машину (галочка «только выбранные объекты» снята) больше не ограничивается мешами из `.blend`:
+    теперь обходится **поддерево prefab** и подхватываются рендереры, созданные при сборке (замер на летающем ACV:
+    из **8** рендереров поддерева **6** получают свою текстуру — 3 меша сцены + 3 клона сборки, а **2**, которым
+    нельзя достоверно приписать владельца, остаются без изменений с печатью причины; остальные **148** из **154**
+    рендереров пакета не тронуты). Принадлежность никогда не угадывается, а неудачное раскрытие фиксируется в панели
+    и внутри пакета (`matswap.scope`), а не тихо откатывается ✓
+  · **Если принадлежность определить нельзя — объект не трогается и печатается причина** (два реальных случая:
+    у `lod_1x1x1` нет `m_Mesh`; меш `Armored` называется `Uparmored`); если целевой бандл сломан — происходит
+    **деградация, а не блокировка сборки** (с указанием причины) ✓
+  · Новый модуль `blender_addon/_rev_tools/matswap_scope.py`, **попадает в zip аддона автоматически**;
+    ⛔ в exe он **намеренно не** кладётся (сторона exe его не импортирует ⇒ в `_internal\_rev_tools` остаётся 24 модуля) ✓
+- 🛠 **Два исправления стабильности записи на диск** (перенесены из прошлого раунда, выходят сейчас):
+  ① `my_bundle.new_bundle()` **детерминированно** падал с `PermissionError [WinError 32]` на завершающем `os.replace` —
+  причина в том, что в `fix_scripts()`/`release_env()` локальные имена `env/senv/ssf` были **ещё живы**, поэтому тот
+  `gc.collect()` не мог разорвать цикл ссылок ⇒ теперь имена **сбрасываются до** сборки мусора, а завершение идёт через
+  `atomic_replace()` (gc + ограниченные повторы); `hashlib.md5(open(...).read())` заменено на `with open(...)` ✓
+  ② `stream_save._release_source_handle()` теперь идёт **на уровень глубже** по `raw`/`stream`
+  (fsspec `LocalFileOpener` → `BufferedReader` → `FileIO`; старая версия закрывала только `reader.stream`, поэтому
+  дескриптор никогда не освобождался) ✓
+- ⚠ **Совместимость (ломающих изменений нет)**: **старые пакеты `.bamod` без** `matswap.scope` ведут себя **точно как в
+  v1.11.1** (первое совпадение по имени) ✓; единственный побочный эффект — при **смешивании версий**: «пакет, сделанный
+  новой версией + импорт старым инструментом» заменит только один из одноимённых клонов (`matswap.scope` для старого
+  инструмента — **неизвестное поле**, json его игнорирует ⇒ **без падения**) ✓
+- ⚠ **Одно, что нужно подтвердить в игре**: после замены по ★⑰ (вся машина) **отведите камеру / переключитесь на низкий
+  LOD** — корпус и винт должны **оба** показывать новую текстуру (раньше при отводе камеры возвращалась старая).
+  Если какая-то часть LOD **всё ещё со старой текстурой**, назовите **имя этой части** (лог инструмента построчно
+  перечисляет «заменим / не трогаем + почему» — по нему и находится) ✓
+- ✅ **Регрессии**: все **15** целевых регрессий проходят (включая ★⑰ 20 критериев, слияние глоссария 29,
+  диагностика 18); ★⑯ E2E **8 pass / 0 fail**, ★⑮ GUI **11 pass / 0 fail**; быстрый набор и секундные гейты зелёные ✓
+
+## v1.11.1（BA_Mod_Maker v1.11.1 + Blender 插件 v2.11.1）—— 🛡 `[配方-04]` 收尾：补 `recoil_<i>` 的工具**先算 DB 条数，对不上就拦住不写**（那条会崩的规则）+ 自检改「子串 + 一层」
+
+【中文】
+- 🛡 **`add_recoil_point.py`（给指定武器补后坐力挂点）加了前置硬闸门**：卡片 §3 那条"会崩"的规则是 ——
+  prefab 的 `UnitPrefabTurretInfo.Weapons` 数组长度**必须 ≥ DB 里该炮塔的武器条数**，短了运行时会
+  `IndexOutOfRangeException`（日志 `CombatSystem initialization for unit=… failed`）⇒ **整台单位的武器一件都建不出来**。
+  以前工具只**打印一句告警就照写**，现在改成**硬闸门**：条数对不上 ⇒ **非 0 退出、不写盘**，并给出补救路径
+  （先用 `add_turret.py` 那条线把数组扩容到 ≥ 条数，再回来补 `recoil_*`）✓
+  · 新增 `--db <目录>`（默认 `_rev_tools\out\db_live`）与 `--db-weapons N`（显式指定条数）两个开关；
+  · 三条解析链**全部实测**：① 独立炮塔 prefab（`Turrets.ModelFileName` 末段 == prefab 名，实测 `US_HMMWV_TOW_M220` ⇒ **2** 件）、
+    ② 单位内嵌炮塔（`Units.ModelFileName` + `TurretUnits.Order == TurretIndex`，实测 `US_AbramsTUA` ⇒ **2** 件）、
+    ③ 步兵"假炮塔"（单位在 `TurretUnits` 里一行都没有 ⇒ 每个假炮塔 **1** 件，实测 `US_Rangers` ⇒ **1**）；
+    同 `Order` 有多个变体时取**最大值**（= 最严要求）✓
+  · ⛔ **判不出来就如实说「未判定」**，绝不假装判过（实测 `US_M10_Booker` 就是判不出来的真实例子）——
+    这时退化为底线判据并明说，用户可用 `--db-weapons N` 手工把件数对上 ✓
+- 🔧 **自检与"已经有了"的判定改成「子串 + 只扫一层」**（镜像引擎语义 `Assets.FindTransformBySubstring`）：
+  真名 `recoil_1_0` 同样命中 `recoil_1` ⇒ 不会再重复加一个同义节点；判据文案也改成
+  「挂点**下一层**内含 `recoil_<i>` 的子节点」，与游戏里真正生效的条件一致 ✓
+- ✅ **回归扩到 13 判据**（`测试\test_add_recoil_point.py`）：DB 三条链 + 未判定负向对照 + ★ **硬闸门**（退出码 2、且**没写出任何包**）
+  + 产物侧（子串/一层命中、原有子节点没被动、炮塔数不变、形状与模板一致）+ 源包负向对照 ⇒ 单跑全部通过 ✓
+- ⚠ **仍未坐实（需要用户进游戏）**：① 第 i 件武器开火时**真的抖**（卡片定为纯观感、不崩）；
+  ② 数组越界那条崩溃的**实机**复现。离线侧现在有硬闸门替它兜底 ✓
+
+【English】
+- 🛡 **`add_recoil_point.py` (adds a recoil mount point for a chosen weapon) gained a hard pre-check**:
+  the recipe's crash rule is that a prefab's `UnitPrefabTurretInfo.Weapons` array **must be ≥ the weapon count
+  of that turret in the DB**; if it is shorter the game throws `IndexOutOfRangeException` at runtime
+  (`CombatSystem initialization for unit=… failed` in the log) and **no weapon of that unit gets built at all**.
+  The tool used to **print a warning and write anyway**; it now **blocks** (non-zero exit, nothing written) and
+  tells you the remedy (expand the array via the `add_turret.py` line first) ✓
+  · New switches `--db <dir>` (default `_rev_tools\out\db_live`) and `--db-weapons N` (explicit count);
+  · All three lookup chains are **measured**: ① standalone turret prefab (`Turrets.ModelFileName` tail == prefab,
+    `US_HMMWV_TOW_M220` ⇒ **2**), ② turret embedded in a unit model (`Units.ModelFileName` + `TurretUnits.Order`,
+    `US_AbramsTUA` ⇒ **2**), ③ infantry “fake turret” (unit has no `TurretUnits` rows ⇒ **1** per turret,
+    `US_Rangers` ⇒ **1**); with multiple variants sharing an `Order` the **maximum** is used (= strictest) ✓
+  · ⛔ **When it cannot be determined the tool says so** instead of pretending it checked (measured real case:
+    `US_M10_Booker`); it then falls back to the minimum invariant and tells you to pass `--db-weapons N` ✓
+- 🔧 **Self-check and “already there” detection now use “substring + one level only”** (mirroring the engine's
+  `Assets.FindTransformBySubstring`): a real node named `recoil_1_0` also matches `recoil_1`, so no duplicate
+  synonym node is added, and the criterion text now reads “a child containing `recoil_<i>` **one level below**
+  the mount” — exactly the condition that works in game ✓
+- ✅ **Regression extended to 13 criteria** (`测试\test_add_recoil_point.py`): the three DB chains, an
+  “undetermined” negative control, ★ the **hard gate** (exit code 2 and **nothing written**), the artifact side
+  (substring/one-level hit, untouched siblings, turret count unchanged, shape identical to the template) and a
+  source-bundle negative control — all pass ✓
+- ⚠ **Still unproven (needs the user in game)**: ① that the chosen weapon actually kicks (the recipe classifies
+  this as cosmetic, never a crash); ② the in-game reproduction of the out-of-range crash. Offline, the new gate
+  now covers it ✓
+
+【Русский】
+- 🛡 **`add_recoil_point.py` (добавляет точку отдачи выбранному оружию) получил жёсткую предпроверку**:
+  правило из рецепта — массив `UnitPrefabTurretInfo.Weapons` в prefab **должен быть ≥ числа оружий этой
+  башни в БД**; если он короче, игра в рантайме бросает `IndexOutOfRangeException`
+  (в логе `CombatSystem initialization for unit=… failed`) и **ни одно оружие юнита не создаётся**.
+  Раньше инструмент **печатал предупреждение и всё равно писал**; теперь он **блокирует**
+  (ненулевой код выхода, ничего не записано) и подсказывает лечение (сначала расширить массив линией
+  `add_turret.py`) ✓
+  · Новые ключи `--db <каталог>` (по умолчанию `_rev_tools\out\db_live`) и `--db-weapons N` (явное число);
+  · Все три цепочки **измерены**: ① отдельный префаб башни (`Turrets.ModelFileName`, `US_HMMWV_TOW_M220` ⇒ **2**),
+    ② башня внутри модели юнита (`Units.ModelFileName` + `TurretUnits.Order`, `US_AbramsTUA` ⇒ **2**),
+    ③ пехотная «фиктивная башня» (у юнита нет строк в `TurretUnits` ⇒ **1** на башню, `US_Rangers` ⇒ **1**);
+    при нескольких вариантах с одним `Order` берётся **максимум** (= самое строгое) ✓
+  · ⛔ **Если определить нельзя — инструмент говорит «не определено»**, а не делает вид, что проверил
+    (измеренный случай: `US_M10_Booker`); тогда используется минимальный инвариант и предлагается `--db-weapons N` ✓
+- 🔧 **Самопроверка и определение «уже есть» теперь по «подстроке + только один уровень»** (как в движке,
+  `Assets.FindTransformBySubstring`): узел с настоящим именем `recoil_1_0` тоже попадает под `recoil_1`,
+  поэтому дубликат-синоним больше не добавляется, а формулировка критерия — «дочерний узел, содержащий
+  `recoil_<i>`, **на один уровень ниже** точки крепления» ✓
+- ✅ **Регрессия расширена до 13 критериев** (`测试\test_add_recoil_point.py`): три цепочки БД, отрицательный
+  контроль «не определено», ★ **жёсткий шлюз** (код выхода 2 и **ничего не записано**), сторона артефакта
+  (подстрока/один уровень, соседи не тронуты, число башен не изменилось, форма как у шаблона) и отрицательный
+  контроль по исходному пакету — всё проходит ✓
+- ⚠ **Пока не подтверждено (нужен пользователь в игре)**: ① что выбранное оружие действительно отдаёт
+  (рецепт относит это к визуальным эффектам, не к падениям); ② воспроизведение падения при выходе за границы
+  массива в игре. Офлайн это теперь закрывает новый шлюз ✓
+
+## v1.11.0（BA_Mod_Maker v1.11.0 + Blender 插件 v2.11.0）—— 🧩 修掉 ★⑮ 的遗留缺口：**贴图替换包在「自建包」上一律失败**（源包 pid → 按名字定位）+ 「只导入 LOD0」不再静默吞零件
+
+【中文】
+- 🐞 **修掉一个"工具白做"的硬故障**：把移植过来的零件（例：ACV 上的 AH-1Z 旋翼）换回它**原机贴图**时，
+  替换包导入**必然失败** ——
+  · **病因**：`mats[].orig` / `renderers[]` 带的是**源包（游戏 units）**的 pid。这两个属性**只在
+    「① 导入模型」时写入**、全工具没有第二处会刷新它；而 `copy_full` 建出来的**自建包把 pid 全重分配了**
+    ⇒ 目标包里按 pid **一个都查不到** ⇒ 老代码直接 `ValueError: 找不到原材质 pid …` ✗
+  · **实测**（用户的 `自制mod\飞行ACV.blend` + 自建包 `FLYACV_f2b2e6c8….bundle`）：旋翼 `Ah_1z.001`
+    的 pid `-6649676451897414096` 与它的材质 `377016869587178026`，在自建包 **2815 个对象**里
+    **全部查不到**；自建包里同名零件其实是 `4851857037681754300` ✓
+- ✨ **修法（带名字 + 两级定位）**：打包时 manifest 里**一并写上名字**
+  （`renderer_info[{pid, go, mats}]`、`mats[].orig_name`），导入端**先按 pid、查不到再按名字**：
+  · **渲染器** = GameObject 名（`Ah_1z`；自动忽略 Blender 加的 `.001` 后缀）+ 它当前材质名做交集收窄；
+  · **材质** = ① 目标包里有**同名材质**就直接用；② 没有同名的（自建包里零件用的是 `copy_full` 从本车
+    继承来的材质，而不是它"原机"那套）⇒ 落到**零件现在用的那个材质**上 —— 我们本来就是要**克隆它**、
+    把它被记录的**槽**换成新贴图（实测该游戏各车材质的基准色槽同名 `Layer_A97CDC25` ⇒ 槽名可跨包用 ✓）
+  · **两条源材质可能落到同一个目标材质**（典型：**不勾**「只对选中生效」的整车替换 —— 旋翼的源材质与
+    车身的源材质在自建包里都指向 `US_ACV 1`）⇒ 于是按 `renderer_info[].mats ↔ mats[].orig_name` 的
+    **归属**分别重指：旋翼拿"AH-1Z 那张图"的克隆、车身拿"ACV 那张图"的克隆
+    （⛔ 否则会把所有渲染器都指到最后一个克隆上 ⇒ 旋翼又贴上车身图，★⑮ 的病换个形式回来 ✗）
+- ✅ **端到端正负对照**（全程用**副本**，⛔ 没碰用户文件、没碰游戏目录）：
+  · **负向（改前必失败）**：同一个包**去掉名字** ⇒ 报错中止；**改前的老代码路径**则直接
+    `ValueError: 找不到原材质 pid 377016869587178026`；新报错还会给三段可执行指引
+    （① 用新版重新打包 ② 目标包里确认有该零件 ③ 网格名要与目标包里 GameObject 名一致）
+  · **正向（改后按预期）**：带名字 ⇒ 导入成功，**只改了自建包里 `Ah_1z` 那一个渲染器** ——
+    实测该车的 `FLYACV.prefab` 子树共 **8 个**渲染器（旋翼 `Ah_1z` ×1 + 车身 **7**）⇒ **车身 7 个一个没动**；
+    整包里另外 **146 个**不属于这个 prefab 的渲染器同样不受影响（整包判据：154 个渲染器里**只有旋翼那 1 个**变了，
+    其余 153 个 pid 逐条对照一致）；新材质的 `Layer_A97CDC25` 指向那张原机贴图，
+    且与导出的原机贴图**逐字节相同**（2,112,832 字节 / 2048²）✓
+  · ⚠️ 语义说明：自建包里零件原本用的是继承来的本车材质 `US_ACV 1` ⇒ **克隆它 + 换基准槽** =
+    给零件一个"自己的材质"，正是当初手工做的那件事（现在产品化、且**抗重建**）✓
+- 🔧 **「只导入 LOD0」不再静默吞零件**：`copy_full` 新加的零件**不在 prefab 的 LODGroup 里** ⇒ 默认被过滤掉，
+  用户"在视口里根本找不到那个网格、没法选中"，却**看不到任何提示** ✗ ⇒ 现在导入完成后会**明确报警**：
+  跳过了几个、分别叫什么、到插件偏好里关掉「只导入 LOD0」再导入即可 ✓
+- 🧹 **「造骨架包」不再往系统盘临时目录写文件**：`image_skeleton.make_skeleton_bundle` 原来把 1×1 占位图
+  写到 `tempfile.mkdtemp(prefix="skel_")`（**%TEMP%，而且从不清理** —— 正是用户抱怨过的"C 盘被白占"那一类）
+  ⇒ 现在占位图**直接在内存里造**（`BytesIO` 喂给 `inject_skeleton`）⇒ 临时文件归零；
+  顺带修掉一个真实故障：**受限/沙箱环境里 `%TEMP%` 下新建子目录写文件会被拒**，
+  那条功能会直接 `PermissionError` 死掉（实测）✓
+- 🧪 **新增两条回归**：`测试\test_star16_selfbuilt_matswap.py`（12 判据：四条证据链逐条落地 + 负向/正向对照 +
+  "名字对不上必须点名报错"）、`测试\test_blender_star16_selfbuilt.py`（无头 Blender 端到端 7 判据：
+  直接打开用户的 `飞行ACV.blend`（**只读**）→ ⑤ GUI 打包 → 导入自建包副本 → 回读核对）✓
+  · 旧包兼容：`renderer_info`/`orig_name` 都是**新增可选字段**，老包在"源包 == 目标包"时**行为一字不变** ✓
+
+【English】
+- 🐞 **Fixed a “the tool did nothing” hard failure**: when giving a transplanted part (e.g. an AH-1Z rotor on
+  an ACV) back **its original machine's texture**, importing the swap pack **always failed** —
+  · **Cause**: `mats[].orig` / `renderers[]` carry the **source package's** (game `units`) pids. Those two
+    properties are written **only** in “① import model” and nothing ever refreshes them, while the
+    **self-built bundle** produced by `copy_full` **reassigns every pid** ⇒ none of them can be found in
+    the target ⇒ the old code raised `ValueError: 找不到原材质 pid …` ✗
+  · **Measured** (the user's `自制mod\飞行ACV.blend` + self-built `FLYACV_f2b2e6c8….bundle`): the rotor
+    `Ah_1z.001`'s pid `-6649676451897414096` and its material `377016869587178026` are **all missing** from
+    the self-built bundle's **2815 objects**; the same part there is `4851857037681754300` ✓
+- ✨ **Fix (carry names + two-stage lookup)**: the pack now writes names too
+  (`renderer_info[{pid, go, mats}]`, `mats[].orig_name`) and the importer **tries the pid first, then the
+  name**: renderers match by GameObject name (`Ah_1z`, Blender's `.001` suffix is ignored) narrowed by the
+  current material names; materials resolve to ① a same-named material in the target, or ② otherwise the
+  material **the part currently uses** — which is exactly what we clone before swapping the recorded slot
+  (measured: every vehicle material here uses the same base-colour slot name `Layer_A97CDC25`, so slot names
+  travel across packages ✓). **Two source materials can land on the same target material** (typical:
+  a whole-vehicle swap with the checkbox **off**, where the rotor's and the body's source materials both
+  point at `US_ACV 1` in the self-built bundle) ⇒ repointing is done **per owner**
+  (`renderer_info[].mats ↔ mats[].orig_name`), so the rotor gets the “AH-1Z texture” clone and the body the
+  “ACV texture” clone (⛔ otherwise every renderer would end up on the last clone and the rotor would wear the
+  body texture again — the ★⑮ symptom returning in another form ✗)
+- ✅ **End-to-end positive/negative controls** (all on **copies** — the user's files and the game directory
+  were not touched): with the names stripped the import aborts (and the pre-fix code path gives
+  `ValueError: 找不到原材质 pid 377016869587178026`), while with names it succeeds and **only the `Ah_1z`
+  renderer changes** — measured: this vehicle's `FLYACV.prefab` subtree has **8** renderers (1 rotor + **7**
+  body) ⇒ **all 7 body renderers are untouched**; the other **146** renderers in the bundle that belong to
+  other prefabs are unaffected as well (bundle-wide criterion: of 154 renderers only the rotor changed, the
+  remaining 153 matched pid-for-pid) — with the new material's `Layer_A97CDC25`
+  pointing at the original texture — **byte-identical** to the exported one (2,112,832 bytes / 2048²) ✓
+- 🔧 **“Import LOD0 only” no longer swallows parts silently**: parts added by `copy_full` are **not in the
+  prefab's LODGroup**, so they were filtered out and the user simply could not find or select them, with no
+  message at all ⇒ the import now **warns explicitly** (how many were skipped, their names, and how to get
+  them: turn “import LOD0 only” off in the add-on preferences) ✓
+- 🧹 **“Build the skeleton bundle” no longer writes into the system temp directory**: the 1×1 placeholder PNG
+  used to go to `tempfile.mkdtemp(prefix="skel_")` (**`%TEMP%`, never cleaned** — the same “C: drive filling
+  up” class of bug the user complained about) ⇒ the placeholder is now created **in memory** (`BytesIO`
+  handed to `inject_skeleton`), so there are **zero temp files**; this also fixes a real failure where
+  creating/writing files under `%TEMP%` is denied in restricted/sandboxed environments (measured) ✓
+- 🧪 **Two new regressions**: `测试\test_star16_selfbuilt_matswap.py` (12 criteria) and
+  `测试\test_blender_star16_selfbuilt.py` (headless Blender end-to-end, 7 criteria, opening the user's
+  `飞行ACV.blend` **read-only**). Old packs stay compatible: the new fields are optional and behaviour is
+  unchanged when source == target ✓
+
+【Русский】
+- 🐞 **Исправлена ошибка «инструмент ничего не сделал»**: при возврате перенесённой детали (например, винта
+  AH-1Z на ACV) её **родной текстуры** импорт пакета замены **всегда падал** —
+  · **Причина**: `mats[].orig` / `renderers[]` несут pid **исходного пакета** (игрового `units`). Эти
+    свойства записываются **только** на шаге «① импорт модели» и больше нигде не обновляются, а
+    **самосборный пакет** от `copy_full` **переназначает все pid** ⇒ в цели не находится ни один ⇒
+    старый код выдавал `ValueError: 找不到原材质 pid …` ✗
+  · **Измерено** (файл пользователя `自制mod\飞行ACV.blend` + самосборный `FLYACV_f2b2e6c8….bundle`):
+    pid винта `Ah_1z.001` = `-6649676451897414096` и его материал `377016869587178026` **отсутствуют**
+    среди **2815 объектов** самосборного пакета; та же деталь там — `4851857037681754300` ✓
+- ✨ **Исправление (несём имена + двухступенчатый поиск)**: пакет теперь пишет и имена
+  (`renderer_info[{pid, go, mats}]`, `mats[].orig_name`), а импортёр **сначала пробует pid, затем имя**:
+  рендереры — по имени GameObject (`Ah_1z`, суффикс `.001` от Blender игнорируется) с уточнением по именам
+  текущих материалов; материалы — ① одноимённый материал в цели, иначе ② материал, **который деталь
+  использует сейчас** (именно его мы клонируем и меняем записанный слот; измерено: у всех материалов
+  техники здесь одно и то же имя базового слота `Layer_A97CDC25`, поэтому имена слотов переносимы ✓).
+  **Два исходных материала могут попасть на один и тот же материал цели** (типичный случай: замена на всей
+  машине с **снятой** галочкой — материалы винта и корпуса в самосборном пакете оба указывают на `US_ACV 1`)
+  ⇒ перепривязка делается **по принадлежности** (`renderer_info[].mats ↔ mats[].orig_name`): винт получает
+  клон «текстура AH-1Z», корпус — клон «текстура ACV» (⛔ иначе все рендереры укажут на последний клон, и
+  винт снова наденет текстуру корпуса — симптом ★⑮ вернётся в другой форме ✗)
+- ✅ **Сквозные положительный/отрицательный контроли** (всё на **копиях** — файлы пользователя и каталог
+  игры не тронуты): без имён импорт прерывается (а старый путь даёт
+  `ValueError: 找不到原材质 pid 377016869587178026`), с именами — успех, и **меняется только рендерер
+  `Ah_1z`** — измерено: в поддереве `FLYACV.prefab` **8** рендереров (1 винт + **7** корпус) ⇒
+  **все 7 рендереров корпуса не тронуты**; ещё **146** рендереров пакета, не относящихся к этому prefab,
+  тоже не затронуты (критерий по всему пакету: из 154 рендереров изменился только винт, остальные 153
+  совпали pid в pid) — а слот `Layer_A97CDC25` нового материала
+  указывает на родную текстуру — **побайтово идентичную** экспортированной (2 112 832 байта / 2048²) ✓
+- 🔧 **«Импортировать только LOD0» больше не проглатывает детали молча**: детали, добавленные `copy_full`,
+  **не входят в LODGroup** prefab, поэтому отфильтровывались, и пользователь просто не мог их найти или
+  выделить — без единого сообщения ⇒ теперь импорт **явно предупреждает** (сколько пропущено, их имена и
+  как их вернуть: снять «импортировать только LOD0» в настройках аддона) ✓
+- 🧹 **«Сборка скелет-пакета» больше не пишет в системный временный каталог**: PNG-заглушка 1×1 писалась в
+  `tempfile.mkdtemp(prefix="skel_")` (**`%TEMP%`, и никогда не удалялась** — тот же класс проблем
+  «диск C: забит», на который жаловался пользователь) ⇒ теперь заглушка создаётся **в памяти**
+  (`BytesIO` передаётся в `inject_skeleton`) ⇒ временных файлов **ноль**; попутно исправлен реальный сбой:
+  в ограниченных/песочных окружениях создание и запись файлов в `%TEMP%` запрещены (измерено) ✓
+- 🧪 **Две новые регрессии**: `测试\test_star16_selfbuilt_matswap.py` (12 критериев) и
+  `测试\test_blender_star16_selfbuilt.py` (безголовый Blender, сквозной тест, 7 критериев, открывает файл
+  пользователя `飞行ACV.blend` **только для чтения**). Старые пакеты совместимы: новые поля необязательны,
+  поведение не меняется при «источник == цель» ✓
+
+## v1.10.0（BA_Mod_Maker v1.10.0 + Blender 插件 v2.10.0）—— 🧩「只对选中对象生效」：移植过来的零件用它**原机**的贴图（PNG 内嵌 / 流式引用两条路）+ 修掉"贴图替换包其实一直导不进去"
+
+【中文】
+- 🐞 **修掉一个"这条功能其实一直用不了"的硬故障**：导入 `.bamod` 时有一道**无条件**的 `root_pid` 关卡，
+  而**贴图替换包 / 皮肤包**的 manifest 里**根本没有** `objects` / `root_pid`（它们只改纹理+材质+渲染器引用、
+  不建 prefab 容器）⇒ 这两类包**一律被拒**：`ValueError: manifest.root_pid=None 不在包对象里` ✗
+  **实测**（5.7 MB 的 decals 包做真往返）：修前必失败、修后"只改选中渲染器"按预期生效 ✓
+  现在只有**带 objects 的模型包**才要求 root，老包行为一字不变。
+- ✨ **⑤ 皮肤 → 「打包贴图替换包」新增「只对选中对象生效（不勾=整车）」**：勾上后**只改视口里选中那些
+  网格**的 `m_Materials`，车身/其它零件一个都不动；面板会实时显示 **"已导入网格 N 个 / 选中 M 个 ⇒
+  只换选中的那 M 个（或整车 N 个一起换）"**，点之前就看得到后果。
+  · **负向对照实测**：勾上+选中 1 个 ⇒ 只有那 1 个渲染器变材质；不勾 ⇒ 3 个都变，且前者是后者的**真子集**
+    （证明开关真接线了，而不是"反正都写全部"）✓
+  · 勾了但**什么都没选** ⇒ **明确报错并中止**，绝不偷偷按整车来 ✓
+- ✨ **贴图来源新增「流式引用」**（同一面板里选）：**不搬像素** —— 只建一个 `Texture2D`，把
+  `m_StreamData` 指到游戏 `.resS` 里**已有的那一段** ⇒ 直接借用游戏里任意一张**原机贴图**
+  （典型用法：把 AH-1Z 的涂装贴给移植过来的旋翼）。**实测包体积**：同一张 2048² 贴图
+  —— 流式引用 **532 字节** / PNG 内嵌 **1,961,732 字节**（差约 3700 倍）；解出来的像素与源贴图
+  **逐字节一致** ✓，既有的流式贴图导入后也**逐字节**没变（4/4）✓
+  · 配一个**「候选贴图」列表**：填搜索词 → 「列出候选贴图」→ 点一条（只列**流式**贴图，带尺寸/格式/大小）
+  · **「槽名」留空 = 自动挑基准色槽**（贴图名带 `BaseMap`/`BaseColor`/`Albedo` 的那个 —— 实测 ACV 旋翼的
+    `Layer_A97CDC25`、decals 的 `_Albedo` 都挑得中；**法线槽不会被误换**）✓
+- 🔧 **「导出贴图（皮肤/模型）」现在能读流式贴图**：以前只走 UnityPy 的 `image`，遇到 `.resS` 在包外或
+  解码异常就**静默跳过**（★⑮ 的"第 1 步导入 AH-1Z 拿贴图"就会少图）⇒ 现在先走原路、失败再
+  **自己按 `offset/size` 读流 + 用 UnityPy 的解码器解**，并把失败原因打出来（不再无声失败）✓
+  · **实测**（无头 Blender 走全 GUI）：导入 `US_AH-1Z Viper.prefab` → ⑤ 导出贴图 ⇒ 出 6 张 PNG，
+    其中默认皮肤 `US_AH-1Z_viper_VMtl458_1_BaseMap.png` = **2,112,832 字节**（这张是**流式**贴图，
+    以前只有工具侧脚本能拿到）✓
+- 🧭 **候选贴图列表标出「材质引用数」**（★⑮ 选贴图时最要紧的一个数）：教学线实测踩过一个坑 ——
+  看到某张贴图解不出来就判它"死数据"，其实**解码失败只能说明"你取到的那段 `.resS` 不是这个包的数据"**；
+  真正该看的是**有没有材质引用它**。⇒ 现在每行都显示 `·引用N`，**0 引用的行标红叹号**并在报告里
+  点名"其中 N 张没有任何材质引用（可能是死数据，慎重）" —— 给数字、**不替用户砍掉** ✓
+  · 顺手把"同一 offset、两个数据源"的坑做成可复现回归：本机实测 4 张 AH-1Z 贴图里
+    **`US_AH-1Z_3_BaseMap` 在「当前包」与磁盘旧 `*_unpacked` 副本里读出来确实不同**
+    （前 8 字节 `2046125f…` vs `48780076…`）⇒ 正是当初误判的来源；现在这条判据钉在回归里 ✓
+- 🐞 **修掉两个会让"自己解流式贴图"静默产出垃圾图的解码坑**（本包实测 fmt **29 = DXT5Crunched**）：
+  · 自己造的 shim 少了 `get_image_data()` **方法** ⇒ `AttributeError`，所有格式必然失败，
+    而日志还写着"可能是死数据"（**误导性极强**）✗
+  · 就算补上方法，shim 里 `version` 是 `(0,0,0,0)` ⇒ crunch 分支按 `version[0] > 2017` 选错解包器
+    ⇒ 解出一张 **11 MB 的垃圾图**（真值 2.1 MB）✗✗ ⇒ 改成**不造 shim**，把 `parse_image_data`
+    需要的 7 个参数直接喂进去，版本/平台/PlatformBlob 都从同包里那个**真对象**上取 ✓
+    （回归判据：我方独立解出的 PNG 与 UnityPy 解出的 **逐字节相同** = 2,112,832 字节）
+- 🧪 **新增 4 条可复现回归（都带负向对照）**：
+  `测试\test_star15_matswap_scope.py`（真往返：只改选中 / 整车 / 空表三条路互相对照 + 贴图像素回读）、
+  `测试\test_star15_stream_tex.py`（流式引用逐字节一致 / 不搬像素 / 把 `offset` 挪 8 字节必须解出**不同**的图）、
+  `测试\test_star15_tex_source.py`（★ 死活判据看**材质引用** + 同一 offset 两个数据源比对 + 解码参数同源）、
+  `测试\test_blender_star15_gui.py`（无头 Blender 走全 GUI：**11 条判据** —— 勾/不勾的真子集对照、
+  勾了没选必中止、**AH-1Z 导出贴图**、**真实 ACV 选中旋翼 ⇒ 只改那 1 个渲染器**、流式打包、候选表引用数；
+  并自检"当前加载的是源码副本而不是已安装的旧插件"）✓
+
+【English】
+- 🐞 **Fixed a hard failure that made a shipped feature unusable**: importing a `.bamod` had an
+  **unconditional** `root_pid` gate, but **texture-swap and skin packs have no `objects`/`root_pid`**
+  at all (they only rewrite textures, materials and renderer references) ⇒ both pack kinds were
+  **rejected outright**: `ValueError: manifest.root_pid=None …`. Measured with a real round-trip on a
+  5.7 MB bundle: always failed before, works as intended after ✓ Only **model packs that carry objects**
+  now require a root; legacy packs behave exactly as before.
+- ✨ **⑤ Skin → “Pack texture-swap” gained “Apply to selected objects only (unchecked = whole vehicle)”**:
+  when checked, **only the meshes selected in the viewport** get their `m_Materials` rewritten — the
+  body and every other part stay untouched. The panel now shows live **“imported meshes N / selected M ⇒
+  only those M will change (or all N)”** so you see the consequence before clicking.
+  · **Negative control, measured**: checked + 1 mesh selected ⇒ exactly 1 renderer changed; unchecked ⇒ 3
+    changed, and the first set is a **proper subset** of the second ✓
+  · Checked but **nothing selected** ⇒ it **reports an error and aborts** instead of silently doing the whole vehicle ✓
+- ✨ **New texture source “streamed reference”**: **no pixel copying** — it only creates a `Texture2D`
+  whose `m_StreamData` points at an **already existing** segment inside the game's `.resS`, so you can
+  reuse **any original texture already in the game** (typical use: give a transplanted AH-1Z rotor its
+  AH-1Z paint). **Measured pack size** for the same 2048² texture: streamed **532 bytes** vs.
+  PNG-embedded **1,961,732 bytes** (~3700×); the decoded pixels are **byte-identical** to the source
+  texture ✓ and pre-existing streamed textures still decode **byte-identically** after import (4/4) ✓
+  · Includes a **candidate-texture list** (type a search term → “List candidates” → click one); it lists
+    **streamed** textures only, with size/format/byte size
+  · **Leave “slot” empty to auto-pick the base-colour slot** (the one whose texture name contains
+    `BaseMap`/`BaseColor`/`Albedo` — works for the ACV rotor's `Layer_A97CDC25` and decals' `_Albedo`;
+    **normal-map slots are never touched by mistake**) ✓
+- 🔧 **“Export textures (skin/model)” now reads streamed textures**: previously it only used UnityPy's
+  `image` and **silently skipped** anything whose `.resS` sits outside the bundle or fails to decode
+  (which would drop files from ★⑮'s “step 1: import AH-1Z and grab its textures”) ⇒ now it tries the old
+  path first, then **reads the stream by `offset/size` and decodes it with UnityPy's decoder**, printing
+  the reason on failure (no more silent misses) ✓
+  · **Measured** (headless Blender through the real GUI): import `US_AH-1Z Viper.prefab` → ⑤ export
+    textures ⇒ 6 PNGs, including the default skin `US_AH-1Z_viper_VMtl458_1_BaseMap.png` =
+    **2,112,832 bytes** — that texture is **streamed**, and this step used to be script-only ✓
+- 🧭 **The candidate-texture list now shows a “material references” count** (the number that actually
+  matters when picking a texture): the teaching line once mis-judged a texture as “dead data” because it
+  failed to decode — **a decode failure only proves the `.resS` slice you read is not this bundle's
+  data**; what you must look at is **whether any material references it**. Each row now shows `refs:N`,
+  **rows with 0 references are flagged**, and the report names “N of them have no material reference at
+  all (possibly dead data — be careful)” — it gives you the number instead of silently dropping rows ✓
+  · The “same offset, two data sources” trap is now a reproducible regression: on this machine
+    `US_AH-1Z_3_BaseMap` really does read **differently** from the live bundle than from the stale
+    on-disk `*_unpacked` copy (first 8 bytes `2046125f…` vs `48780076…`) — the exact source of that old
+    mis-judgement ✓
+- 🐞 **Two decoding traps that made “decode the stream myself” silently produce garbage** (the pack uses
+  fmt **29 = DXT5Crunched**): a hand-made shim missed the `get_image_data()` **method** (⇒ every format
+  failed while the log blamed “dead data” — highly misleading), and even with the method the shim's
+  `version` was `(0,0,0,0)`, so the crunch branch picked the wrong unpacker and produced an **11 MB
+  garbage image** (the real one is 2.1 MB) ✗ ⇒ now no shim is built at all; the seven arguments
+  `parse_image_data` needs are passed directly, with version/platform/PlatformBlob taken from the **real**
+  object in the same bundle ✓ (Regression criterion: our independent decode is **byte-identical** to
+  UnityPy's — 2,112,832 bytes.)
+- 🛠 **Two low-level save-path traps that streamed references always hit** (without these, the new feature
+  looks fine but the game cannot read the texture):
+  · Internal CAB names are **renamed on every save**, and the “fix up `m_StreamData.path` after renaming”
+    pass **deliberately skips objects with unsaved changes** ⇒ a freshly created streamed texture is
+    **skipped** ⇒ its path keeps the old CAB name ⇒ `FileNotFoundError: Resource file CAB-….resS not found`
+    ✗ (reproduced). The importer now fixes **only the pids it created itself** (never touching other
+    objects, so no other tool is affected) ✓
+  · `save_stream` renamed **a second time** (the importer already renamed for the byte-surgery path), and
+    that second pass cannot fix new objects either. Now **a save renames only once** ✓
+- 🧪 **Four new reproducible regressions (all with negative controls)**:
+  `测试\test_star15_matswap_scope.py` (real round-trip: selected-only / whole-vehicle / empty-list paths
+  cross-checked, plus pixel read-back), `测试\test_star15_stream_tex.py` (streamed reference is
+  byte-identical, no pixel copying, shifting `offset` by 8 bytes **must** decode differently),
+  `测试\test_star15_tex_source.py` (liveness is judged by **material references**, same-offset two-source
+  comparison, decode parameters from the same object), and `测试\test_blender_star15_gui.py` (headless
+  Blender through the real GUI: **11 criteria** — subset control for the checkbox, “checked but nothing
+  selected” must abort, **AH-1Z texture export**, **real ACV with the rotor selected ⇒ only that one
+  renderer changes**, streamed pack, candidate reference counts; it also self-checks that it loaded the
+  **source copy rather than a stale installed add-on**) ✓
+
+【Русский】
+- 🐞 **Исправлена жёсткая ошибка, из-за которой поставленная функция была нерабочей**: при импорте
+  `.bamod` стояла **безусловная** проверка `root_pid`, но у **пакетов замены текстур и скинов**
+  `objects`/`root_pid` **вообще нет** (они меняют только текстуры, материалы и ссылки рендереров) ⇒
+  оба типа пакетов **отклонялись сразу**: `ValueError: manifest.root_pid=None …`. Проверено реальным
+  проходом на пакете 5,7 МБ: до правки — всегда ошибка, после — работает как задумано ✓ Теперь root
+  требуется только у **модельных пакетов с objects**; старое поведение не изменилось.
+- ✨ **⑤ Скин → «Упаковать замену текстур»: новый переключатель «Только для выделенных объектов
+  (снят = вся машина)»**: при включении переписываются `m_Materials` **только у выделенных в вьюпорте
+  мешей** — корпус и остальные части не трогаются. Панель показывает в реальном времени **«мешей N /
+  выделено M ⇒ изменятся только эти M (или все N)»**, чтобы последствия были видны до нажатия.
+  · **Отрицательный контроль, измерено**: включено + выделен 1 меш ⇒ изменился ровно 1 рендерер;
+    выключено ⇒ 3, причём первый набор — **собственное подмножество** второго ✓
+  · Включено, но **ничего не выделено** ⇒ **явная ошибка и остановка**, никакого «молча всю машину» ✓
+- ✨ **Новый источник текстуры — «потоковая ссылка»**: **пиксели не копируются** — создаётся только
+  `Texture2D`, чей `m_StreamData` указывает на **уже существующий** участок в `.resS` игры, поэтому можно
+  взять **любую оригинальную текстуру, уже имеющуюся в игре** (типичный случай: вернуть перенесённому
+  винту AH-1Z его собственную окраску). **Измеренный размер пакета** для одной и той же текстуры 2048²:
+  потоковая ссылка **532 байта** против встроенного PNG **1 961 732 байта** (~3700×); декодированные
+  пиксели **побайтово совпадают** с исходной текстурой ✓, а уже имевшиеся потоковые текстуры после
+  импорта по-прежнему декодируются **побайтово** так же (4/4) ✓
+  · Есть **список кандидатов** (ввести слово → «Показать кандидатов» → выбрать строку); показываются
+    только **потоковые** текстуры с размером/форматом/объёмом
+  · **Пустое поле «слот» = автоматический выбор слота базового цвета** (у которого имя текстуры содержит
+    `BaseMap`/`BaseColor`/`Albedo` — работает для `Layer_A97CDC25` винта ACV и `_Albedo` в decals;
+    **слоты нормалей по ошибке не меняются**) ✓
+- 🔧 **«Экспорт текстур (скин/модель)» теперь читает потоковые текстуры**: раньше использовался только
+  `image` из UnityPy, а всё, чей `.resS` лежит вне пакета или не декодируется, **молча пропускалось**
+  (из-за этого у ★⑮ «шаг 1: импортировать AH-1Z и забрать текстуры» пропадали файлы) ⇒ теперь сначала
+  старый путь, затем **чтение потока по `offset/size` и декодирование декодером UnityPy**, а причина
+  ошибки печатается (без «тихих» пропусков) ✓
+  · **Измерено** (безголовый Blender через настоящий GUI): импорт `US_AH-1Z Viper.prefab` → ⑤ экспорт
+    текстур ⇒ 6 PNG, среди них скин по умолчанию `US_AH-1Z_viper_VMtl458_1_BaseMap.png` =
+    **2 112 832 байта** — эта текстура **потоковая**, а раньше этот шаг был доступен только скриптам ✓
+- 🧭 **Список кандидатов теперь показывает «число ссылок из материалов»** (именно это важно при выборе):
+  учебная линия однажды ошибочно сочла текстуру «мёртвой» из-за неудачного декодирования —
+  **ошибка декодирования доказывает лишь то, что прочитанный участок `.resS` не из этого пакета**;
+  смотреть надо на то, **ссылается ли на неё какой-либо материал**. Теперь в строке есть `refs:N`,
+  **строки с 0 ссылок помечаются**, а в отчёте пишется «N из них вообще без ссылок из материалов
+  (возможно, мёртвые данные — осторожно)» — цифра даётся, строки **не выкидываются за вас** ✓
+  · Ловушка «один и тот же offset, два источника данных» стала воспроизводимой регрессией: на этой машине
+    `US_AH-1Z_3_BaseMap` действительно читается **по-разному** из живого пакета и из устаревшей копии
+    `*_unpacked` на диске (первые 8 байт `2046125f…` против `48780076…`) — именно оттуда взялась та
+    ошибочная оценка ✓
+- 🐞 **Две ловушки декодирования, из-за которых «прочитать поток самому» тихо давало мусор** (в пакете
+  формат **29 = DXT5Crunched**): у самодельного shim не было **метода** `get_image_data()` (⇒ все форматы
+  падали, а в логе при этом писалось «возможно, мёртвые данные» — крайне вводит в заблуждение), а даже с
+  методом `version` в shim был `(0,0,0,0)`, поэтому ветка crunch выбирала неверный распаковщик и выдавала
+  **мусорную картинку на 11 МБ** (настоящая — 2,1 МБ) ✗ ⇒ теперь shim не создаётся вообще: семь аргументов
+  `parse_image_data` передаются напрямую, а version/platform/PlatformBlob берутся у **настоящего** объекта
+  из того же пакета ✓ (Критерий регрессии: наше независимое декодирование **побайтово совпадает** с
+  UnityPy — 2 112 832 байта.)
+- 🛠 **Две низкоуровневые ловушки пути сохранения, которые потоковые ссылки ловят всегда** (без них
+  функция выглядит рабочей, но игра текстуру не прочитает):
+  · Внутренние имена CAB **переименовываются при каждом сохранении**, а проход «поправить
+    `m_StreamData.path` после переименования» **намеренно пропускает объекты с несохранёнными
+    изменениями** ⇒ только что созданная потоковая текстура **пропускается** ⇒ в пути остаётся старое имя
+    CAB ⇒ `FileNotFoundError: Resource file CAB-….resS not found` ✗ (воспроизведено). Теперь импортёр
+    правит **только созданные им самим pid** (не трогая чужие объекты, поэтому другие инструменты не
+    затронуты) ✓
+  · `save_stream` переименовывал **второй раз** (импортёр уже переименовал для «байтовой хирургии»), и
+    этот второй проход тоже не может поправить новые объекты. Теперь **за одно сохранение имя меняется
+    один раз** ✓
+- 🧪 **Четыре новых воспроизводимых регрессии (все с отрицательными контролями)**:
+  `测试\test_star15_matswap_scope.py` (реальный проход: только выделенные / вся машина / пустой список —
+  взаимная сверка, плюс обратное чтение пикселей), `测试\test_star15_stream_tex.py` (потоковая ссылка
+  побайтово идентична, пиксели не копируются, сдвиг `offset` на 8 байт **обязан** дать другую картинку),
+  `测试\test_star15_tex_source.py` (живость определяется **ссылками из материалов**, сравнение двух
+  источников при одном offset, параметры декодирования — от того же объекта),
+  `测试\test_blender_star15_gui.py` (безголовый Blender через настоящий GUI: **11 критериев** — контроль
+  подмножества для переключателя, «включено, но ничего не выделено» — обязательная остановка,
+  **экспорт текстур AH-1Z**, **реальный ACV с выделенным винтом ⇒ меняется только 1 рендерер**, потоковый
+  пакет, счётчики ссылок; плюс самопроверка, что загружена **копия исходников, а не устаревший
+  установленный аддон**) ✓
+
+## v1.9.0（BA_Mod_Maker v1.9.0 + Blender 插件 v2.9.0）—— 🏷 档位补正（上版实为中版本）+ 清掉产品里的"写死点" + 新的「改包后自检」
+
+【中文】
+- 🏷 **档位补正说明**：上一版 **v1.8.118 实际是中版本（minor）的改动量**（新增 GUI 面板 1 个 / 新增模块 4 个 /
+  动了 catalog 写入链与字段风格 / 新增交付资产 1 个 / Blender 插件新增 3 个算子），当时只跳了末位 ⇒
+  本次按**中版本**发号（`1.8.x → 1.9.0`），检查也按中档跑（秒级门禁 + 快速测试套件）。
+  判档依据（含逐项矩阵与规则清单）见 `tools\release\发版判档-v1.8.118.md`。
+  ⛔ 今后版本跨度按**改动量**判，**不默认只跳末位**。
+- 🧹 **清掉产品里的两处"写死点"**（游戏一更新就会**静默失效**的那类）：
+  - **内置词典里不再印过期的包名与体积**：以前写死 `units_assets_all_3cc1eb58….bundle (3.66GB)`，
+    而现盘上是 `…1e6c04ce….bundle`（**旧名字已经不存在**）⇒ 现在**现场解析**，并同时给出
+    **字节数 + GB + GiB** 三种写法（实测 `3,381,248,409 字节 = 3.38 GB = 3.15 GiB`）。
+    ⛔ 解析不出来时**明说"未找到"**，绝不退回一个可能过期的旧值 ✓
+  - **`AnimationHub` 的脚本编号改成按类名解析**：以前写死 `4665939560152279323`，游戏更新后编号漂了
+    **不会报错**、只会"认不出这个组件 / 给你另一个对象的字节"✗ ⇒ 现在按 `m_ClassName == "AnimationHub"`
+    现查，硬编码值只作兜底且**过期会警告** ✓（实测该常量**当前仍有效**：反查 3/3 命中）
+  - 顺带把同一批脚本编号从**4 份副本**收敛成**单一来源**（改一处即可，并带"按名字复核"的函数）
+- 🛡 **新增「改包后自检」**（工具菜单 →「我的 bundle」→ ④ 收尾 → **🔍 改包后自检**）：
+  比**内部文件名（`CAB-…`）与每个文件的大小**，并告诉你 **"谁依赖我动的那个 CAB"**。
+  为什么重要：这游戏里**跨包 `archive:/CAB-…` 引用是常态**（实测 **79 个包里 38 个跨包引用**，
+  其中 `vfx_assets_all` 被 **31 个包**引用）⇒ **改内部 CAB 名会连带打断引用者**，
+  而游戏里往往**不报错**、只是内容不见 ✗。自检会说清两种情形：
+  改的是**游戏自带包** ⇒ 改名**危险**（明确警告 + 列出引用者）；改的是**我们自己的包** ⇒ 改名
+  **正常且必须**（不变名会和游戏包撞名、直接加载不了）✓
+  实测：小模板的内部名被 1 个别的包引用（×7 次）；扫描**只扫阈值内的包**，超出的**明说"没扫"**
+  （「没扫」≠「没引用」）✓
+- 🔎 **全产品"写死点"普查与处置**：新增扫描器与清单（写死的包名 / 32 位哈希 / 脚本 pid / pid 段），
+  把交付路径里的命中**逐条登记处置**（已走 `bundle_paths` 现场解析的标「**已免疫**」）；
+  并加了一条**守卫测试**：**新出现**的写死包名会**判红**，注释行里的历史包名**不算错** ✓
+- 📋 **「换音乐」规格与可行性**（本轮**不实现**，只交文档）：结论是**能换"用哪一段现成音乐"**
+  （把音乐总表里某一项的事件名改成另一条**已经在 bank 里**的曲子，**不用碰 bank、不用 FMOD 工程**），
+  **不能凭空加一段新音乐**。两条写入路线：**等长改写**（只重压 1 块、包大小不变，快）/ **变长改写**
+  （重写节点 + 变长重切，慢）。实测并在文档里标出资产自带的 **1 条坏数据**（`Special` 组的 `ar1`
+  事件名不是 `event:/` 开头 ⇒ **永远播不出**）。
+  ⛔ 明确不做"导入你自己的音频"（那条路未通，做了只会得到"改了没反应"）✗
+
+【English】
+- 🏷 **Release-tier correction**: the previous release **v1.8.118 was actually a minor-level change**
+  (1 new GUI panel, 4 new modules, changes to the catalog writing path and field style, 1 new shipped asset,
+  3 new Blender operators) but only the patch digit was bumped ⇒ this release is numbered as a **minor**
+  (`1.8.x → 1.9.0`) and gated accordingly (fast gates + the fast test suite). Rationale (with the per-item
+  matrix): `tools\release\发版判档-v1.8.118.md`. ⛔ From now on the version span follows the **change scope**,
+  never "just the last digit".
+- 🧹 **Removed two hardcoded values that fail silently after a game update**:
+  - the built-in glossary no longer prints a **stale bundle name/size** (it now resolves at runtime and shows
+    **bytes + GB + GiB**: measured `3,381,248,409 bytes = 3.38 GB = 3.15 GiB`); if it cannot resolve it says
+    **"not found"** instead of reusing a possibly outdated value ✓
+  - `AnimationHub`'s script id is now resolved **by class name** (the old hardcoded id would silently point at
+    the wrong object after an update); the constant stays only as a fallback **and warns when it is stale** ✓
+    The same script ids were collapsed from **4 copies into a single source**.
+- 🛡 **New “post-modification self-check”** (Tools → My bundle → ④ Finish → **🔍 self-check**): compares the
+  bundle's **internal file names (`CAB-…`) and per-file sizes**, and tells you **who depends on the CAB you
+  touched**. Why it matters: cross-bundle `archive:/CAB-…` references are **normal** in this game
+  (**38 of 79 bundles** reference another bundle; `vfx_assets_all` is referenced by **31**), so renaming an
+  internal CAB **breaks its referrers** — usually **without any error**, content just disappears ✗.
+  It distinguishes both cases (renaming a **game** bundle = dangerous, with the referrer list; renaming **our
+  own** bundle = required) and **says which bundles it did not scan** (“not scanned” ≠ “no referrers”) ✓
+- 🔎 **Product-wide “hardcoded value” census**: a scanner plus a disposition list (hardcoded bundle names,
+  32-hex hashes, script pathIDs, pid segments), with **every hit in shipped paths registered**, plus a
+  **guard test** that fails on **new** hardcoded bundle names (historical names in comments are fine) ✓
+- 📋 **“Replace music” spec and feasibility** (documentation only this round): you **can** change *which
+  existing track* plays (point a config entry at another event that is **already in a bank** — no bank or FMOD
+  project changes), but you **cannot add a brand-new track**. Two write routes are documented (equal-length
+  patch = fast, pack size unchanged; variable-length = slow re-cut), together with **one broken entry shipped
+  by the game itself** (`Special` / `ar1`, whose event name does not start with `event:/` ⇒ never plays).
+  ⛔ “Import your own audio” is explicitly not offered (that route is not proven) ✗
+
+【Русский】
+- 🏷 **Коррекция уровня релиза**: предыдущий релиз **v1.8.118 по объёму изменений был минорным** (1 новая
+  панель, 4 новых модуля, изменения в записи catalog и стиле полей, 1 новый поставляемый ресурс, 3 новых
+  оператора Blender), но была увеличена только последняя цифра ⇒ этот релиз нумеруется как **минорный**
+  (`1.8.x → 1.9.0`) с соответствующими проверками. Обоснование: `tools\release\发版判档-v1.8.118.md`.
+  ⛔ Теперь разряд версии определяется **объёмом изменений**, а не «последней цифрой».
+- 🧹 **Убраны два «зашитых» значения, которые тихо ломаются после обновления игры**: встроенный словарь
+  больше не печатает **устаревшее имя/размер пакета** (теперь определяется на месте; показываются
+  **байты + GB + GiB**), а id скрипта `AnimationHub` определяется **по имени класса** (старая константа
+  осталась только как запасной вариант и **предупреждает об устаревании**) ✓ Одни и те же id были сведены
+  из **4 копий в один источник**.
+- 🛡 **Новая «самопроверка после изменения пакета»**: сравнивает **внутренние имена (`CAB-…`) и размеры
+  файлов** и сообщает, **кто зависит от изменённого CAB**. Перекрёстные ссылки `archive:/CAB-…` здесь
+  **норма** (**38 из 79** пакетов ссылаются на другие; `vfx_assets_all` — на него ссылаются **31**),
+  поэтому переименование внутреннего имени **рвёт ссылающиеся пакеты**, обычно **без ошибок** ✗.
+  Различает оба случая (пакет игры = опасно; наш пакет = обязательно) и **перечисляет непросканированные
+  пакеты** («не сканировали» ≠ «нет ссылок») ✓
+- 🔎 **Сквозная инвентаризация «зашитых значений»** (имена пакетов, 32-символьные хеши, id скриптов,
+  сегменты pid) с **реестром решений по каждому попаданию** и **тестом-стражем**, который ругается на
+  **новые** зашитые имена пакетов ✓
+- 📋 **Спецификация «замена музыки»** (в этом релизе только документ): можно сменить **какой из
+  существующих треков** играет (перенаправив событие на другое, **уже присутствующее в bank**), но
+  **нельзя добавить новый трек**. Описаны два пути записи (равной длины — быстро; переменной длины — медленно)
+  и **одна битая запись самой игры** (`Special` / `ar1`: имя события не начинается с `event:/` ⇒ не играет) ✓
+
+## v1.8.118（BA_Mod_Maker v1.8.118 + Blender 插件 v2.7.119）—— 🧩 catalog 写入器按原生风格重写（那次"装进游戏 UI 全没了"的根因候选）+ 肖像一键替换 + 数值 mod 面板 + 游戏坐标面板
+
+【中文】
+- 🐞 **修掉一个"装进游戏后 UI 全没了"的根因候选**（自检以前**完全查不出来**）：
+  - **实测取证**：游戏原生 catalog 里 **78 个 bundle 条目中有 76 个**的 `m_BundleName` 是
+    **纯 32 位哈希**（不带 `.bundle`）；而**我们自己注册的那一条**写的是**文件名** ✗
+    ⇒ 现在写入器**从原生条目深拷贝整套字段与顺序**，只覆盖 `m_Hash`/`m_Crc`/`m_BundleSize`/`m_BundleName`，
+    并把它写成**纯哈希** ✓
+- 🛡 **自检新增第 ⑥ 条「catalog 全量自洽校验」**（以前只看"本包那一条链"，整份 catalog 坏没坏一概不看）：
+  逐项过 **引用越界 / 孤儿条目 / 重复键 / 字段风格 / `m_Crc`=0 / `m_Hash` 与文件名对不上**。
+  实测：**健康原生 catalog 零误报**（4 万多个索引全过）；**故意做坏 6 种，6 种全被抓到** ✓
+- ♻️ **「地址已存在」不再中断流程**（重建模型时的高频动作）：
+  以前每次重建都抛 `地址 'FLYACV' 已存在` 把整步打断，而**包其实已经写好了**（只有 catalog 这一步没做）✗
+  ⇒ 现在**自动走"更新现有条目"**（沿用原 internalId/键/providerId，只重写 extra）并打印
+  `✓ 已更新现有条目（m_Crc 旧 → 新）`；**实测 keys/entries 一条不增**（28941/21279 → 28941/21279）✓
+  ⛔ 地址属于**别人的包**时**不硬抢**（那会顶掉游戏原生资产）⇒ 明确拒绝并给出三条出路 ✓
+- 📏 **新的「地址命名辅助」**：注册地址时点一下就看得到**DB 里这个字段的原值有几个字符**，并**实时校验**
+  新地址长度 ≤ 原值（定长回填放不下就写不进去）。实测：`Units #180` 的 `ModelFileName = 'US_ACV'`
+  = **6 字符** ⇒ `FLYACV2`(7) **被判红**、`FLACV2`(6) 判绿 —— 正是当初白试一轮的那个坑 ✓
+- 🖼 **肖像/图标：一键「原键替换」+ 条目级重指向**：
+  - ⛔ **单位肖像/图标不要指望新建地址键**（实测游戏**不消费**它，立绘会回退成步兵立绘）⇒ 只能"原键不变"。
+  - 「一键原键替换」把原来的**手工 3 步**（复制原包 → 就地换图 → 重指向原包键）合成 1 步，并**自动同步 CRC** ✓
+  - 新增**条目级重指向**：只把**这一条资产**改指到你的小包 ⇒ **不用再复制整个 304 MB 肖像包**
+    （实测端口级操作：地址键名**一个没变**、**原共享条目一字未改**）✓
+- 🏗 **新增「肖像/图标骨架包」**：小模板本身**没有图片骨架**（连 `Sprite(213)` 类型都没有）
+  ⇒ 从它建的包，③b 的「骨架图标」下拉是**空的**。现在产品自带一个 **201 KB** 的骨架包
+  （预置 1×1 占位图标 = `Texture2D` + `Sprite`，并把 `Sprite(213)` 补进类型表）⇒ **天生能换图** ✓
+  （面板里同时写明模板取舍：小模板 149 KB 加载快、推荐；游戏主包 3.15 GB 结构同源但**加载明显变慢**）
+- 🧪 **新增「数值 mod（场景 `configs.zip`）」面板**（工具菜单）：
+  改数值**不用碰 6.8 GB 的 `data.unity3d`**、产物只有几十字节、**也不会被 Steam 校验还原** ✓
+  流程：选场景 → 载入它现有的 `configs.zip` 当模板（或手写字段）→ 打包 → 放进场景 → **出货前自查两条**
+  （① 名字不在"不可覆盖"黑名单里 ② 条目名与字段集合法）。实测本机列出 **82 个**场景文件夹，
+  且全程**只读**（跑前跑后游戏目录内容一字未变）；放进场景前**会先把旧的备份**成 `.bak_<时间戳>` ✓
+- 🔍 **「Mod 自查」新增三条"静默失败"判据**（游戏里**不报错**、但内容看不见的那类坑）：
+  ① 步兵班**声明武器数 > 模型炮塔数** ⇒ 第 M+1 件起**一件实体都不建**（战场栏看不到）
+     —— 实测在 T4c 的 DB 上**真报出**「unit 113 声明 6 件 · 模型 5 塔 ⇒ `669（RShG-1）` 不建实体」，
+     而**原版 DB 一条都不报** ✓
+  ② `TurretWeapons` 条数 > prefab 里 `UnitPrefabTurretInfo.Weapons` 数组长度 ⇒ 装载期抛异常（拿不到 prefab
+     数据时**只提示、不断言**）
+  ③ 武器 `Type` 在该槽位**原版从没出现过** ⇒ 每帧越界刷异常（**必须有原版基线**才判，没有就不臆测）✓
+- 🪟 **Blender 插件三件事**：
+  - **★「游戏坐标」板块（可编辑）**：面板直接显示 **游戏坐标**（父链复合后的位置）、**视图坐标**、
+    **网格几何中心**；两者不一致时**标红提示"视图不可信"**。点「✏ 输入游戏坐标…」填目标值，
+    插件**内部反算 `loc`**（实测：输入 `(5, 6, 7)` ⇒ 游戏坐标**精确等于** `(5, 6, 7)`）✓
+    ⛔ 为什么网格要单列一行：网格**对象原点根本不是几何中心**（实测那对桨盘的轴心与顶点重心差 **3.78 m**）
+    ⇒ 只显示"原点"会把人带偏 ✓
+  - **★「摊平父级逆变换（让视图 = 游戏坐标）」**：实测**`loc` 一个数都不改**、**游戏坐标不变**
+    （⇒ **构建产物完全不变**，因为导出器本来就不读父级逆变换）、之后**视图位置 == 游戏位置** ✓
+    ⛔ 故意**不用** Blender 的「应用父级逆变换」——那会把逆变换**烧进 `loc`** ⇒ 导出结果跟着变 ⇒ 实机反而偏 ✗
+    安全阀：祖先链有**非均匀缩放**时**跳过并警告**（逆变换可能含剪切）✓
+    ★ 顺带把一条原来只敢标"推测"的结论**当场验了**：全链带 90° 旋转时 **矩阵连乘 ≠ 各级 `loc` 相加**
+    ⇒ 通用式**必须**是矩阵连乘 ✓
+  - **[路径-02] 输出路径不再落 C 盘**：启动时把**落在 C 盘 / 插件目录内**的输出路径自动迁到 D 盘
+    （`bundle` 是**输入**·游戏文件，**永不被动**）；实测 `C:\…\out.bamod` → `D:\BrokenArrow_Mods\exports\…` ✓
+
+【English】
+- 🐞 **Fixed a likely root cause of the “UI vanished after installing into the game” incident**
+  (the old self-check could not see it at all): in the game’s own catalog, **76 of 78 bundle entries**
+  store `m_BundleName` as a **bare 32-hex hash** (no `.bundle`), while **our registered entry** wrote the
+  **file name** ✗ ⇒ the writer now **deep-copies the whole field set and order from a native entry** and
+  only overrides `m_Hash`/`m_Crc`/`m_BundleSize`/`m_BundleName`, writing a **bare hash** ✓
+- 🛡 **New self-check step ⑥: full-catalog consistency validation** (previously only “this bundle’s chain”
+  was verified): out-of-range references, orphan entries, duplicate keys, field style, `m_Crc`==0,
+  `m_Hash` vs file name. Measured: **zero false positives on a healthy native catalog** (40k+ indices),
+  and **all 6 deliberately corrupted variants were caught** ✓
+- ♻️ **“Address already exists” no longer aborts the run**: rebuilding a model used to fail with
+  `地址 'FLYACV' 已存在` while **the bundle itself was already written** ✗ ⇒ it now **automatically updates
+  the existing entry** (keeping internalId/key/providerId, rewriting only the extra) and prints
+  `✓ 已更新现有条目`; measured **keys/entries unchanged** (28941/21279). Addresses that belong to
+  **someone else’s bundle are never hijacked** — it refuses and lists three options ✓
+- 📏 **New “address length helper”**: shows the **DB field’s original value and character count** and
+  live-validates “new address ≤ original” (fixed-width backfill). Measured: `Units #180`
+  `ModelFileName='US_ACV'` = **6 chars** ⇒ `FLYACV2` (7) is flagged red, `FLACV2` (6) green ✓
+- 🖼 **Portraits/icons: one-click “replace under the original key” + entry-level repointing**:
+  ⛔ a **new address key is not consumed by the game** for portraits (the portrait falls back to an
+  infantry image) ⇒ the original key must stay. The one-click flow merges the old **3 manual steps**
+  (copy pack → swap image → repoint the key) and **syncs the CRC automatically** ✓ Entry-level repointing
+  changes **only that one asset**, so you **no longer copy the entire 304 MB portrait pack** ✓
+- 🏗 **New “portrait/icon skeleton bundle”** (201 KB, ships with the product): the small template has **no
+  image skeleton at all** (not even the `Sprite(213)` type), so the skeleton dropdown was empty ⇒ the new
+  skeleton pre-seeds a 1×1 placeholder (`Texture2D` + `Sprite`) and adds the `Sprite(213)` type ✓
+- 🧪 **New “Numeric mod (scenario `configs.zip`)” panel**: change numbers **without touching the 6.8 GB
+  `data.unity3d`**, output is a few dozen bytes and **Steam verification will not restore it** ✓
+  Pick a scenario → load its existing `configs.zip` as a template (or type fields) → pack → install into
+  the scenario → **two pre-ship self-checks**. Measured: **82** scenario folders listed, strictly
+  **read-only** (the game folder is byte-identical before/after), and the previous file is **backed up**
+  as `.bak_<timestamp>` before installing ✓
+- 🔍 **“Mod self-check” gained three “silent failure” rules** (nothing is logged in-game, content just
+  never appears): declared weapons > model turrets (measured: reports unit 113 / `669` on the T4c DB,
+  reports nothing on the vanilla DB), `TurretWeapons` count > the prefab’s
+  `UnitPrefabTurretInfo.Weapons` length, and a weapon `Type` never used in that slot originally ✓
+- 🪟 **Blender add-on, three things**: an editable **“game coordinate” block** (game / view / mesh
+  geometric center, red when they disagree); **“flatten parent inverse”** which provably **does not touch
+  `loc`** ⇒ **the exported result is unchanged** while the viewport finally equals the game; and
+  **[path-02] startup migration of output paths off the C: drive** (the game bundle input path is never
+  touched) ✓
+
+【Русский】
+- 🐞 **Исправлена вероятная причина случая «после установки в игру пропал весь UI»**: в родном catalog
+  игры **у 76 из 78** записей bundle `m_BundleName` — **чистый 32-символьный хеш** (без `.bundle`),
+  а **наша запись** содержала **имя файла** ✗ ⇒ теперь писатель **копирует весь набор и порядок полей
+  из родной записи** и перезаписывает только `m_Hash`/`m_Crc`/`m_BundleSize`/`m_BundleName` ✓
+- 🛡 **Новый шаг самопроверки ⑥: полная проверка catalog** (выход за границы, «сироты», дубли ключей,
+  стиль полей, `m_Crc`=0, `m_Hash` против имени файла). Измерено: **ноль ложных срабатываний** на
+  здоровом родном catalog и **все 6 специально испорченных вариантов пойманы** ✓
+- ♻️ **«Адрес уже существует» больше не прерывает работу**: раньше при пересборке модели вылетала
+  ошибка, хотя **сам пакет уже был записан** ✗ ⇒ теперь запись **обновляется автоматически**
+  (internalId/ключ/providerId сохраняются); измерено: **число ключей/записей не растёт** ✓
+- 📏 **Помощник по имени адреса**: показывает **исходное значение поля БД и число символов** и проверяет
+  «новый адрес ≤ исходного» (выравнивание фиксированной длины). Измерено: `US_ACV` = **6 символов** ⇒
+  `FLYACV2` (7) — красный, `FLACV2` (6) — зелёный ✓
+- 🖼 **Портреты/иконки: замена «под исходным ключом» в один клик + перенаправление на уровне записи**
+  (новый ключ-адрес игра **не использует** для портретов) ⇒ больше **не нужно копировать весь пакет
+  портретов на 304 МБ** ✓
+- 🏗 **Новый «скелетный пакет» портретов/иконок** (201 КБ, входит в поставку): у малого шаблона
+  **нет скелета изображения** (даже типа `Sprite(213)`) ⇒ теперь предустановлена картинка-заглушка 1×1 ✓
+- 🧪 **Новая панель «Числовой мод (сценарный `configs.zip`)»**: менять числа **без правки 6.8 ГБ
+  `data.unity3d`**; измерено: **82** папки сценариев, работа **только на чтение**, старая копия
+  **резервируется** перед установкой ✓
+- 🔍 **«Самопроверка мода»: три новых правила «тихих отказов»** (в игре нет ошибок, контент просто
+  не появляется): объявлено оружия больше, чем башен у модели; число `TurretWeapons` больше длины массива
+  в prefab; тип оружия, которого в этом слоте никогда не было ✓
+- 🪟 **Blender-аддон**: редактируемый блок **«игровые координаты»**, кнопка **«выровнять родительскую
+  обратную матрицу»** (проверено: **`loc` не меняется** ⇒ результат экспорта **не меняется**, а вид
+  наконец совпадает с игрой) и **[path-02] автоперенос выходных путей с диска C:** (путь к игровому
+  bundle никогда не трогается) ✓
+
+## v1.8.117（BA_Mod_Maker v1.8.117 + Blender 插件 v2.7.118）—— 🔧「补悬空脚本」进产品（一键修好）+ 自检 ③/⑤ 的假绿与假红
+
+【中文】
+- 🔧 **「补悬空脚本」从"命令行任务"变成"产品里一键"**（用户现场："你能不能直接修一下 BA_Mod_Maker 呢？"）：
+  - **④ 收尾**里新增按钮 **「🔧 补悬空脚本」**（就放在「自检」旁边：自检报红 → 点它 → 再自检）✓
+  - 它做的事：**自动找到游戏 units 主包** → 把 MonoBehaviour 引用、包里却没有的 `MonoScript`
+    **按原 pathID 复制进来** → **写完重新解析自证"缺 0"** → 才原子替换 → **自动同步 CRC** ✓
+    实测用户那个 26 MB 的包：**16 → 0，7.1 秒**，全程不用开终端 ✓
+  - 命令行同款：`--fix-scripts`（配 `--source-pack` 可指定源包）、`--check-scripts`（只查不改，
+    有悬空返回码 1，方便脚本用）✓
+  - ⛔ **建包时就顺手修**：`新建 bundle` / `加资产` / `安装到游戏` 三条路现在都**自动补一次**
+    （模板里那些 `_TEMPLATE_*` prefab 天生引用了 16 个住在游戏主包里的脚本
+    ⇒ 以前**每个自建包从出生那一刻就是悬空的**，而在游戏里**静态网格照样渲染**
+    ⇒ 极易被当成"成功"，但 `AnimationHub`（旋翼自转）/ `DriverMarker` /
+    `ContainerSeatInitializer` 这些组件**全部静默失效**）✗
+  - **源包猜错也不会有损失**：复制后**必须重新解析自证**，不成则抛错、**原包一字未动**
+    （有负向对照钉住：故意给一个不含这些脚本的包 ⇒ 退出码 2 且副本**字节完全一致**）✓
+- 🐞 **自检 ③ 的"假绿"修掉了**：以前只统计 `m_FileID == 0` 的引用，
+  **跨文件引用被静默丢掉** ⇒ 万一包里全是跨文件引用，输出会和"全部通过"**一模一样**（"✓ 全在本包内"）✗
+  ⇒ 现在把 **查了几个 MonoBehaviour、几条引用、几条跨文件引用、几个读不出** 全部打出来
+  （`134 个 MonoBehaviour · 本包内引用 134 条 · 跨文件引用 0 条 · 读不出 0 个`），
+  并且 **`读不出 > 0` 一律判不通过**（以前读不出就等于"没看见"，最容易被当成没问题）✓
+  - 顺带把 ③ **改成真的判不通过**（`ok=False`）：既然产品现在能一键修，还留着悬空就是**真缺陷**，
+    不该再"⚠ 提醒一下就算过" ✗
+- 🐞 **自检 ⑤ 的"假红"修掉了**：地址那格**还留着默认值**（`MyMod/Asset`）时，
+  ⑤ 直接拿它去查 catalog ⇒ 报 `✗ catalog 里找不到地址 'MyMod/Asset'`，
+  **整个自检判红 —— 而问题其实在输入框，不在包** ✗
+  ⇒ 现在先**按包名反查**这个包实际注册了哪些地址，有就改验那些并说明一句
+  （用户那个包反查出真实地址 `FLYACV`，注册链与磁盘 CRC **全部通过** ✓），
+  一个都没注册才判红 ✓
+- 🐞 **修掉一个"修好了却替换不上去"的写盘 bug**（本次开发中端到端实测踩到）：
+  保存 .tmp 后只写 `del env` 就 `os.replace` ⇒ 报
+  `PermissionError: [WinError 32] 另一个程序正在使用此文件`。
+  **真因**：`UnityPy` 的 Environment 有引用环，`del` 只减引用计数，
+  **句柄要等下一次 `gc.collect()` 才真正关闭**（对照实测：`del` 后再 gc 就成功，只 `del` 就失败）✗
+  ⇒ 新增 `stream_save.release_env()`（确定性释放）与 `stream_save.atomic_replace()`（带重试），
+  并且**失败时不退回"原地覆盖"** —— 那会把目标截断成半截；
+  宁可**把完整成品留在 .tmp、目标一字不动**并讲清楚怎么接手 ✓
+
+【English】
+- 🔧 **“Fix dangling scripts” is now a product feature instead of a CLI chore**
+  (user: “can’t you just fix BA_Mod_Maker itself?”):
+  - New button **「🔧 Fix dangling scripts」** in **④ Finish**, right next to Self-check ✓
+  - It **finds the game’s units pack automatically**, copies every `MonoScript` a MonoBehaviour
+    references but the bundle lacks **keeping the original pathID**, **re-parses the result to prove
+    “0 missing”**, only then atomically replaces the file, and **syncs the catalog CRC** ✓
+    Measured on the user’s 26 MB bundle: **16 → 0 in 7.1 s**, no terminal involved ✓
+  - Same thing from the CLI: `--fix-scripts` (`--source-pack` to pin the source) and
+    `--check-scripts` (read-only, exit code 1 when dangling) ✓
+  - ⛔ **It also runs automatically** on new-bundle / add-assets / install, because every self-made
+    bundle used to be **born dangling** (the template’s `_TEMPLATE_*` prefabs reference 16 scripts that
+    live in the game’s units pack) — and Unity **still renders static meshes** in that state, so it
+    looks like a success while `AnimationHub`, `DriverMarker`, `ContainerSeatInitializer` … are
+    **silently dead** ✗
+  - **A wrong source pack cannot damage anything**: the result is re-parsed and self-verified, and the
+    original file is left **byte-for-byte untouched** on failure (negative control: pointing at a pack
+    without those scripts ⇒ exit 2 and an identical copy) ✓
+- 🐞 **Self-check ③ no longer reports a false green**: it only counted `m_FileID == 0` references and
+  **silently dropped cross-file ones** ⇒ a bundle full of cross-file references printed exactly the same
+  “✓ all local” line ✗ ⇒ it now reports **how many MonoBehaviours / references / cross-file references /
+  unreadable** were scanned, and **`unreadable > 0` fails the check** ✓ It is also a **real failure**
+  now (`ok=False`) — with a one-click fix available, dangling scripts are a genuine defect ✗
+- 🐞 **Self-check ⑤ no longer reports a false red**: with the address field still holding its default
+  (`MyMod/Asset`) it failed the whole check while the real problem was the **input box** ✗ ⇒ it now
+  **reverse-looks-up the addresses actually registered for this bundle** and verifies those
+  (the user’s bundle resolves to `FLYACV`; chain and on-disk CRC both pass ✓)
+- 🐞 **Fixed a “fixed but cannot replace the file” write bug** (hit end-to-end during this work):
+  after saving the `.tmp`, a bare `del env` before `os.replace` raised
+  `PermissionError: [WinError 32]`. **Root cause:** UnityPy’s Environment has reference cycles, so
+  `del` only drops a reference and the handle closes on the **next `gc.collect()`** (controlled
+  measurement: `del` + gc succeeds, `del` alone fails) ✗ ⇒ added `stream_save.release_env()` and
+  `stream_save.atomic_replace()` (with retries). On failure it does **not** fall back to overwriting in
+  place (that would truncate the target) — it keeps the complete `.tmp` and leaves the target untouched ✓
+
+【Русский】
+- 🔧 **«Починить висячие скрипты» теперь функция продукта, а не команда в терминале** (просьба
+  пользователя): новая кнопка в **④ Финал** рядом с самопроверкой. Она **сама находит основной
+  units-пакет игры**, копирует нужные `MonoScript` **с сохранением исходного pathID**,
+  **перечитывает результат и доказывает «0 отсутствующих»**, только затем атомарно заменяет файл и
+  **синхронизирует CRC**. На пакете пользователя (26 МБ): **16 → 0 за 7.1 с** ✓
+  То же из CLI: `--fix-scripts` (`--source-pack`) и `--check-scripts` (только проверка, код 1) ✓
+  ⛔ Дополнительно это **выполняется автоматически** при создании пакета / добавлении ассетов /
+  установке: раньше **каждый самодельный пакет рождался с висячими скриптами** (шаблонные prefab’ы
+  ссылаются на 16 скриптов из основного пакета игры), а Unity **всё равно рисует статичную геометрию**
+  ⇒ выглядит как успех, хотя компоненты **молча не работают** ✗
+  **Ошибочный исходный пакет ничего не испортит**: результат перечитывается и проверяется,
+  при неудаче оригинал остаётся **побайтово неизменным** (негативный контроль: код 2 и идентичная копия) ✓
+- 🐞 **Самопроверка ③ больше не даёт ложный «✓»**: раньше учитывались только ссылки `m_FileID == 0`,
+  а межфайловые **молча игнорировались** ⇒ теперь выводятся числа (сколько MonoBehaviour, ссылок,
+  межфайловых, нечитаемых), и `нечитаемых > 0` — это **провал** ✓ Сама ③ теперь тоже **провал**, а не
+  «предупреждение» — при наличии кнопки в один клик висячие скрипты это реальный дефект ✗
+- 🐞 **Самопроверка ⑤ больше не даёт ложный «✗»**: если поле адреса осталось со значением по умолчанию
+  (`MyMod/Asset`), ⑤ валила всю проверку, хотя виновато **поле ввода** ✗ ⇒ теперь она **обратным
+  поиском находит адреса, реально зарегистрированные для этого пакета**, и проверяет их
+  (у пакета пользователя это `FLYACV`; цепочка и CRC на диске проходят ✓)
+- 🐞 **Исправлена ошибка записи «починили, но заменить не удаётся»**:
+  `del env` без освобождения дескриптора перед `os.replace` давал
+  `PermissionError: [WinError 32]`. **Причина:** у Environment есть циклы ссылок, дескриптор
+  закрывается только при следующем `gc.collect()` ⇒ добавлены `stream_save.release_env()` и
+  `stream_save.atomic_replace()` с повторами. При неудаче **не** делается перезапись на месте
+  (это обрезало бы файл) — готовый `.tmp` сохраняется, оригинал не тронут ✓
+
+## v1.8.116（BA_Mod_Maker v1.8.116 + Blender 插件 v2.7.117）—— 🗂 折叠栏 + 所有窗口能最大化了 + 修一个"无控制台就静默失效"的崩溃
+
+【中文】
+- 🗂 **「我的 bundle」改成折叠分区**（用户："信息太多了，做些折叠栏吧"）：
+  - 顶上一排「**全部展开 / 全部折叠**」；**点分区标题**也能单独展开/收起 ✓
+  - **默认只展开**「① 工作区 / ② bundle 列表」，四块重的（**③ 新建·加资产 / ③b 图片 /
+    ③c 替换图标 / ③d 删除条目**）**默认收起** ⇒ 一进来看到的内容高度从 **788 px 降到 502 px** ✓
+  - **④ 收尾**（同步 CRC / 自检 / 安装…）**故意不折叠** —— 它是每次都要点的主操作栏 ✓
+  - 标题上带**摘要**（如"② 我的 bundle …… 3 个"、"③d …… 299 条"）⇒ 收起也不会变瞎 ✓
+  - 折叠**不销毁**内容：变量与回调都还在，展开即恢复（有回归钉住）✓
+  - ⛔ 顺手量出一个**物理事实**：**全部展开**需要约 **1205 px**，而本机屏幕可用只有 **883 px**
+    ⇒ 硬要"全展开还一个按钮都不许被截"是做不到的。现在做法是：**记一行日志告诉你**"建议一次只展开
+    你要用的那一块"（不让人以为按钮坏了），并让**默认状态**保证放得下屏幕 ✓
+    单块展开时会自动把窗口长高（`ui_fit.fit_window`），不会出现"点开一块就被截断"✓
+- 🪟 **所有窗口现在都能最大化了**（用户要求）：
+  - **真因（现场取证）**：对话框几乎都调了 `transient(master)`，而 **`wm_transient(True)` 会让
+    Windows 清掉 `WS_MAXIMIZEBOX`** ⇒ **标题栏那个最大化按钮变灰**；而且
+    **`resizable(True, True)` 救不回来** ✗（`tools\perf\probe_maximize2.py` 直接读 `GWL_STYLE` 实测：
+    普通 Toplevel 能最大化；`transient` 后就**不能**）
+  - **修法**：保留 `transient`（对话框语义不变），**把 `WS_MAXIMIZEBOX` 加回去**，
+    并挂在两处 ⇒ **所有现有与将来的对话框一处生效**：
+    · `ui_fit.install_autofit` 的 `<Map>` 钩子（生产路径，**新写的对话框不用记得调任何东西**）
+    · `ui_fit.fit_window()` / 各对话框收尾（单独起的对话框也生效）
+  - ⛔ **尊重显式固定尺寸**：作者写了 `resizable(False, False)` 的提示框**不**被强行改大 ✓
+  - 实测：最大化后「我的 bundle」从 1000×820 → **1707×889**，且不超出屏幕 ✓
+- 🐞 **修掉一个"GUI 里静默失效"的崩溃**（用户报的，属于我上一版新加的自检）：
+  ```
+  ③ ⚠ 悬空脚本检查没跑成（AttributeError: 'NoneType' object has no attribute 'reconfigure'）
+  ```
+  - **真因**：产品 exe 是 PyInstaller `--windowed` 构建 ⇒ **没有控制台 ⇒ `sys.stdout is None`**；
+    而 `_rev_tools\fix_dangling_scripts.py` 在**模块级**就 `sys.stdout.reconfigure(...)`
+    ⇒ 被 `my_bundle.selfcheck()` **import 的那一瞬间**抛 `AttributeError` ⇒ **整条检查被跳过** ✗
+    （典型症状：功能看着在、其实从来没跑 —— 与"exe 静默退回旧行为"同一类）
+  - **修法**：**17 处**裸调用统一加守卫（不引共享模块，逐点内联 —— `_rev_tools` 在 exe 里可能先于
+    产品根被 import，跨目录 import 更脆）。`sys.stderr` 同款问题一并覆盖 ✓
+  - **验证**：在 `sys.stdout = sys.stderr = None` 的子进程里 import 那 12 个"GUI 会用到"的模块
+    ⇒ **全部成功**；并用负向对照确认"模块级裸调用**确实会炸**"（证明守卫不是摆设）✓
+
+【English】
+- 🗂 **“My bundle” now uses collapsible sections** (user: “too much information, add some collapsible panels”):
+  - A 「Expand all / Collapse all」 row on top; **clicking a section header** toggles it too ✓
+  - **Only ① Workspace and ② bundle list start expanded**; the four heavy ones (**③ new/import,
+    ③b images, ③c replace, ③d delete**) start collapsed ⇒ the content height on open drops from
+    **788 px to 502 px** ✓
+  - **④ Finish** (sync CRC / self-check / install …) is **deliberately not collapsible** — it is the
+    action bar you hit every time ✓
+  - Headers carry a **summary** (e.g. “② … 3”, “③d … 299”) so collapsing does not blind you ✓
+  - Collapsing **does not destroy** content: variables and callbacks stay put (pinned by a regression) ✓
+  - ⛔ We also measured a **physical limit**: expanding *everything* needs **~1205 px** while this screen
+    offers **~883 px** ⇒ “expand all with nothing clipped” is impossible. So the dialog **logs a hint**
+    (“expand only the section you need”) instead of leaving you to think the buttons broke, and the
+    **default state is guaranteed to fit** ✓ Expanding one section grows the window automatically ✓
+- 🪟 **Every window can now be maximized** (user request):
+  - **Root cause (measured, not guessed)**: dialogs call `transient(master)`, and
+    **`wm_transient(True)` makes Windows drop `WS_MAXIMIZEBOX`** ⇒ the title-bar **maximize button goes
+    grey**; **`resizable(True, True)` does not bring it back** ✗ (`tools\perf\probe_maximize2.py` reads
+    `GWL_STYLE` directly) — fixed by keeping `transient` and **adding `WS_MAXIMIZEBOX` back**, wired in two
+    places so **all current and future dialogs benefit without anyone having to remember anything**:
+    the `<Map>` hook in `ui_fit.install_autofit`, and `ui_fit.fit_window()` / dialog tails ✓
+  - ⛔ **Explicit fixed-size dialogs are respected** (`resizable(False, False)` is left alone) ✓
+  - Measured: maximizing “My bundle” goes 1000×820 → **1707×889**, and stays within the screen ✓
+- 🐞 **Fixed a crash that silently disabled a check in the GUI** (reported by the user; from a check added
+  in the previous version): the windowed exe has **no console ⇒ `sys.stdout is None`**, and
+  `_rev_tools\fix_dangling_scripts.py` called `sys.stdout.reconfigure(...)` at **module level** ⇒
+  importing it raised `AttributeError` and **the whole dangling-script check was skipped** ✗ ⇒ all **17**
+  bare call sites are now guarded (inlined, not via a shared module), `sys.stderr` included ✓
+  Verified by importing the 12 GUI-relevant modules in a subprocess with `sys.stdout = sys.stderr = None`
+  (all succeed) plus a negative control proving a bare module-level call really does raise ✓
+
+【Русский】
+- 🗂 **«Мой bundle» теперь со сворачиваемыми разделами** (просьба пользователя): строка
+  «Развернуть всё / Свернуть всё», клик по заголовку раздела тоже работает; **по умолчанию раскрыты
+  только ① рабочая папка и ② список** — высота содержимого при открытии падает с **788 до 502 px** ✓
+  «④ Финал» (CRC / самопроверка / установка) **не сворачивается** намеренно ✓
+- 🪟 **Все окна теперь можно развернуть на весь экран**: причина найдена замерами —
+  `wm_transient(True)` заставляет Windows **снять `WS_MAXIMIZEBOX`**, и `resizable(True,True)` это
+  не возвращает ✗ ⇒ бит добавлен обратно и подвешен в двух местах (`<Map>`-хук `install_autofit`
+  и `fit_window()`), поэтому **все будущие окна** получают это автоматически ✓
+  Явно фиксированные окна (`resizable(False,False)`) не трогаются ✓
+- 🐞 **Исправлено падение, тихо отключавшее проверку в GUI**: в exe без консоли `sys.stdout is None`,
+  а `fix_dangling_scripts.py` вызывал `reconfigure` на уровне модуля ⇒ `AttributeError` при импорте ⇒
+  проверка пропускалась ✗ ⇒ все **17** мест обёрнуты в try/except ✓
+
+## v1.8.115（BA_Mod_Maker v1.8.115 + Blender 插件 v2.7.116）—— 🧹 移除「任务工具」（做任务 mod 用游戏自带的场景编辑器就够）
+
+
+【中文】
+- 🗑 **删掉「任务工具」**（`.bascr` 任务文件的命令行读写改一整套：`bascr_tool` / `bascr_nodes` /
+  `bascr_repack` / `bascr_batch` / `bascr_crypt` + 586 KB 的 `mission_node_catalog.py` 节点大典）。
+  **依据**：用户明确说明 —— **做任务 mod（场景）用的是游戏自带的场景编辑器**，这套 CLI 用不上 ✓
+- 📦 **分发侧一并拆干净**（不然新包里还会带着 600 KB 用不上的东西）：
+  · `package_zip.py` 去掉 `任务工具/*` 规则（源码包原来会把它整份带进去）
+  · `build_exe.py` 去掉"把该目录拷进发布目录"那一段
+  · 删掉 `测试\test_mission_tools_shipped.py`（它测的就是"发布后的 `任务工具\` 能不能真跑"，
+    被测对象没了 ⇒ 留着只会变红）
+- ↩ **可逆**：删除前整份备份在 `工具制作资源\BA_Mod_Maker\_archive\任务工具_已移除_v1.8.114\`
+  （含 README 与那个测试）；想彻底不要，把这个目录一起删掉即可 ✓
+  （`_archive\` 不参与打包、不进 exe、审计工具也跳过它 ✓）
+- 📌 **没动的部分（不在产品里、也不随包分发）**：分析区 `技术资料\scripts\` 里还有一份
+  `bascr_*.py` 原件 + `node_catalog.json` + `sync_mission_tools.py`（生成器），
+  以及它们的 3 个回归（`test_bascr_batch` / `test_bascr_nodeset` / `test_node_catalog`）。
+  那是**知识/分析区**（A/M 线）且 `技术资料` 的知识卡片还在引用这些配方 ⇒ 保持原样；
+  要一起清掉的话见下面那行命令。
+
+  ```bat
+  :: 想连分析区那份一起删（可选；删了就再也生成不出节点大典）
+  del 技术资料\scripts\bascr_*.py 技术资料\scripts\node_catalog.py 技术资料\scripts\sync_mission_tools.py
+  del 技术资料\data\node_catalog.json
+  del 测试\test_bascr_batch.py 测试\test_bascr_nodeset.py 测试\test_node_catalog.py
+  ```
+
+【English】
+- 🗑 **Removed the “mission tools”** (the whole `.bascr` mission-file read/edit CLI — `bascr_tool`,
+  `bascr_nodes`, `bascr_repack`, `bascr_batch`, `bascr_crypt` plus the 586 KB `mission_node_catalog.py`
+  node catalogue). **Reason**: the user stated they build mission (scenario) mods with the **game's own
+  built-in scenario editor**, so this CLI is not needed ✓
+- 📦 **Packaging hooks removed too** (otherwise a new build would still carry 600 KB of dead weight):
+  · `package_zip.py`: dropped the `任务工具/*` rule (the source zip used to bundle the whole folder)
+  · `build_exe.py`: dropped the block that copied the folder into the release directory
+  · deleted `测试\test_mission_tools_shipped.py` (it verified that the *shipped* `任务工具\` actually
+    runs; with the subject gone it could only go red)
+- ↩ **Reversible**: a full copy was archived first at
+  `工具制作资源\BA_Mod_Maker\_archive\任务工具_已移除_v1.8.114\` (including the README and that test);
+  delete that folder too if you want it gone for good ✓ (`_archive\` is never packaged, never enters the
+  exe, and is skipped by the audit tools ✓)
+- 📌 **Left untouched** (not shipped, outside the product): the analysis area still holds a copy of
+  `bascr_*.py` under `技术资料\scripts\`, plus `node_catalog.json`, the generator
+  `sync_mission_tools.py`, and their three regressions. That is the knowledge/analysis area (A/M line)
+  and the knowledge cards still reference those recipes ⇒ left as-is; the batch file above removes them
+  too if you want.
+
+【Русский】
+- 🗑 **Удалён набор «инструменты миссий»** (CLI для чтения/правки `.bascr`: `bascr_tool`, `bascr_nodes`,
+  `bascr_repack`, `bascr_batch`, `bascr_crypt` и каталог узлов `mission_node_catalog.py` на 586 КБ).
+  **Причина**: пользователь делает миссии (сценарии) во **встроенном редакторе сценариев игры**,
+  этот CLI не нужен ✓
+- 📦 **Убраны и хуки упаковки**: правило `任务工具/*` в `package_zip.py` и копирование папки в
+  `build_exe.py`; удалён `测试\test_mission_tools_shipped.py` (он проверял именно поставляемую копию) ✓
+- ↩ **Обратимо**: перед удалением сделана полная копия в
+  `工具制作资源\BA_Mod_Maker\_archive\任务工具_已移除_v1.8.114\` ✓
+- 📌 В аналитической области (`技术资料\scripts\`) остаётся копия `bascr_*.py`, `node_catalog.json` и
+  генератор — это область знаний (линия A/M), она не поставляется ✓
+
+## v1.8.114（BA_Mod_Maker v1.8.114 + Blender 插件 v2.7.115）—— 🧹 「我的 bundle」能删条目了 + 备份只留 5 份 + 建包即干净
+
+
+【中文】
+> 这一版按 **`17-软件改进待办` 的 T 批（2026-10-15 飞行 ACV 教学会话）** 做，每条都有现场证据。
+
+- 🗑 **【我的 bundle】终于能删包内条目了**（以前**没有任何删除入口**）：
+  加了一块「③d 删除包内条目」—— 下拉列出**包内容器条目**（不用手抄路径）、
+  勾「按末段文件名批量删」（图标/肖像在容器里是 `Texture2D`+`Sprite` **两条同名条目**）⇒ 一次删干净 ✓
+  命令行同款：`my_bundle.py --remove-asset <容器路径> [--remove-asset-all …] [--dry-run]`
+  - ⛔ **只删容器条目**：对象与 `m_PreloadTable` **都不动**（被删的资产变成孤儿对象，无害）
+    ⇒ 这是实机验证过的最安全做法（容器 12→10 条、包正常、自检通过）✓
+  - 三种真实诉求一次解决：① 换骨架命名时清旧条目；② 加错地址/加错图能撤销；
+    ③ 给包"瘦身"（149 KB 模板建的包自带 9 个 `_TEMPLATE_*` 骨架 prefab）
+  - 删完会**提醒"务必再点一次「同步 CRC」"** —— 改过包但 catalog 里还是旧 `m_Crc` 时，
+    游戏里该包的资产会**静默取不到**（表现为图标/模型不出来）✗
+- 🔁 **备份文件滚动保留：同类最多 5 份**（用户原话「不希望备份文件一大堆，最多五个」）：
+  `安装到游戏` 每点一次就写一份 `catalog.json.bak_<YYYYmmdd_HHMMSS>`，用几次就攒一堆 ⇒
+  现在装完**立刻滚动**（按 mtime 从旧到新删，**最新的那份一定留下**），并打印
+  "已删除 N 个旧备份（释放 X MB）" ✓
+  - ⛔ **只认我们自己生成的时间戳格式**（`<原文件名>.bak_8位日期_6位时间`）——
+    用户手动改名的 `.bak` / `.bak_old` / `.bak_pre_mod` **一个都不碰** ✓
+- 🧼 **建包即干净（`--new` 时归一化）**：以前 `新建 bundle` **只是复制模板** ⇒ 自建包从出生就带着
+  ① **必撞名的内部 CAB 名**（模板沿用了游戏 units 包的 `CAB-1e53…` ⇒ 游戏报
+  `can't be loaded because another AssetBundle with the same files is already loaded` ✗）；
+  ② 从模板抄来的 `m_Dependencies`（两条小写 `cab-…`，**游戏 79 个包里一个都没有**）⇒
+  现在建包时过一遍自己的保存器：**内部名唯一化 + 清空 `m_Dependencies`** ✓
+  - 顺带**不再同步 `AssetBundle.m_Name`**：`m_Name` 与内部 CAB 名不相等是**正常**的
+    （游戏自己的包就是 `m_Name='b54a3eca….bundle'` + 内部 `CAB-1e53…`）⇒
+    旧代码那段"改名顺手把 m_Name 也改掉"是白干，还在**每次保存**时刷一行"（跳过同步…）"的噪音 ✗
+- 🩺 **自检变强了（3 条新判据）**：以前只走「地址→条目→依赖键→bundle→CRC」，看不见两类**静默失效**：
+  - ③ **包内脚本自包含**：MonoBehaviour 引用的 `m_Script` 不在本包内 ⇒ 游戏刷
+    `The referenced script … is missing!`、编辑器抛 `No UnitPrefabRoot script found`，
+    而**静态网格照样渲染**（极易被当成"成功"）⇒ 现在自检会点名，并**自动找到游戏主包**
+    给出可直接照抄的修法命令（`fix_dangling_scripts.py --bundle … --source …`）✓
+  - ④ **容器条目指向的资产是否真在包里**（实机症状：`Addressable prefab 'X' was not loaded!`）
+  - 上述两条都注明了"哪条会阻止加载、哪条只是组件静默失效"，不再混成一个"自检不通过" ✓
+- 🐞🐞 **顺带抓到一个**产品级**老 bug（会静默毁掉图标/肖像替换）**：内部 CAB 改名时**没改**
+  `Texture2D.m_StreamData.path` —— 带**流式贴图**的包（unitportraits / unitlabels 这类）里，
+  这个字段写的就是内部文件名（`CAB-….resS`）⇒ 改名后重新加载会报
+  **`FileNotFoundError: Resource file CAB-….resS not found`**，贴图直接读不出来 ✗
+  ⇒ 现在**改名必须成对做**（内部文件名 + 引用它的 `m_StreamData.path`）；实测一个图标包里
+  **一次同步了 299 个流式贴图**的路径 ✓（`测试\test_my_bundle_image.py` / `test_my_bundle_replace.py` 当场抓到）
+- ⚡ **`inject_test_files.py --status` 从"跑 10 分钟没跑完"变成 0.07 秒**：原来对
+  `data.unity3d`(7.1 GB) + `GameAssembly.dll`(143 MB) 逐个算 md5 ⇒ 慢到不可用（而它存在的初衷
+  恰恰是"避免以为装了其实没装"）✗ ⇒ 默认**只看大小**（秒级）、`--deep` 才全量哈希 ✓
+  - ⛔ **而且这一版把口径改诚实了**：实测 size 会骗人（同一时刻 `GameAssembly.dll` 与候选件
+    **大小相同、md5 不同**，因为游戏更新过）⇒ 默认模式的结论现在一律带「**疑似**」，
+    并明确写"要下结论请跑 `--deep`（7 GB × 3 ≈ 170 秒）"，**不再假装权威** ✓
+- ⚡ **回归套件支持并行 `--jobs N`**（默认 **1 = 串行**）：实测 `--fast` **205.6 s → 152.3 s**，
+  且**项目数/通过数/失败数与串行完全一致**（79/77/2/0 对 79/77/2/0）✓
+  - 规则写死在代码里：**要起 Blender 的**、**会碰游戏目录/7 GB 级包的**一律串行（本次 36/79 个），
+    其余可并行；⛔ 默认仍是串行 —— 并行会抢磁盘/内存，**用户在玩实机测试时绝不能用** ✓
+- 🐞 **修掉 `run_all_tests.py` 两个真 bug**：① `--jobs 4` / `--slow-over 12` 的**值**会被当成
+  "只跑名字含 4 的测试"的位置参数 ⇒ 预演打印"会跑 0 个"（看着像测试被跳光了）✗；
+  ② 串行时**漏跑"可并行那批"** ⇒ 79 个测试只汇总出 38 行 ✗（两个都被新回归当场抓到）
+- 🌐 **`push_to_github.ps1` 自动探测代理**：以前直连 GitHub 443 不通、必须先手工
+  `git config --global http.proxy …`；换机器/换端口就得重来 ✗ ⇒ 现在依次探测
+  `7890/7897/10809/1080/10808`，通了就用 `git -c http.proxy=… push`（**只对这次命令生效，不改全局配置**）；
+  直连失败后还会**中途再探一次**（用户可能刚把代理打开），失败时打印探测过的端口 ✓
+- 📁 **所有写文件入口自动建父目录**（`db_edit.py` / `unityfs_patch.py` 等 `--out` 类参数）：
+  现场是 `--out 自制mod\_db_out\x.unity3d`，而 `_db_out` 不存在 ⇒ `FileNotFoundError`：
+  **exit 1、没有产物、前面几十行日志一片正常** ⇒ 表现成"命令跑完了但什么都没发生"（白跑一轮）✗
+  ⇒ 新增 `技术资料\scripts\out_path.py` 的 `ensure_parent()`，产品侧同款在 `mod_paths.ensure_parent()` ✓
+
+【English】
+> This release follows the **T batch of `17-软件改进待办` (the 2026-10-15 flying-ACV session)**; every item has on-site evidence.
+
+- 🗑 **“My bundle” can finally delete entries** (there used to be **no delete path at all**): a new
+  “③d delete container entries” block lists the pack's **container entries** in a dropdown (no hand-typing
+  paths) with an option to delete by **trailing file name** (icons/portraits are a `Texture2D` + `Sprite`
+  pair of same-named entries) ⇒ cleans both in one go ✓ CLI: `--remove-asset … [--remove-asset-all] [--dry-run]`
+  - ⛔ **Only the container entry is removed**: objects and `m_PreloadTable` are left untouched
+    (the removed asset becomes an orphan object — harmless), which is the safest approach verified
+    on-device (12 → 10 entries, pack fine, self-check passed) ✓
+  - It reminds you to **“sync CRC again”** — otherwise the pack's assets are **silently unfetchable**
+    in-game (symptoms: icons/models just don't show up) ✗
+- 🔁 **Backup rotation: at most 5 per kind** (user: “I don't want piles of backup files, five at most”):
+  `install to game` writes a `catalog.json.bak_<stamp>` every time ⇒ now it rotates **immediately**
+  (oldest by mtime first, **the newest is always kept**) and logs “deleted N old backups (freed X MB)” ✓
+  - ⛔ **Only our own timestamp format is matched** — hand-renamed `.bak` / `.bak_old` / `.bak_pre_mod`
+    are **never touched** ✓
+- 🧼 **Bundles are clean from birth (`--new` normalizes)**: creating one used to be a **plain copy**, so
+  every self-made bundle started with ① an internal CAB name that **is guaranteed to collide** (the
+  template reused the game's units pack name ⇒ `can't be loaded because another AssetBundle with the
+  same files is already loaded` ✗) and ② a copied `m_Dependencies` of two lowercase `cab-…` names that
+  **exist in none of the game's 79 packs** ⇒ creation now runs it through our own saver:
+  **unique internal name + cleared `m_Dependencies`** ✓
+  - It also **stops syncing `AssetBundle.m_Name`** — `m_Name` differing from the internal CAB name is
+    **normal** (the game's own packs do exactly that), so the old “rename the m_Name too” step was busy
+    work that also spammed a “(skipping sync…)” line on **every save** ✗
+- 🩺 **Stronger self-check (3 new judgements)** — it used to cover only
+  “address → entry → dependency key → bundle → CRC”, blind to two silent failure modes:
+  - ③ **in-pack script self-containment**: a MonoBehaviour whose `m_Script` is not in the pack makes the
+    game log `The referenced script … is missing!` while **static meshes still render** (so it looks like
+    success) ⇒ the self-check now names it and **auto-locates the game's main pack** to print a
+    copy-pasteable fix command ✓
+  - ④ **container entries whose asset is not actually in the pack** (on-device symptom:
+    `Addressable prefab 'X' was not loaded!`)
+  - Both now say **which one blocks loading and which one only silently breaks components**, instead of
+    collapsing into one “self-check failed” ✓
+- 🐞🐞 **Caught a product-level long-standing bug that silently destroys icon/portrait replacement**:
+  renaming the internal CAB **did not update `Texture2D.m_StreamData.path`** — in packs with **streamed
+  textures** (unitportraits / unitlabels) that field *is* the internal file name (`CAB-….resS`) ⇒ after a
+  rename, loading fails with **`FileNotFoundError: Resource file CAB-….resS not found`** and the texture
+  simply cannot be read ✗ ⇒ **renaming is now done in pairs** (internal file name + the
+  `m_StreamData.path` referencing it); in one icon pack this **synced 299 streamed texture paths** in a
+  single pass ✓ (caught immediately by `测试\test_my_bundle_image.py` / `test_my_bundle_replace.py`)
+- ⚡ **`inject_test_files.py --status` went from “10 minutes and gave up” to 0.07 s**: it used to md5
+  `data.unity3d` (7.1 GB) + `GameAssembly.dll` (143 MB) ⇒ too slow to use, even though its whole purpose
+  is “avoid thinking you installed something when you didn't” ✗ ⇒ default is now **size only** (seconds),
+  with `--deep` for full hashing ✓
+  - ⛔ **And the wording is now honest**: size really does lie (at one point `GameAssembly.dll` had the
+    **same size but a different md5** than the candidate, because the game had updated) ⇒ the fast mode's
+    verdicts all carry “**suspected**” and it tells you to run `--deep` (7 GB × 3 ≈ 170 s) instead of
+    pretending to be authoritative ✓
+- ⚡ **The regression suite can run in parallel (`--jobs N`, default **1 = serial**)**: measured
+  `--fast` **205.6 s → 152.3 s** with **identical counts** (79/77/2/0 both ways) ✓
+  - The rule is hard-coded: anything that **starts Blender** or **touches the game directory / 7 GB packs**
+    stays serial (36 of 79 here); the rest may run in parallel. ⛔ Default remains serial — parallelism
+    competes for disk and memory and **must not be used while the user is doing on-device testing** ✓
+- 🐞 **Fixed two real bugs in `run_all_tests.py`**: ① the **value** of `--jobs 4` / `--slow-over 12` was
+  treated as a positional name filter ⇒ the plan printed “will run 0 tests” ✗; ② in serial mode the
+  “parallelisable batch” was **never run** ⇒ 79 tests summarised as 38 rows ✗ (both caught by new
+  regressions)
+- 🌐 **`push_to_github.ps1` auto-detects a proxy**: direct connections to GitHub on 443 don't work here,
+  so you had to set `git config --global http.proxy …` by hand and redo it on every new machine/port ✗ ⇒
+  it now probes `7890/7897/10809/1080/10808` and uses `git -c http.proxy=… push` (**for that command
+  only — the global config is untouched**); it re-probes mid-retry (you may have just enabled the proxy)
+  and prints the probed ports on failure ✓
+- 📁 **Every file-writing entry point creates parent directories** (`--out` style args in `db_edit.py` /
+  `unityfs_patch.py`): with `--out 自制mod\_db_out\x.unity3d` and a missing `_db_out`, you got a
+  `FileNotFoundError` — **exit 1, no artifact, dozens of normal-looking log lines above** ⇒ “it ran but
+  nothing happened” ✗ ⇒ new `out_path.ensure_parent()` (scripts) / `mod_paths.ensure_parent()` (product) ✓
+
+【Русский】
+- 🗑 **«Мой bundle» теперь умеет удалять записи** (раньше **не было никакого способа удаления**):
+  новый блок «③d» со списком **записей контейнера** и опцией удаления по **конечному имени файла**
+  (иконки/портреты — это пара `Texture2D` + `Sprite` с одинаковыми именами) ✓
+  CLI: `--remove-asset … [--remove-asset-all] [--dry-run]`. ⛔ **Удаляется только запись контейнера**:
+  объекты и `m_PreloadTable` не трогаются (удалённый ассет становится «сиротой» — безвредно) ✓
+- 🔁 **Ротация резервных копий: не более 5 на вид** (просьба пользователя) — самая новая всегда
+  сохраняется, старые удаляются по mtime; ⛔ переименованные вручную `.bak` **не трогаются** ✓
+- 🧼 **Пакеты чистые с рождения (`--new`)**: уникальное внутреннее имя CAB + очистка `m_Dependencies`
+  (в шаблоне лежали два `cab-…`, которых **нет ни в одном из 79 пакетов игры**);
+  синхронизация `AssetBundle.m_Name` **убрана** — расхождение с именем CAB нормально ✓
+- 🩺 **Самопроверка усилена**: самодостаточность скриптов (`m_Script`), записи контейнера без ассета,
+  и подсказка с готовой командой починки ✓
+- 🐞🐞 **Найден старый баг уровня продукта**: при переименовании CAB **не обновлялся
+  `Texture2D.m_StreamData.path`** ⇒ `FileNotFoundError: Resource file CAB-….resS not found`
+  и текстура не читается ✗ ⇒ теперь переименование **парное** (в одном наборе иконок —
+  **299 путей** за один проход) ✓
+- ⚡ `inject_test_files.py --status`: **10 минут → 0.07 с** (по умолчанию только размер, `--deep` — md5);
+  формулировки теперь честно говорят «предположительно» ✓
+- ⚡ **Параллельный прогон регрессий `--jobs N`** (по умолчанию 1): `--fast` **205.6 с → 152.3 с**
+  при **полностью совпадающих** итогах (79/77/2/0) ✓
+- 🐞 Исправлены две ошибки в `run_all_tests.py` (значение `--jobs 4` попадало в фильтр имён;
+  в последовательном режиме пропускалась «параллельная» часть) ✓
+- 🌐 **Автопоиск прокси** в `push_to_github.ps1`; 📁 **автосоздание родительских каталогов** для `--out` ✓
+
+## v1.8.113（BA_Mod_Maker v1.8.113 + Blender 插件 v2.7.114）—— 🎯 「按名字钉地址」：游戏更新后再也不会静默读错函数
+
+
+【中文】
+- 🚨 **修复本轮最要命的一类问题：写死的地址全库失效（F1）**。游戏更到 **1.2.0.3** 之后，
+  全库 358 对「名字 @RVA」里 **275 对失效、0 对还对得上**，而且位移量**不是常数**
+  （实测 −0x12890 ~ +0x12160）。⛔ 最致命的是：**错的地址不报错**，
+  只会静默反汇编出**别家函数**，然后你拿别人的机器码得出"结论" ✗
+  - 新增 `技术资料\scripts\rva_pin.py`：**只按名字查表**（`methods.tsv` 的地址列是**十进制**）
+    → 拿到地址后**验形状**（函数体头若干字节的指纹）→ 不符就**报警**，
+    并新增 `rva_pins.json` 钉住 12 个关键方法（F2 画质 / F3 命中盒 / F4 装甲 / F5 权威表 / F9 调用图）
+  - 🐞 **修掉工具自己的一个"自洽但全错"**：第一版把 **RVA 直接当文件偏移**读 `GameAssembly.dll`，
+    而实际节偏移差是 **−0xC00**（`il2cpp` 节 va=0x1000/raw=0x400）⇒ 读到的其实是"偏移 +0xC00 处的
+    别的字节"；更阴的是**生成指纹和校验指纹用的是同一个错函数 ⇒ 判据恒真、看不出破绽** ✗
+    → 现在按 PE 节表做 RVA→文件偏移映射，并用 `disasm_range.py` 当 **oracle 逐字节对齐首条指令**，
+    另配负向对照（故意用老写法读 ⇒ 必须不一致）✓
+  - 🧪 新增 `测试\test_rva_pin.py`（含 3 条负向对照）+ 重写 `测试\test_asm_tools.py`：
+    **地址一律当场按名字解析**，并新增一条**自审**：RVA 相关测试里**不许再把钉住的地址抄成常量**
+    （AST 取数字字面量，不咬文档串里的历史引述）✓
+- 🧠 **新增「逆向事实钉板」`ba_knowledge.py`（F2~F9）**：把夜里坐实的结论变成**代码能引用的数据**，
+  并由 `测试\test_knowledge_facts.py` 用**钉住的地址 + 真实 DB 导出**逐条当裁判复核：
+  - **F2 画质极性**：`ModelsQuality <= 1`（Custom/Potato）时武器 prefab 渲染器**是开**的，
+    **Low 及以上才整片关掉** —— 旧口径方向反了，所有提示/文案按新极性改正 ✓
+  - **F3 命中盒轴序**：`RawSize = (X=Width, Y=Height, Z=Length)`（旧卡写成 (L,W,H)，会让人**改错轴**）；
+    另记两档特例：步兵走 `SquadCollider`（改 DB 无效）、固定翼 + 非制导弹药按
+    `ADDITIONAL_PLANE_SIZE_FOR_UNGUIDED_SHELLS` 加肥 ✓
+  - **F4 方向装甲会被旁路**：`Units.CurrentArmor` 那行 `ArmorValue > 0` 时，四向 × 热/动能 **8 列完全不参与结算**
+    ⇒ 「Mod 自查」新增这条检查，并**只在作者确实填了方向值时**提示"它们现在是摆设" ✓
+  - **F5 权威表**：加/换炮塔武器要改 **`TurretWeapons`**（`Weapons` 的两列装载期被覆盖，
+    全表 804/804 都是 0），且 `Order` 要**稠密** ⇒ 自查新增 Order 稠密度检查 + 无效列提醒 ✓
+  - **F6 关联表**：八张表只在**装载期**读一次、**运行期没有任何 ECS 查库** ⇒ 加行必须命中过滤键，
+    且**不热生效**（要新开一局）✓
+  - **F7 音频：不存在"路径哈希"**（事件身份 = 资产侧路径 + bank 侧 GUID）⇒ 删掉 `_fnv1a32` 的"哈希"说法
+    （正名为 `_local_stable_id`，旧名保留为别名），新增 `event_in_bank()`：**事件名不在 bank = 无声且不报错**，
+    打包前先问一句 ✓
+  - **F8 机库/UI**：卡片顺序 = 国家→专精→名称→Type；**搜索会去掉符号**（名字带空格/连字符就搜不到）；
+    「看不见」有且只有三种原因（筛选 / 视口裁剪 / DLC 门控）✓
+  - **F9 调用图陷阱**：`who_calls` 0 命中 ≠ 没调用者（可能内联或走**字典/委托间接调用**）⇒ 三重验证 ✓
+- 🐞 **修掉一个静默了很久的路径 bug**：`audio_bank.py` 里真值表路径少算了一层
+  （`dirname(dirname(__file__))`）⇒ `fmod_oracle.json` **永远读不到**，而读不到只返回 `None`（静默）
+  ⇒ 工具"看着正常"、其实一直在瞎猜 ✗ 现在按"往上找"定位并在找不到时**说出来** ✓
+- 🐞 **又抓到两处「备份包名写死」**（和 F1 同族：名字里带内容哈希，游戏一更新就变）：
+  `test_paint_tool.py` / `test_rootpid_stale.py` 里写死的 `units_assets_all_3cc1eb58…bundle`
+  实际已经变成 `1e6c04ce…` ⇒ **`UnityPy.load(<不存在的路径>)` 不报错、只返回空 Environment**
+  ⇒ 表现为"没有贴图可画"/光秃秃的 `IndexError`（看着像代码 bug，其实是路径过时）✗
+  ⇒ 两个测试改成 **glob 自动发现**；`copy_full._load_env()` 现在会**明确报错**（文件在不在、读出几个对象、
+  该去哪找纯净包），不再让人对着 IndexError 猜 ✓
+- 🐞 **修掉两处「把会变的编号写成测试常量」**：
+  `test_config_tool.py` 写死 `path_id=52088`（实测已位移到 **52089**）、
+  `test_config_override_pack.py` 写死"现装包 = 资金 5000 / 收入 600"（资产随版本变，
+  而且**用户自己的 `configs.zip` 会把运行时值覆盖成 7777**）⇒ 换成**当场解析/自洽**的判据：
+  用刚解析出的 pid 再 show 一次、`export → 改哨兵 → pack → 原样读回` ✓
+  新增 `tools\db_truth\config_truth_probe.py`（资产两条路径 + 运行时覆盖一起报出来）✓
+- ⚡ **性能（O1/O2）**：`game_config_tool show` 新增**解码结果缓存**（键 = 内部文件 size+mtime + 目标名）
+  ⇒ 实测 **3.06 s → 0.66 s（4.6×）**，输出逐字节一致（`--no-cache` 可强制重解）；
+  新增 `tools\perf\dump_scan_audit.py` 复查"在 70 MB `dump.cs` 上做全量正则"的写法
+  ⇒ 全工作区**高危 0 处**（唯一放行的是基准工具本身，理由写死在白名单里），带负向对照 ✓
+- ⚡⚡ **性能（O4）：导入的另一半时间也省下来了 —— 「等长替换快路径」正式落地（`inplace_surgery.py`）**
+  - **它做什么**：替换模型时**对象数不变、每个对象长度不变** ⇒ 那就**只改对象数据那几个字节**、
+    **复用原来的压缩块**，连 UnityPy 的序列化器都不调。PoC 实测整包 save **16.2 s → 3.1 s**、
+    块复用率 **99.97%**（41,772 个块里只有 11 个真的变了）✓
+  - **怎么接的**：`import_pack` 在保存前判"对象集合没变 + 全部等长" ⇒ 是就走字节手术，**否则原样回退**
+    全量 `save_stream`（行为与以前完全一致，只是可能更快）✓
+  - ⛔ **前提不成立/自检不过 ⇒ 一定回退，且把产物删掉**：写完会**重新解析新包**逐对象比对
+    "读回的字节 == 期望字节"，并把节点名、块表、块标志一起核一遍；不通过就删产物 + 走全量保存
+    ⇒ **绝不会把一个没验过的包留在磁盘上** ✓
+  - 🧪 **两条回归**：`测试\test_inplace_surgery.py`（引擎级：正例 + **4 条负向对照**：
+    非等长 / 对象集合变了 / 写坏了 / 布局不同，外加"自检本身会失败"的对照）与
+    `测试\test_import_fast_path.py`（**端到端**：第一次导入走全量、**第二次导入必须走快路径**、
+    两条路径产物语义等价、强制关掉快路径后导入仍成功）✓
+  - 🐞 **过程中抓到并修掉 3 个真问题**：① 工具第一版把 **RVA 当文件偏移**读 DLL（另见上）；
+    ② `verify()` 在产物写坏时抛 `AttributeError` 逃出去 ⇒ **回退逻辑根本走不到**（现改为 fail-closed）；
+    ③ 接线第一版写成"内部 CAB 名改过就跳过快路径"，而改名**每次都会发生** ⇒ 快路径**永远不触发** ✗
+    （`test_import_fast_path.py` ② 就是为这条写的）
+  - ⛔ **一条实测踩坑（已写进代码注释）**：别拿 `AssetBundle` 对象做等长补丁的自测样本 ——
+    `UnityPy.SerializedFile.__init__` 会解析它，改坏它 = 整包**加载就失败**，
+    看着像"字节手术写坏了包"，其实是样本挑错了 ✗
+- 🛠️ **打包/交付加固**：
+  - `package_zip.py` 的源码包清单新增 `ba_knowledge.py`，并把清单升级为
+    **「手写清单 ∪ 种子模块的递归 import 闭包」**（`effective_files()`）—— 顺手补上漏掉的 `mod_paths.py`
+    ⇒ 以后新增模块**不必再靠"记得改清单"**（这类漏洞曾经导致"exe 正常、源码版一崩到底"）✓
+  - `auto_build.py` 的 `WATCH_FILES` 与交付体检都补上 `ba_knowledge.py`（否则 exe 里会静默退回旧提示）✓
+  - **临时目录全面去 `tempfile`**：`ws_tmp.mkdtemp()` 不再调 `tempfile.mkdtemp`
+    （受限权限环境下 `tempfile` 会先 chmod、chmod 失败 ⇒ **目录建得出来却写不进去**，WinError 5），
+    并把 18 个测试/工具里的裸 `tempfile.mkdtemp` / `TemporaryDirectory` 统一换成 `ws_tmp`
+    （顺带修回一条丢失的 `atexit.register(cleanup_all)` —— 护栏 `test_temp_leaks.py` 当场判红，说明它有用）✓
+- 🐞🐞 **又抓到一整族"写死的包名"（与 F1 同源：名字里带内容哈希）**：
+  `finalize_crc.DEFAULT_BUNDLE`、`component_edit.PRISTINE` 等都指向
+  `units_assets_all_3cc1eb58…bundle`，而游戏目录里现在只有 **`…1e6c04ce…bundle`**
+  （旧名字只剩一个 `…_unpacked` 残留**目录**，看着像还在 ✗）
+  ⇒ 新增 `_rev_tools\bundle_paths.py`：**按 glob 解析**（`units_bundle()` / `sfx_bundle()` /
+  `find_bundle(前缀)`，区分"游戏里那份"与"`备份\` 里那份纯净包"），
+  并把 `finalize_crc` / `component_edit` 接过去；解析不到时**明确报错**（`BundleNotFound`），
+  绝不退回写死的旧路径 ✓
+- 🐞 **顺带审出 exe 里 8 个 `_rev_tools` 模块其实没打进去**（新增回归 `测试\test_revtools_wiring.py` 抓的）：
+  `build_exe.py` 的 `--add-data` 是**手写清单**，而产品代码对它们的 import 常写在
+  **函数内 + try/except 兜底** ⇒ 漏了就**不报错**，只在用户点那个功能时**静默退回旧行为** ✗
+  实测漏项：`unitypy_path` / `extract_model`（`skin_data` 要用）、`hub_edit` / `behavior_meta` /
+  `behavior_codec`（`import_pack` 要用）、`build_turret_direct` / `turret_swap`（建炮塔要用）、
+  `fix_dangling_scripts`（`stream_save` 要用）；另外 `skin_data` 有 `--add-data` 却**不在**
+  `WATCH_FILES` 里（改了不触发重建）⇒ 已全部补齐，并加**两道闸门**：
+  静态清单（`test_revtools_wiring.py`，含 4 条负向对照）＋ **交付物真值**
+  （交付体检直接数发布目录 `_internal\_rev_tools` 里的文件）✓
+
+【English】
+- 🚨 **Fixed the most dangerous class of bug this round: every hard-coded address went stale (F1)**. After the
+  game updated to **1.2.0.3**, of 358 "name @RVA" pairs **275 no longer match and 0 still do**, and the shift is
+  **not constant** (−0x12890 … +0x12160). ⛔ The killer: **a wrong address never raises** — it silently
+  disassembles *somebody else's function*, and you draw conclusions from their machine code ✗
+  - New `技术资料\scripts\rva_pin.py`: **resolve by name only** (the address column in `methods.tsv` is
+    **decimal**) → then **verify the shape** (a fingerprint of the function prologue) → warn on mismatch.
+    New `rva_pins.json` pins 12 critical methods (F2 quality / F3 hitbox / F4 armour / F5 authoritative table / F9 callgraph)
+  - 🐞 **Fixed a "self-consistent but entirely wrong" bug in the tool itself**: the first version treated the
+    **RVA as a file offset** when reading `GameAssembly.dll`, but the real section delta is **−0xC00**
+    (the `il2cpp` section is va=0x1000 / raw=0x400) ⇒ it read bytes 0xC00 past the intended spot; worse,
+    the fingerprint was **generated and verified by the same wrong function ⇒ the check was a tautology** ✗
+    → now proper PE section mapping, cross-checked **byte-for-byte against `disasm_range.py` as an oracle**,
+    plus a negative control (the naive read must differ) ✓
+  - 🧪 New `测试\test_rva_pin.py` (3 negative controls) + rewritten `测试\test_asm_tools.py`: addresses are
+    **resolved by name at run time**, and a new self-audit forbids **copying pinned addresses back into code**
+    (AST-based, so historical quotes in docstrings don't trip it) ✓
+- 🧠 **New "reverse-engineering fact board" `ba_knowledge.py` (F2–F9)**: the night's findings become
+  **data that code can reference**, verified item-by-item by `测试\test_knowledge_facts.py` against the
+  **pinned addresses plus the real DB export**:
+  - **F2 quality polarity**: with `ModelsQuality <= 1` (Custom/Potato) the weapon prefab renderers are **ON**;
+    **Low and above switch them all off** — the old wording had it backwards, all hints now corrected ✓
+  - **F3 hitbox axis order**: `RawSize = (X=Width, Y=Height, Z=Length)` (the old card said (L,W,H), which makes
+    people **edit the wrong axis**); plus the two special cases: infantry uses `SquadCollider` (DB edits do
+    nothing) and fixed-wing aircraft with unguided ammo get inflated by `ADDITIONAL_PLANE_SIZE_FOR_UNGUIDED_SHELLS` ✓
+  - **F4 directional armour is bypassed**: when `Units.CurrentArmor`'s row has `ArmorValue > 0`, the
+    4-side × KE/CE **8 columns take no part in resolution** ⇒ "Mod self-check" now flags it, and only claims
+    "they are decoration" when the author actually filled directional values ✓
+  - **F5 authoritative table**: add/change turret weapons in **`TurretWeapons`** (the two columns on `Weapons`
+    are overwritten at load time — 804/804 rows are zero), and keep `Order` **dense** ⇒ self-check gained an
+    Order-density check and a notice about the ineffective columns ✓
+  - **F6 relation tables** are read **once at load time**; **no ECS queries them at run time** ⇒ added rows must
+    match the filter key and are **not hot-reloaded** (start a new match) ✓
+  - **F7 audio has no "path hash"** (identity = asset-side path + bank-side GUID) ⇒ removed the `_fnv1a32`
+    "hash" framing (renamed `_local_stable_id`, old name kept as an alias) and added `event_in_bank()`:
+    **a name absent from the bank is silent with no error**, so ask before packaging ✓
+  - **F8 hangar/UI**: card order is country → specialisation → name → Type; **search strips symbols**
+    (names with spaces/hyphens become unfindable); there are exactly three reasons for invisibility ✓
+  - **F9 callgraph traps**: `who_calls` returning zero does **not** mean "nobody uses it" (inlining, or
+    dictionary/delegate indirection) ⇒ prove it three ways ✓
+- 🐞 **Fixed a long-silent path bug**: `audio_bank.py` computed the truth-table path one level short
+  (`dirname(dirname(__file__))`) ⇒ `fmod_oracle.json` was **never loaded**, and a failed load only returned
+  `None` (silent) ⇒ the tool looked fine while guessing ✗ now it searches upwards and says so when missing ✓
+- 🐞 **Caught two more hard-coded backup-bundle names** (same family as F1: the name carries a content hash and
+  changes with every game update): `test_paint_tool.py` / `test_rootpid_stale.py` still referenced
+  `units_assets_all_3cc1eb58…bundle`, which is now `1e6c04ce…` ⇒ **`UnityPy.load(<missing path>)` does not
+  raise, it returns an empty Environment** ⇒ symptoms were "no textures to paint" and a bare `IndexError`
+  (looks like a code bug, is actually a stale path) ✗ ⇒ both tests now **glob-discover** the bundle, and
+  `copy_full._load_env()` **fails loudly** (file present? how many objects? where to get a pristine pack) ✓
+- 🐞 **Fixed two more "mutable id baked into a test constant"**: `test_config_tool.py` hard-coded
+  `path_id=52088` (actually **52089** now) and `test_config_override_pack.py` hard-coded
+  "installed pack = money 5000 / income 600" (asset values follow the game version, and **the user's own
+  `configs.zip` overrides the runtime value to 7777**) ⇒ replaced with **resolved-on-the-spot / self-consistent**
+  checks (re-`show` with the pid just parsed; `export → change sentinel → pack → read back`) ✓
+  New `tools\db_truth\config_truth_probe.py` reports both asset paths plus the runtime override ✓
+- ⚡ **Performance (O1/O2)**: `game_config_tool show` gained a **decode-result cache** (key = inner file
+  size+mtime plus target) ⇒ measured **3.06 s → 0.66 s (4.6×)**, byte-identical output (`--no-cache` forces a
+  re-decode); new `tools\perf\dump_scan_audit.py` re-audits "full regex scan over the 70 MB `dump.cs`"
+  ⇒ **zero high-risk sites** across the workspace (the only exempted one is the benchmark tool, reason written
+  into the allowlist), with a negative control ✓
+- ⚡⚡ **Performance (O4): the other half of the import cost is gone — the "equal-length fast path" has
+  landed (`inplace_surgery.py`)**
+  - **What it does**: when replacing a model the object count is unchanged and every object keeps its
+    length ⇒ it edits **only the object data bytes** and **reuses the original compressed blocks**, never
+    touching UnityPy's serializer. The PoC measured a full-pack save going **16.2 s → 3.1 s** with a
+    **99.97 % block reuse rate** (only 11 of 41,772 blocks actually changed) ✓
+  - **How it is wired**: before saving, `import_pack` checks "object set unchanged + every change
+    equal-length" ⇒ if so it takes the byte-surgery path, **otherwise it falls back** to the original
+    full `save_stream` (behaviour identical to before, just possibly faster) ✓
+  - ⛔ **Preconditions unmet or self-check failed ⇒ always fall back, and delete the artifact**: after
+    writing it **re-parses the new pack** and compares "bytes read back == expected bytes" per object,
+    and re-checks the node names, block table and block flags; on failure it removes the artifact and
+    falls back to the full save ⇒ **a pack that was never verified is never left on disk** ✓
+  - 🧪 **Two regressions**: `测试\test_inplace_surgery.py` (engine level: positive case + **4 negative
+    controls** — non-equal length / object set changed / corrupted write / different layout — plus a
+    control proving the self-check itself can fail) and `测试\test_import_fast_path.py` (**end-to-end**:
+    first import takes the full path, the **second import must take the fast path**, both products are
+    semantically equal, and with the fast path forced off the import still succeeds) ✓
+  - 🐞 **Three real bugs were found and fixed along the way**: ① the tool's first version treated an
+    **RVA as a file offset** when reading the DLL (see above); ② `verify()` raised `AttributeError` on a
+    corrupted artifact, so the **fallback never ran** (now fail-closed); ③ the wiring's first version
+    skipped the fast path "whenever the internal CAB name changed" — and renaming happens **every**
+    save ⇒ the fast path **never fired** ✗ (judgement ② of `test_import_fast_path.py` exists for this)
+  - ⛔ **One measured pitfall (documented in the code)**: never use the `AssetBundle` object as the
+    equal-length patch sample in a self-test — `UnityPy.SerializedFile.__init__` parses it, so corrupting
+    it makes the **whole pack fail to load**, which looks like "byte surgery broke the pack" while the
+    real cause is a badly chosen sample ✗
+- 🛠️ **Packaging/delivery hardening**:
+  - The source-package list in `package_zip.py` now includes `ba_knowledge.py` and is upgraded to
+    **"hand-written list ∪ recursive import closure of the seed modules"** (`effective_files()`) — which also
+    picked up the missing `mod_paths.py` ⇒ new modules **no longer depend on remembering to edit the list**
+    (this exact class of gap used to mean "exe fine, source build crashes on start") ✓
+  - `auto_build.py`'s `WATCH_FILES` and the delivery check both cover `ba_knowledge.py` (otherwise the exe
+    silently keeps the old hints) ✓
+  - **Temporary directories no longer use `tempfile`**: `ws_tmp.mkdtemp()` no longer calls
+    `tempfile.mkdtemp` (under restricted permissions `tempfile` chmods first, and a failed chmod yields a
+    directory that **cannot be written into** — WinError 5), and 18 tests/tools were migrated to `ws_tmp`
+    (this also restored a lost `atexit.register(cleanup_all)` — the guard `test_temp_leaks.py` flagged it
+    immediately, which is exactly why it exists) ✓
+- 🐞🐞 **Caught a whole family of hard-coded bundle names** (same root cause as F1: the name carries a
+  content hash): `finalize_crc.DEFAULT_BUNDLE`, `component_edit.PRISTINE` and friends pointed at
+  `units_assets_all_3cc1eb58…bundle`, while the game folder now only has **`…1e6c04ce…bundle`**
+  (the old name survives only as a `…_unpacked` **directory**, so it looks present ✗) ⇒ new
+  `_rev_tools\bundle_paths.py` **resolves by glob** (`units_bundle()` / `sfx_bundle()` /
+  `find_bundle(prefix)`, distinguishing the in-game copy from the pristine one under `备份\`), and
+  `finalize_crc` / `component_edit` now use it; when nothing resolves it **raises `BundleNotFound`**
+  instead of falling back to the stale path ✓
+- 🐞 **The same audit found 8 `_rev_tools` modules missing from the exe** (new regression
+  `测试\test_revtools_wiring.py`): `build_exe.py`'s `--add-data` is a **hand-written list**, while the
+  product imports those modules **inside functions with a try/except fallback** ⇒ a missing one
+  **does not raise**; the feature just **silently reverts to the old behaviour** ✗ Measured gaps:
+  `unitypy_path` / `extract_model` (needed by `skin_data`), `hub_edit` / `behavior_meta` /
+  `behavior_codec` (needed by `import_pack`), `build_turret_direct` / `turret_swap` (turret building),
+  `fix_dangling_scripts` (needed by `stream_save`); also `skin_data` was in `--add-data` but **not** in
+  `WATCH_FILES` (edits wouldn't trigger a rebuild) ⇒ all wired up, with **two gates**: the static list
+  (`test_revtools_wiring.py`, 4 negative controls) plus **delivery ground truth** (the hygiene check
+  counts the files actually present in the release's `_internal\_rev_tools`) ✓
+
+【Русский】
+- 🚨 **Исправлен самый опасный класс ошибок этого раунда: все жёстко прописанные адреса устарели (F1)**.
+  После обновления игры до **1.2.0.3** из 358 пар «имя @RVA» **275 больше не совпадают, совпадающих — 0**,
+  и смещение **не постоянно** (−0x12890 … +0x12160). ⛔ Главное: **неверный адрес не выдаёт ошибку** —
+  он молча дизассемблирует *чужую функцию*, и выводы делаются по чужому машинному коду ✗
+  - Новый `技术资料\scripts\rva_pin.py`: **поиск только по имени** (столбец адресов в `methods.tsv` —
+    **десятичный**) → затем **проверка «формы»** (отпечаток пролога функции) → предупреждение при расхождении.
+    Новый `rva_pins.json` закрепляет 12 ключевых методов ✓
+  - 🐞 **Исправлена ошибка «самосогласовано, но полностью неверно» в самом инструменте**: первая версия
+    читала **RVA как смещение в файле**, тогда как реальная разница секций — **−0xC00** ⇒ читались байты
+    на 0xC00 дальше; хуже того, отпечаток **создавался и проверялся одной и той же неверной функцией,
+    то есть проверка была тавтологией** ✗ → теперь корректное отображение через таблицу секций PE,
+    сверка **побайтово с `disasm_range.py` как оракулом** и негативный контроль ✓
+- 🧠 **Новый «реестр фактов» `ba_knowledge.py` (F2–F9)**: выводы ночи стали **данными для кода**,
+  проверяемыми по каждому пункту в `测试\test_knowledge_facts.py` (закреплённые адреса + реальный экспорт БД):
+  полярность качества (F2), порядок осей хитбокса (F3), обход направленной брони (F4),
+  авторитетная таблица `TurretWeapons` (F5), таблицы связей (F6), идентичность аудиособытий (F7),
+  правила ангара (F8), ловушки графа вызовов (F9) ✓
+- 🐞 **Исправлена давно молчавшая ошибка пути**: `audio_bank.py` вычислял путь к таблице истинности на
+  уровень выше ⇒ `fmod_oracle.json` **никогда не загружался**, а неудачная загрузка возвращала `None`
+  (молча) ✗ → теперь поиск вверх и явное сообщение ✓
+- 🐞 **Ещё два жёстко прописанных имени резервного bundle** (то же семейство, что F1) ⇒ теперь **glob-поиск**,
+  а `copy_full._load_env()` **падает громко** вместо голого `IndexError` ✓
+- 🐞 **Ещё два «изменяемых идентификатора в константе теста»** исправлены на проверки «на месте» ✓
+- ⚡ **Производительность (O1/O2)**: кэш результата декодирования в `game_config_tool show`
+  ⇒ **3.06 с → 0.66 с (4.6×)**, вывод побайтово идентичен; аудит полного сканирования `dump.cs`
+  ⇒ **0 опасных мест** ✓
+- ⚡⚡ **Производительность (O4): «быстрый путь для равновеликих замен» внедрён
+  (`inplace_surgery.py`)** — при замене модели число объектов и длины не меняются ⇒ правятся
+  **только байты данных объектов**, а **исходные сжатые блоки переиспользуются** (сериализатор
+  UnityPy не вызывается). PoC: сохранение всего пакета **16.2 с → 3.1 с**, доля переиспользованных
+  блоков **99.97 %**. `import_pack` перед сохранением проверяет «множество объектов не изменилось +
+  все правки равновелики» ⇒ иначе **обычный полный путь** (поведение как раньше). После записи пакет
+  **перечитывается** и сверяется по объектам; при провале самопроверки артефакт **удаляется** —
+  непроверенный пакет на диск не попадает ✓ Две регрессии: `test_inplace_surgery.py` (движок,
+  4 негативных контроля) и `test_import_fast_path.py` (сквозной: второй импорт **обязан** идти
+  быстрым путём; при принудительном отключении импорт всё равно успешен) ✓
+- 🛠️ **Упаковка**: список исходников теперь = «рукописный список ∪ рекурсивное замыкание импортов»;
+  временные каталоги больше не используют `tempfile` (в ограниченных окружениях каталог создаётся,
+  но **не доступен для записи**) ✓
+- 🐞🐞 **Найдено целое семейство жёстко прописанных имён bundle** (та же причина, что F1: в имени
+  зашит хеш содержимого) ⇒ новый `_rev_tools\bundle_paths.py` **ищет по glob**, а при неудаче
+  **явно падает** (`BundleNotFound`), не возвращаясь к устаревшему пути ✓
+- 🐞 **Тот же аудит нашёл 8 модулей `_rev_tools`, отсутствовавших в exe** (новая регрессия
+  `测试\test_revtools_wiring.py`): они импортируются **внутри функций с try/except**, поэтому
+  пропажа **не вызывает ошибку** — функция просто **молча возвращается к старому поведению** ✗
+  ⇒ все пропущенные модули добавлены, плюс **два рубежа**: статический список и **фактическое
+  содержимое поставки** (проверка гигиены считает файлы в `_internal\_rev_tools`) ✓
+
 ## v1.8.112（BA_Mod_Maker v1.8.112 + Blender 插件 v2.7.112）—— 🎨 「我的 bundle」② / ④ 的白底改成暗色（经典 tk 控件不吃主题）
 
 【中文】
@@ -2649,8 +4578,8 @@
   实测：文件 → 导入音频/音效… 与 文件 → 添加音频/音效（新音效）… 两个对话框
   **只会落在屏幕 +0+0，被主窗完全盖住** ⇒ 看起来就像“点了没反应”。
   仅 	ransient(master) 并不保证新窗在主窗之上。现在统一「居中到主窗 + 置顶 400ms +
-  抢焦点 + grab_set() 模态」，两个对话框实测均 iewable=1 且可正常交互 ✓。
-  新增共享模块 udio_ui.py（两个对话框共用）。
+  抢焦点 + grab_set() 模态」，两个对话框实测均 `viewable=1 且可正常交互 ✓。
+  新增共享模块 `audio_ui.py（两个对话框共用）。
 - **音频窗口按钮哑掉的根因修掉了** ✗→✓
   「导入音频/音效…」里 替换选中 / 批量替换 / 还原选中 / 备份全部 四个按钮在
   **音库目录没检测到时是 if not self.sa: return 静默返回** ⇒ 对话框开着、列表空、点谁都没反应 ✗。
@@ -2668,7 +4597,7 @@
   Measured: both audio dialogs appeared only at screen +0+0, **fully hidden behind the main window**
   — which looks exactly like “nothing happens”. 	ransient(master) alone does not guarantee stacking
   above the parent. They now centre on the main window, raise for 400 ms, take focus and call
-  grab_set(); both measure iewable=1 and are interactive ✓. Added shared module udio_ui.py.
+  grab_set(); both measure `viewable=1 and are interactive ✓. Added shared module `audio_ui.py.
 - Version bumped to **v1.8.63** (Blender addon v2.7.63 in lockstep).
 
 【Русский】
@@ -2678,7 +4607,7 @@
   Теперь главное окно ставит глобальный обработчик: диалог с ошибкой + полный стек в
   BA_Mod_Maker_error.log рядом с exe.
 - **Аудио-диалоги теперь по центру, поверх и модальные** ✗→✓ Измерено: оба диалога появлялись
-  только в +0+0 и **полностью скрывались за главным окном**. Добавлен общий модуль udio_ui.py.
+  только в +0+0 и **полностью скрывались за главным окном**. Добавлен общий модуль `audio_ui.py.
 - Версия поднята до **v1.8.63** (аддон Blender — v2.7.63).
 
 ## v1.8.62（BA_Mod_Maker v1.8.62 + Blender 插件 v2.7.62）—— 补上"导入全链路"端到端测试，修掉它抓到的 2 个回归

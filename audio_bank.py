@@ -155,13 +155,20 @@ def add_sound(sa, event_name, wav_bytes, bank_name="CustomDialog.bank", progress
     step("构建 PCM16 样本 ...")
     fsb = build_fsb5_pcm16(wav_bytes, os.path.basename(event_name))
     enc = fmod_encrypt(fsb)
+    # ★ F7 前置体检：**事件名不在 bank = 无声且不报错** ⇒ 打包前先问一句
+    ok, why = event_in_bank(event_name, strings_path)
+    step("事件名体检：%s" % why)
     # 2) 重建音库：事件 + 波形 + 样本 + 总线 + HASH（以 .bak 原件为基底，写入 live 路径）
     step("重建 %s（事件 + 波形 + 样本）..." % bank_name)
     new_bytes, event_guid, wav_guid = rebuild_bank_with_event(bank_path, event_name, enc)
     open(live_path, "wb").write(new_bytes)
     step("完成：事件 %s GUID=%s WAV=%s" % (event_name, event_guid, wav_guid))
-    step("提示：Master.strings.bank 路径注册为实验性（格式未完全解出）；"
-         "进游戏实测，若音效不响请看 GameLogs 的 FMOD 报错")
+    step("⚠ 本函数**只**写 bank；让游戏真正用到它还需要**改游戏侧引用点**"
+         "（资产里的 `EventReference` GUID）—— 事件身份 = 路径字符串 + GUID，"
+         "**没有「路径哈希」这回事**（F7 已证伪）")
+    if ok is False:
+        step("⛔ 事件名不在 bank 字符串表里 ⇒ 进游戏会**无声且不报错**（上面已给出判据）")
+    step("提示：进游戏实测，若音效不响先看 GameLogs 的 FMOD 报错、再回来核事件名是否已注册")
     return event_guid, 1
 
 
@@ -192,21 +199,20 @@ SECTION_ORDER = ["IBSS", "GBSS", "RBSS", "MBSS", "BEFX", "PEFX", "SEFX", "SCFX",
                  "LWVS", "WAVS", "SNAS", "MODS"]
 
 
-def _fnv1a32(data):
-    r"""⚠⚠ **这个哈希函数已被实测证伪（2026-09）——它不一定是游戏用的那个**。
+def _local_stable_id(data):
+    r"""HASH 记录里那个尾随 u32 —— **不是路径哈希**，只是"项目内 id"。
 
-    它写在新增事件的 `HASH` 块里（`{u32 hash, GUID}`），而 HASH 块是
-    **事件路径 → GUID 的正向查找表**。实测（`技术资料/scripts/fmod_hash_id.py`）：
-    把 `Master.strings.bank` 的 2,576 条路径片段 × 6 种前缀，代入 **9 个候选函数**
-    （fnv1a32 / fnv1a32(lower) / fnv1a32(utf16le) / fnv1_32 / crc32 / djb2 / sdbm…），
-    与**全部 15 个 bank 的 873 个真实 hash 值**比对 —— **全部 0 命中** ✗
-    ⇒ `fnv1a32` **不是**游戏用的算法（正确函数应命中几十~几百）。
-
-    ⇒ **后果**：新加的事件若靠**按名解析**（`FMOD_Studio_System_LookupID(path)`），
-    很可能**找不到**（表现为"打包成功、进游戏没声音"）✗。
-    定案与修法见 `.re-kb/data-structures/fmod-studio-bank-format.md` 的 HASH 小节
-    （下一步：解开 FEV 路径表编码，或 Frida hook `LookupID` 抓一对 (path, GUID) 真值）。
-    **在查清之前，别把这个哈希当成"已验证正确"** ✓
+    ⛔⛔ 2026-10 F7 更正（把旧结论彻底推翻，别再回头找"正确哈希函数"）：
+      · 旧代码管它叫 `_fnv1a32` 并当"事件路径 → GUID 的哈希"，**已被引擎当裁判证伪** ✗
+        （`技术资料/scripts/fmod_hash_id.py`：2,576 条路径片段 × 6 前缀 × 9 个候选哈希函数
+         vs 15 个 bank 的 873 个真实值 ⇒ **全部 0 命中**）
+      · **根本不存在"FMOD 路径哈希"这回事**：事件的真实身份 =
+        **资产侧路径字符串 + bank 侧 GUID**，对照表就是 `Master.strings.bank` 的**字符串表**
+        （`fmod_oracle.py` 载入游戏自带 fmodstudio.dll 2.1.11 读出的 4,226 条 `{bank,guid,path}` 为真值）
+      · 那这个 u32 是什么：**只保证"同一对象恒定"的项目内 id**（`fmod_id_field.py` +
+        `fmod_id_seed.py` 用 4,124 条引擎真路径 × 13 函数 × 6 输入变体 + seed 0..1023 扫描也 0 命中）
+      ⇒ 保留这个函数**只为让新写出的 bank 自洽**（有确定值、可复现、可 diff），
+        **绝不要**拿它当"事件能被游戏找到"的依据 ✓
     """
     h = 0x811C9DC5
     for c in data:
@@ -215,24 +221,37 @@ def _fnv1a32(data):
     return h
 
 
+# ⛔ 旧名保留一版（外部可能有引用）；新代码用 `_local_stable_id`
+_fnv1a32 = _local_stable_id
+
+
 # ══════════════════════════════════════════════════════════════════════════════
-# ★ 2026-09 查清（比上面那段更彻底，以这段为准）：
+# ★ 事件身份真值（2026-10 F7，以本段为准）
 #   HASH 块真实布局 = [u32 头(低 16 位 = 2N+1)][N × (GUID 16 字节 + u32 项目内 id)]
 #     · 证据：`技术资料/scripts/fmod_hash_records2.py` —— 每个 bank 的 GUID 命中数
 #             **恰好等于引擎报的事件数**（Ambience 71/71、Dialog 1617/1617…）✓
-#   · 那个尾随 u32 **不是路径哈希**：`fmod_id_field.py` + `fmod_id_seed.py` 用
-#     **4,124 条引擎真路径** × 13 函数 × 6 输入变体 + XOR 常数差 + seed 0..1023 扫描
-#     —— **全部 0 命中** ✗（它只保证"同一对象恒定"，是项目内 id）
-#   · **游戏不按路径找事件**：C# 侧 0 条 `event:/` 字面量，走 FMODUnity 的
-#     `EventReference`（**GUID**）⇒"路径哈希"这个前提本身不成立 ✗
-#   ⇒ 本文件用 `_fnv1a32` 只当**确定性占位**：它不能让新事件变成"游戏可调用的"。
-#     要让游戏用到新音效，得改**游戏侧引用点（Unity 资产里的 EventReference GUID）**，
-#     或者**复用已有事件的 GUID 做原位替换**。
-#   ⇒ 按名字查真实 GUID：`技术资料/scripts/fmod_oracle.py`（加载游戏自带 fmodstudio.dll
-#     2.1.11，用官方 C API 读）导出的 `技术资料/data/fmod_oracle.json` = 4,226 条真值表 ✓
+#   · 那个尾随 u32 **不是路径哈希**（见 `_local_stable_id` 的 ⛔）
+#   · ★★ **游戏不按路径找事件**：C# 侧只走 FMODUnity `EventReference`（**GUID**）
+#     ⇒ 要让游戏用到新音效，得改**游戏侧引用点**（资产里的 EventReference GUID），
+#       或者**复用已有事件的 GUID 做原位替换**。
+#   · 按名字查真实 GUID：`技术资料/scripts/fmod_oracle.py` 导出的
+#     `技术资料/data/fmod_oracle.json` = 4,226 条真值表 ✓
 # ══════════════════════════════════════════════════════════════════════════════
-ORACLE_JSON = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                           "技术资料", "data", "fmod_oracle.json")
+# ⛔ 路径踩坑（2026-10 修）：原来是 `dirname(dirname(__file__))` ⇒ 算成
+#   `工具制作资源\技术资料\data\fmod_oracle.json`（**少一层**）⇒ 真值表**永远读不到**，
+#   而 `load_oracle()` 读不到只返回 None（静默）⇒ 工具"看着正常"、其实一直在瞎猜 ✗
+#   ⇒ 现在按"从本文件往上找 技术资料/data/fmod_oracle.json"来定位，并在找不到时**说出来**。
+def _find_oracle():
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(4):
+        cand = os.path.join(d, "技术资料", "data", "fmod_oracle.json")
+        if os.path.isfile(cand):
+            return cand
+        d = os.path.dirname(d)
+    return None
+
+
+ORACLE_JSON = _find_oracle()
 _ORACLE = None
 
 
@@ -242,11 +261,14 @@ def load_oracle():
     if _ORACLE is None:
         try:
             import json
+            if not ORACLE_JSON:
+                raise FileNotFoundError("没找到 技术资料/data/fmod_oracle.json")
             with open(ORACLE_JSON, encoding="utf-8") as f:
                 data = json.load(f)
             _ORACLE = {s["path"]: s["guid"] for s in data.get("strings", [])}
-        except Exception:
+        except Exception as e:                                         # noqa: BLE001
             _ORACLE = {}
+            _ORACLE_ERR = str(e)
     return _ORACLE or None
 
 
@@ -261,6 +283,56 @@ def lookup_event_guid(name):
         if p.rsplit("/", 1)[-1] == name:
             return g
     return None
+
+
+def registered_paths(strings_bank_path=None):
+    r"""★ 从 **bank 字符串表**读出所有已注册的事件路径（这才是"事件存不存在"的判据）。
+
+    两级来源，优先级从高到低：
+      ① 引擎真值 `fmod_oracle.json`（`fmod_oracle.py` 用游戏自带 fmodstudio.dll 读出来的）
+      ② 退而求其次：从 `Master.strings.bank` 的 STDT 片段树里**抖出**可读路径
+         （格式未完全解出 ⇒ 只做"名字片段在不在"的粗判，**不保证**）
+
+    ⇒ 返回 set(路径)，拿不到就返回空 set（**不要**把空 set 当成"事件不存在"的结论）。
+    """
+    tb = load_oracle()
+    if tb:
+        return set(tb)
+    out = set()
+    if strings_bank_path and os.path.isfile(strings_bank_path):
+        raw = open(strings_bank_path, "rb").read()
+        # ⚠ 粗判：把可打印 ASCII 片段拼一拼，够判断"这个名字片段在不在"（不是解析器）
+        cur = bytearray()
+        for b in raw:
+            if 32 <= b < 127:
+                cur.append(b)
+            else:
+                if len(cur) >= 6:
+                    out.add(cur.decode("latin1"))
+                cur = bytearray()
+        if len(cur) >= 6:
+            out.add(cur.decode("latin1"))
+    return out
+
+
+def event_in_bank(event_name, strings_bank_path=None):
+    """★ 判断"这个事件名在 bank 里存不存在" → (bool, 说明字符串)。
+
+    ⛔⛔ **事件名不在 bank = 无声且不报错**（游戏不会崩、日志也不会说）——
+      这正是"改了音效却没响"最常见的原因 ⇒ 打包前必须问这一句。
+    """
+    paths = registered_paths(strings_bank_path)
+    if not paths:
+        return None, ("拿不到 bank 字符串表（先跑 技术资料/scripts/fmod_oracle.py 生成 "
+                      "技术资料/data/fmod_oracle.json）⇒ **无法判定**，不代表不存在")
+    if event_name in paths:
+        return True, "事件名在 bank 字符串表里 ✓"
+    if any(p.rsplit("/", 1)[-1] == event_name for p in paths):
+        return True, "事件名作为路径末段存在 ✓（完整路径见 oracle）"
+    if any(event_name in p for p in paths):
+        return True, "事件名是某条已注册路径的**子串** ✓（建议用完整路径更稳）"
+    return False, ("✗ 事件名不在 bank 里 ⇒ 进游戏会**无声且不报错**。"
+                   "要么改用已存在的路径，要么真把事件做进 bank")
 
 
 def _p16(v):
@@ -341,11 +413,14 @@ def rebuild_bank_with_event(bank_path, event_name, encrypted_fsb5):
         proj_fixed += sections[t]
     # 尾部块（SNDH 12B 数据 + STDT/STBL 空 + HASH + DEL/MUTE/REFI/PLAT 空）
     path_bytes = event_name.encode("utf-8")
-    h_hash = _fnv1a32(path_bytes)
+    # ★ F7：这里原来叫 `h_hash = _fnv1a32(path_bytes)` 并当"路径哈希"。
+    #   那个前提已证伪（没有"FMOD 路径哈希"这回事）⇒ 现在明确它只是**项目内 id**：
+    #   只为了写出自洽、可复现的 HASH 块；**它不影响游戏能不能找到这个事件** ✓
+    local_id = _local_stable_id(path_bytes)
     # HASH 真实布局（2026-09 实测坐实）：
     #   [u32 头：高 16 位=0x0014，**低 16 位 = 2N+1**（N=记录数）][N × (GUID 16B + u32 id)]
     #   ⛔ 旧代码把 0x0014009D 写死（那是 Master.bank 78 条记录的数值）⇒ 2 条记录应为 0x00140005
-    recs = [(new_event_guid, h_hash), (new_wav_guid, h_hash)]
+    recs = [(new_event_guid, local_id), (new_wav_guid, local_id)]
     hash_chunk = (b"HASH" + _p32(4 + 20 * len(recs))
                   + _p32(0x00140000 | (2 * len(recs) + 1))
                   + b"".join(g + _p32(v) for g, v in recs))

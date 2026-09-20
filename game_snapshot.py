@@ -33,7 +33,10 @@ import subprocess
 import sys
 import time
 
-sys.stdout.reconfigure(encoding="utf-8")
+try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 DEFAULT_FILES = ("BrokenArrow_Data/data.unity3d",
                  "BrokenArrow_Data/StreamingAssets/aa/catalog.json",
@@ -45,7 +48,22 @@ _GAME_ROOTS = [
     "E:/Steam/steamapps/common/broken_arrow",
     "F:/Steam/steamapps/common/broken_arrow",
 ]
-DEFAULT_ROOT = os.path.join(os.path.expanduser("~"), "BrokenArrow_Mods", "snapshots")
+def _default_snapshot_root():
+    """快照默认目录 —— **绝不落 C 盘**（单份 6.8 GB！2026-10 修；见 `mod_paths.py`）"""
+    try:
+        import mod_paths
+        return mod_paths.snapshot_root()
+    except Exception:                                        # noqa: BLE001
+        env = os.environ.get("BAMOD_HOME")
+        if env:
+            return os.path.join(env, "snapshots")
+        for d in ("D:", "E:"):
+            if os.path.isdir(d + os.sep):
+                return os.path.join(d + os.sep, "BrokenArrow_Mods", "snapshots")
+        return os.path.join(os.path.expanduser("~"), "BrokenArrow_Mods", "snapshots")
+
+
+DEFAULT_ROOT = _default_snapshot_root()
 
 
 def _looks_like_game(d):

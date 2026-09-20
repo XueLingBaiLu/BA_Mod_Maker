@@ -17,7 +17,10 @@ import shutil
 import sys
 import zipfile
 
-sys.stdout.reconfigure(encoding="utf-8")
+try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from version import APP_VERSION                                     # noqa: E402

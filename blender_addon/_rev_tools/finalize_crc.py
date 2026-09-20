@@ -15,14 +15,36 @@ if HERE not in sys.path:
 from compute_bundle_crc import compute_bundle_crc
 from update_crc import update_catalog
 
-DEFAULT_BUNDLE = r"<游戏安装目录>\BrokenArrow_Data\StreamingAssets\aa\PC\units_assets_all_3cc1eb58d8b7f6cdf82bbfbf3b5b8aaf.bundle"
-DEFAULT_CATALOG = r"<游戏安装目录>\BrokenArrow_Data\StreamingAssets\aa\catalog.json"
+# ⛔ 2026-10 修（B 分支）：下面这个路径原来**写死了包名里的 32 位内容哈希**，
+#   而游戏 1.2.0.3 之后那份包已经变成 `units_assets_all_1e6c04ce42984f32a0891b92fab010e8.bundle`
+#   ⇒ `DEFAULT_BUNDLE` 指向一个**不存在的文件**（旧名字只剩一个 `_unpacked` 残留目录，
+#   看着像还在 ✗）。而"错的路径不报错"正是这类事故的共性 ⇒ 现在**按 glob 解析**。
+try:
+    from bundle_paths import units_bundle
+    DEFAULT_BUNDLE = units_bundle() or ""
+except Exception:                                                     # noqa: BLE001
+    DEFAULT_BUNDLE = ""
+# 兜底（glob 找不到时给个提示用的旧名，**不要**拿它当真路径）
+_FALLBACK_HINT = r"<游戏>\BrokenArrow_Data\StreamingAssets\aa\PC\units_assets_all_<内容哈希>.bundle"
+DEFAULT_CATALOG = os.path.join(
+    r"<游戏安装目录>", "BrokenArrow_Data",
+    "StreamingAssets", "aa", "catalog.json")
+
+
+class BundleNotFound(RuntimeError):
+    """bundle 没解析出来 —— **明确报错**，绝不退回写死的旧路径"""
 
 
 def run(bundle=None, catalog=None, verbose=True):
     """算 bundle 的 CRC 并更新 catalog。返回 (crc, updated 列表)。"""
     bundle = bundle or DEFAULT_BUNDLE
     catalog = catalog or DEFAULT_CATALOG
+    if not bundle or not os.path.isfile(bundle):
+        raise BundleNotFound(
+            "没能解析出要算 CRC 的 bundle%s\n"
+            "  ⛔ 包名里带 **32 位内容哈希**，游戏更新一次就变（实测 3cc1eb58… → 1e6c04ce…）\n"
+            "  ⇒ 别写死名字；用 `bundle_paths.units_bundle()` / 显式传路径\n"
+            "  ⇒ 期望形状：%s" % (("：" + str(bundle)) if bundle else "（glob 也没命中）", _FALLBACK_HINT))
     if verbose:
         print("算 CRC（流式，约1-2分钟）...", flush=True)
     crc = compute_bundle_crc(bundle)
@@ -43,7 +65,10 @@ def run(bundle=None, catalog=None, verbose=True):
 
 
 if __name__ == "__main__":
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     b = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_BUNDLE
     c = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_CATALOG
     run(b, c)

@@ -81,8 +81,22 @@ def configure():
         log("没自动检测到游戏目录，请手动填「游戏 bundle 文件」")
 
     if not prefs.out_bundle:
-        prefs.out_bundle = os.path.join(os.path.expanduser("~"), "work.bundle")
-        log("输出 bundle 默认：" + prefs.out_bundle)
+        # ⛔ 2026-10 修：原先是 `~\work.bundle`（C 盘）⇒ 导出的 .bamod/.bundle 默认往 C 盘写 ✗
+        #   ⇒ 走产品统一入口 `mod_paths`（D 盘优先；可用环境变量 BAMOD_HOME 强制指定）✓
+        try:
+            import mod_paths
+            prefs.out_bundle = os.path.join(mod_paths.exports(), "work.bundle")
+        except Exception:                                    # noqa: BLE001
+            # 兜底不依赖任何未定义变量（原先写了 GAME_CANDIDATES ⇒ 那条路会 NameError ✗）
+            _base = None
+            for _d in ("D:", "E:"):
+                if os.path.isdir(_d + os.sep):
+                    _base = os.path.join(_d + os.sep, "BrokenArrow_Mods", "exports")
+                    break
+            if not _base:
+                _base = os.path.join(os.path.expanduser("~"), "BrokenArrow_Mods", "exports")
+            prefs.out_bundle = os.path.join(_base, "work.bundle")
+        log("输出 bundle 默认（D 盘优先）：" + prefs.out_bundle)
 
 
 if __name__ == "__main__":

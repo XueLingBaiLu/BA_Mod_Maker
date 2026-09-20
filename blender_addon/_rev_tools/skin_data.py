@@ -289,11 +289,23 @@ def skins_for_renderers(index, renderer_pids):
     return merged
 
 
-def texture_png_bytes(by_pid, tex_pid):
-    """把 Texture2D 解码为 PNG 字节；失败返回 None。"""
+def texture_png_bytes(by_pid, tex_pid, bundle=None):
+    """把 Texture2D 解码为 PNG 字节；失败返回 None。
+
+    ★ v1.9.1（★⑮）：多了 `bundle` 参数 —— 传了就走 `tex_stream.png_from_object`，
+      它能处理 **`.resS` 在包外**、UnityPy 的 `t.image` 直接抛异常的**流式贴图**
+      （★⑮ 第 1/2 步「导出贴图」读 AH-1Z 那种图就靠这条）✓
+      ⛔ 走这条**不会**重新 load 包（对象已在 `by_pid` 里）；批量导出仍是 O(1) 次加载 ✓
+    """
     o = by_pid.get(tex_pid)
     if not o or o.type.name != "Texture2D":
         return None
+    if bundle:
+        try:
+            import tex_stream
+            return tex_stream.png_from_object(o, bundle=bundle)
+        except Exception:                                        # noqa: BLE001
+            pass                                                     # 退回老路子
     try:
         t = o.read()
         img = t.image

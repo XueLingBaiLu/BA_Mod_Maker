@@ -41,10 +41,65 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
-HUB_SCRIPT = 4665939560152279323
+# ══════════════════════════════════════════════════════════════════════════════
+# ★ **脚本 pathID 的单一来源**（2026-10-16 立此存照）
+#
+# ⚠ 这些值**随游戏版本变**（它们是 IL2CPP 给每个 `MonoScript` 资产分配的 pathID）。
+#   以前它们在 4 个文件里各写一份（`hub_edit` / `build_turret_direct` / `extract_model` /
+#   `analyze_hub`），**任何一处过期都不报错**、只是"那个对象认不出来 / 写出错脚本"⇒ 静默失效 ✗
+#   ⇒ 现在**只在这里定义**，别处一律 `from hub_edit import ...` ✓
+#   取值来源：`units_assets_all_*.bundle` 里对应 `MonoScript` 的 `m_Name`（实测于 2026-10-16，
+#   游戏 1.2.0.3）。**复核命令**（按类名现查，不信这张表）：
+#       python 技术资料\scripts\bundle_script_check.py <某个含该脚本的包>
+#       python _rev_tools\analyze_hub.py <包> --list     # AnimationHub 走**类名解析**，不依赖本表
+# ══════════════════════════════════════════════════════════════════════════════
+HUB_SCRIPT = 4665939560152279323                 # `AnimationHub`（军械库演示动画）
+UNITPREFABTURRETINFO_SCRIPT = 6426374804064612000   # `UnitPrefabTurretInfo`（炮塔配对表）
+ANIMATIONMANAGERBRIDGE_SCRIPT = 8775279424834731323  # `AnimationManagerBridge`（后坐/开火联动）
 NS_ANIM = "BrokenArrow.Client.Ecs.AnimationBehaviors"
 ASM_ANIM = "BrokenArrow"
 ARRAY_NAMES = ("universal", "demo", "game", "preDeath", "death")
+SCRIPT_PIDS = {"AnimationHub": HUB_SCRIPT,
+               "UnitPrefabTurretInfo": UNITPREFABTURRETINFO_SCRIPT,
+               "AnimationManagerBridge": ANIMATIONMANAGERBRIDGE_SCRIPT}
+
+
+def scripts_by_class(objs):
+    """→ `{类名: path_id}`：从**真实包**里按 `MonoScript.m_ClassName` 建索引（复核用，不加载大包）。"""
+    out = {}
+    for o in objs:
+        if getattr(getattr(o, "type", None), "name", "") != "MonoScript":
+            continue
+        try:
+            d = o.read()
+            cn = (getattr(d, "m_ClassName", "") or "").split(".")[-1]
+        except Exception:                                        # noqa: BLE001
+            continue
+        if cn:
+            out.setdefault(cn, o.path_id)
+    return out
+
+
+def verify_script_pids(objs, log=None):
+    r"""把上面的常量与**这个包里真实的 `MonoScript`** 对一遍 → `{"checked","mismatch","missing"}`。
+
+    ⛔ 判据是"**名字对得上**"，不是"值等于常量" —— 常量过期时这里会报出来，而不是静默用错值 ✓
+    """
+    real = scripts_by_class(objs)
+    mm, miss = {}, []
+    for name, pid in SCRIPT_PIDS.items():
+        got = real.get(name)
+        if got is None:
+            miss.append(name)
+        elif got != pid:
+            mm[name] = (pid, got)
+    if log:
+        for name, (old, new) in mm.items():
+            log("⚠ 脚本 pathID 过期：%s 常量=%d，包里实际=%d ⇒ 请更新 hub_edit.SCRIPT_PIDS"
+                % (name, old, new))
+        for name in miss:
+            log("（这个包里没有 %s 的 MonoScript ⇒ 无法核对）" % name)
+    return {"checked": len(SCRIPT_PIDS) - len(miss), "mismatch": mm, "missing": miss}
 
 
 def _read_str(buf, off):

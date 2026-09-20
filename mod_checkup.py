@@ -20,11 +20,16 @@ r"""**Mod 自查**：改完 DB 之后、进游戏之前，先在这里把"会看
 ======
     # ① 先把 DB 导成 JSON（每张表一个文件）
     python 技术资料\scripts\db_table_census.py --data _rev_tools\out\pristine\data.unity3d \
-        --pid 52084 --export-dir _rev_tools\out\db_live
+        --export-dir _rev_tools\out\db_live
     # ② 自查（产品里也有菜单：工具 → Mod 自查…）
     python mod_checkup.py --db-dir _rev_tools\out\db_live
-    python mod_checkup.py --data <包> --pid 52084            # 顺手导出再查
+    python mod_checkup.py --data <包>                       # 顺手导出再查（自动认正本）
     python mod_checkup.py --db-dir <目录> --json out.json    # 机器可读
+
+⚠ **别再写 `--pid 52084`**（2026-10 第 74 轮）：游戏更新后 DataBaseCompiled 的 pathID
+   整体位移了（52084 → **52085**），而旧编号**仍然存在**、指向别的对象（一个 72 字节的 `Constants`）
+   ⇒ 传旧编号会**静默读到错对象**。现在默认**自动认**"游戏实际加载的那份"；
+   要挑副本用 `--copy 1`。`db_tables_scan.py` 本身是**按内容**扫表的（不靠 pid）⇒ 不受影响 ✓
 
 输出怎么读
 ==========
@@ -38,7 +43,10 @@ import json
 import os
 import sys
 
-sys.stdout.reconfigure(encoding="utf-8")
+try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 WS = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TABLES_SUBDIR = os.path.join("技术资料", "scripts")
 
@@ -127,6 +135,62 @@ def load_dir(db_dir):
 
 def _ids(db, table):
     return {r.get("Id") for r in db.get(table, []) if isinstance(r, dict)}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ★★ [自查-01] 三条"静默失败"判据要用的规则本体
+#
+#   ⛔ 这三条规则**原始出处是 `技术资料\scripts\plan_hud_bar_order.py`**（HUD 栏序的真机制）。
+#      产品**不能** import 那个脚本（技术资料不进交付件）⇒ 这里是一份**移植**。
+#      移植件最容易"悄悄和源头分叉" ✗ ⇒ 专门有一条回归盯着：
+#        `测试\test_mod_checkup_silent_failures.py` 会把**两份实现在同一个 DB 上跑一遍并逐项比对**，
+#        不一致就报红（这比"记得同步改两处"可靠得多）✓
+# ══════════════════════════════════════════════════════════════════════════════
+INFANTRY_TYPE = 2                      # `Units.Type == 2` 才是步兵班（走"假炮塔按下标查 MainTurrets"）
+SLOT_FIELDS = (("PrimaryWeaponId", "P"), ("SpecialWeaponId", "S"))
+INT_MAX = 2147483647
+ASSUMED_INFANTRY_TURRETS = 5           # 普查缓存取不到时的**假定值**（实测：194/194 个班共用 US_Rangers，它 5 个炮塔）
+TURRET_COUNTS = None                   # {模型名: 炮塔数}（由 `turret_census.py --out` 的缓存喂进来；None = 用假定值）
+PREFAB_TURRET_WEAPONS = None           # {炮塔Id: prefab 里 Weapons 数组长度}（拿不到就只提示不断言）
+
+
+def _bar_list(rows):
+    """★ 规则本体（会员）：按 Id 升序、每行 P 后 S、首次出现入列。→ 武器 id 列表"""
+    seen, out = set(), []
+    for r in sorted(rows, key=lambda x: x["Id"]):
+        for field, _tag in SLOT_FIELDS:
+            w = r.get(field) or 0
+            if w and w not in seen:
+                seen.add(w)
+                out.append(w)
+    return out
+
+
+def _order_map(sw_rows, uid):
+    """★ 真机制：本班 `SquadWeapons` 的 `WeaponId → Order`（列不存在 ⇒ 不在 map 里 = 排最后）"""
+    m = {}
+    for r in sw_rows or ():
+        if r.get("UnitId") == uid and r.get("WeaponId") is not None:
+            o = r.get("Order")
+            m[r["WeaponId"]] = 0 if o is None else int(o)
+    return m
+
+
+def _bar_list_mech(rows, sw_rows, uid):
+    """★ 真机制的栏序 = 会员 + 按 `(Order, WeaponId)` **稳定**升序（`Order` 平局时保持会员序）。"""
+    om = _order_map(sw_rows, uid)
+    return sorted(_bar_list(rows), key=lambda w: (om.get(w, INT_MAX), w))
+
+
+def _slot_type_sets(sm_rows, W):
+    """每个槽位**原版用过**的 `Weapons.Type` 集合（`TrySetIdle` 风险判据的基准）。"""
+    s = {}
+    for r in sm_rows or ():
+        for field, tag in SLOT_FIELDS:
+            w = r.get(field) or 0
+            if w and w in W:
+                s.setdefault(tag, set()).add(W[w].get("Type"))
+    return s
 
 
 def _empty(v):
@@ -279,6 +343,177 @@ def check(db, log=print, baseline=None):
                         "值 %r 看起来像**本地化键**；这些字段要写**字面量**（除非它确实是 ui_* 键）" % v,
                         "（显示成键名/空白）")
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # ★ ⑦⑧⑨ 2026-10 F4/F5/F6：夜里的新定案（详见 `ba_knowledge.py`）
+    #   这三条都属于"**不报错但结果不是你想的那样**"，靠进游戏撞是很贵的
+    # ══════════════════════════════════════════════════════════════════════════
+    # ⑦ F4 方向装甲**被旁路**：`Units.CurrentArmor` 指向的那行 `ArmorValue > 0` ⇒
+    #    四向 × 热/动能 8 列完全不参与结算（`GetArmorBySideAndType` 逐行坐实）
+    armors_by_id = {r.get("Id"): r for r in db.get("Armors", [])}
+    if db.get("Units") is not None and armors_by_id:
+        for r in db.get("Units", []):
+            cid = r.get("CurrentArmor")
+            if _empty(cid):
+                continue
+            a = armors_by_id.get(cid)
+            if a is None:
+                continue                      # 关联缺失已由 ① 报过
+            try:
+                av = float(a.get("ArmorValue") or 0)
+            except (TypeError, ValueError):
+                continue
+            if av > 0:
+                directional = any(
+                    float(a.get(col) or 0) != 0
+                    for col in ("KinArmorFront", "KinArmorSides", "KinArmorRear", "KinArmorTop",
+                                "HeatArmorFront", "HeatArmorSides", "HeatArmorRear", "HeatArmorTop"))
+                add("warn" if directional else "info", "Units", r.get("Id"), "CurrentArmor",
+                    "当前装甲行 ArmorValue=%g > 0 ⇒ **四向×热/动能 8 列完全不参与结算**"
+                    "%s；想让方向装甲生效，这一行必须为 0 或负"
+                    % (av, "（而你这行确实填了方向值 ⇒ 它们现在是**摆设**）" if directional else ""),
+                    "（不报错；判据：GetArmorBySideAndType 读到 ArmorValue>0 直接返回它）")
+
+    # ⑧ F5 炮塔武器：权威表是 `TurretWeapons`，而且 `Order` 必须**稠密**
+    tw = db.get("TurretWeapons")
+    if tw is not None:
+        try:
+            import ba_knowledge as _bk
+            _hint = _bk.hint("turret_authoritative")
+        except Exception:                                              # noqa: BLE001
+            _hint = ""
+        by_turret = {}
+        for r in tw:
+            by_turret.setdefault(r.get("TurretId"), []).append(r)
+        for tid, rows in by_turret.items():
+            orders = [r.get("Order") for r in rows]
+            nums = sorted(x for x in orders if isinstance(x, int) and not isinstance(x, bool))
+            if len(nums) != len(rows):
+                continue
+            if nums and nums != list(range(len(nums))):
+                add("warn", "TurretWeapons", rows[0].get("Id"), "Order",
+                    "炮塔 Id=%s 的 Order=%s **不稠密**（期望 0..%d）⇒ 装载期会按 `Order` 往槽位补 "
+                    "`null`，武器可能挂到空槽上" % (tid, nums, len(nums) - 1), "（不报错）")
+        # 有人给 Weapons 表填了 WeaponChannel/WeaponPriority ⇒ 温和提醒那是无效的
+        wrows = db.get("Weapons", [])
+        if wrows and any(not _empty(r.get("WeaponChannel")) or not _empty(r.get("WeaponPriority"))
+                         for r in wrows):
+            nz = [r.get("Id") for r in wrows
+                  if not _empty(r.get("WeaponChannel")) or not _empty(r.get("WeaponPriority"))]
+            if len(nz) <= max(5, len(wrows) // 10):     # 只有**少数几行**被填过 ⇒ 像是手工改的
+                add("info", "Weapons", nz[0], "WeaponChannel/WeaponPriority",
+                    "这 %d 行填了 WeaponChannel/WeaponPriority，但这两列**装载期会被 TurretWeapons 覆盖** ⇒ "
+                    "改了不生效（%s）" % (len(nz), _hint[:40]), "（不报错）")
+
+    # ⑨ F6 关联表加行的规矩：**过滤键没命中 = 表里有行、游戏里没有，且不报错**；
+    #    这条在 ① 里已经能查出来（指向不存在的 Id 会报），这里只补"**不热生效**"的提醒
+    rel_present = [t for t in ("UnitArmors", "UnitAbilities", "SensorUnits", "UnitPropulsions",
+                               "TurretUnits", "TurretWeapons", "SquadWeapons", "WeaponAmmunitions")
+                   if db.get(t)]
+    if rel_present:
+        # ★ stats 在**没有 baseline** 时是 None（见上面 `scope, stats = (None, None)`）⇒
+        #   第一版直接 `stats[...]` 就在这条路径上抛 TypeError，把整个 check() 打挂 ✗
+        #   （`测试\test_mod_checkup.py` ⑪「直接调 check() 不抛异常」当场抓到 —— 这就是那条判据的价值）
+        if stats is None:
+            stats = {"added": 0, "changed": 0, "gone": 0}
+        stats["relation_tables_present"] = rel_present
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # ⑩ ★★ [自查-01] 三条**"静默失败"**判据（第 39–51 轮挖出来、游戏里不报错的坑）
+    #
+    #   为什么要加：实测在 T4c 包上本自查只报 `错误 0 · 提示 144 · 说明 80`，
+    #   **完全没提"6 件武器只建 5 件"** —— 而那正是模组作者最容易踩、且游戏里**没有任何报错**的坑 ✗
+    #
+    #   ⛔ 第 64 轮**证伪**的一条，**故意没加**：（旧的）"同一炮塔 3 件以上武器 ⇒ 抛异常" ——
+    #      `recoil_i` 找不到**不抛异常**，只是那件武器没有后坐力动画 ⇒ 加了会**误报** ✗
+    #      改成下面 ⑩b 的那条（**数组长度不够**才会 `IndexOutOfRangeException`）✓
+    # ══════════════════════════════════════════════════════════════════════════
+    turrets = db.get("Units")
+    if turrets and db.get("SquadWeapons") is not None and db.get("SquadMembers"):
+        # ⑩a **声明武器数 > 模型炮塔数** ⇒ 由第 M+1 位起**一件实体都不建**（战场栏看不到）
+        members = {}
+        for r in db.get("SquadMembers") or []:
+            members.setdefault(r.get("UnitId"), []).append(r)
+        wnames = {r.get("Id"): (r.get("HUDName") or r.get("Name")) for r in db.get("Weapons") or []}
+        sw_rows = db.get("SquadWeapons") or []
+        for u in turrets:
+            if u.get("Type") != INFANTRY_TYPE:
+                continue                      # ⚠ 只有步兵班走"假炮塔按下标查 MainTurrets"这条路
+            uid = u.get("Id")
+            declared = _bar_list_mech(members.get(uid) or [], sw_rows, uid)
+            model = u.get("ModelFileName")
+            m = (TURRET_COUNTS or {}).get(model)
+            assumed = m is None
+            if assumed:
+                m = ASSUMED_INFANTRY_TURRETS
+            if len(declared) > m:
+                dropped = declared[m:]
+                # ★ 被丢的那几件**同时给 id 与名字**：id 方便对数据表，名字方便一眼认出是哪件
+                #   （第一版只给了名字 ⇒ 用户拿着文档里的 `[669]` 对不上，得再查一次表 ✗）
+                shown = ["%s（%s）" % (w, wnames.get(w) or "?") for w in dropped[:4]]
+                add("warn", "Units", uid, "SquadWeapons/Turrets",
+                    "声明 %d 件武器，但模型只有 %d 个炮塔%s ⇒ 按真机制顺序第 %d 位起"
+                    "（%s）**一件实体都不建** —— 战场栏看不到它们"
+                    % (len(declared), m, "（**假定值**：普查缓存里没有这个模型）" if assumed else "",
+                       m + 1, "、".join(shown)),
+                    "（游戏不报错；`Turrets[i].Item2 = null`）")
+
+    # ⑩b `TurretWeapons` 条数 > prefab 里 `UnitPrefabTurretInfo.Weapons` 数组长度
+    #     ⇒ `IndexOutOfRangeException`（`0x3559e7 jae 0x3564d3`）⇒ **加武器时两边必须一起加**
+    if db.get("TurretWeapons"):
+        by_t = {}
+        for r in db.get("TurretWeapons") or []:
+            by_t.setdefault(r.get("TurretId"), []).append(r)
+        for tid, rows in sorted(by_t.items(), key=lambda kv: (kv[0] is None, kv[0])):
+            n = len(rows)
+            if n < 2:
+                continue
+            # 拿得到 prefab 数据就真比；拿不到就只对**被改过**的炮塔提醒（否则原版全部报 = 噪音）✗
+            have = (PREFAB_TURRET_WEAPONS or {}).get(tid)
+            if have is not None:
+                if n > have:
+                    add("error", "TurretWeapons", rows[0].get("Id"), "TurretId",
+                        "炮塔 Id=%s 在 DB 里有 %d 条武器，但 prefab 的 "
+                        "`UnitPrefabTurretInfo.Weapons` 数组只有 %d 个 ⇒ 装载期 "
+                        "`IndexOutOfRangeException`（游戏会刷异常）" % (tid, n, have),
+                        "（加武器时 DB 与 prefab 必须一起加）")
+            elif any(in_scope("TurretWeapons", r.get("Id")) for r in rows):
+                # ⛔ `force=True`：`add()` 默认会按 `in_scope(table, rid)` 过滤，而这里报的 rid 是
+                #   组里**任意一行**（可能恰好是没改的那行）⇒ 会被静默丢掉（第一版就是这样，
+                #   `测试\test_mod_checkup_silent_failures.py` ⑤b 当场红）✗
+                #   外面那句 `any(in_scope(...))` 已经把关过了 ⇒ 这里必须强制发出 ✓
+                changed = [r for r in rows if in_scope("TurretWeapons", r.get("Id"))] or rows
+                add("info", "TurretWeapons", changed[0].get("Id"), "TurretId",
+                    "炮塔 Id=%s 现在是 %d 条武器 —— **记得把 prefab 里 "
+                    "`UnitPrefabTurretInfo.Weapons` 数组同步扩到 %d**，"
+                    "否则装载期 `IndexOutOfRangeException`" % (tid, n, n),
+                    "（本机拿不到 prefab 数据 ⇒ 只提示，不做断言）", force=True)
+
+    # ⑩c **槽位类型不合法**：`Weapons.Type` 在该槽位**原版从没出现过**
+    #     ⇒ `InfantryUnitSystem.TrySetIdle` **每帧越界**（实机 2292 次 `IndexOutOfRangeException`）
+    #     ⛔ 判据需要"原版用过哪些 Type"⇒ **必须有 baseline**；没有就跳过（不臆测）✗
+    if baseline and baseline.get("Weapons") and db.get("SquadMembers"):
+        orig_sets = _slot_type_sets(baseline.get("SquadMembers") or [],
+                                    {r.get("Id"): r for r in baseline.get("Weapons") or []})
+        W = {r.get("Id"): r for r in db.get("Weapons") or []}
+        for r in db.get("SquadMembers") or []:
+            for field, tag in SLOT_FIELDS:
+                wid = r.get(field)
+                if not wid or wid not in W or tag not in orig_sets or not orig_sets[tag]:
+                    continue
+                t = W[wid].get("Type")
+                # ⛔ 归因要落在**改过的那张表**上：变的是 `Weapons.Type`（不是 SquadMembers 行）
+                #   ⇒ 用 `in_scope("Weapons", wid)` 把门，否则 `add()` 的 scope 过滤会把它丢掉 ✗
+                #   （第一版就错在这里，`测试\test_mod_checkup_silent_failures.py` ⑧a 当场红）
+                if in_scope("Weapons", wid) and t not in orig_sets[tag]:
+                    add("warn", "Weapons", wid, "Type",
+                        "这件武器 `Type=%s` 在**原版该槽位（%s）从没出现过**（原版只出现过 %s）"
+                        "⇒ `TrySetIdle` 每帧越界刷异常（实机 2292 次）"
+                        % (t, tag, sorted(x for x in orig_sets[tag] if x is not None)),
+                        "（`Weapons.Type` 与槽位要配套）", force=True)
+        stats = stats if stats is not None else {"added": 0, "changed": 0, "gone": 0}
+        stats["slot_type_sets"] = {k: sorted(x for x in v if x is not None)
+                                   for k, v in orig_sets.items()}
+
     return issues, stats
 
 
@@ -320,13 +555,34 @@ def main():
     ap.add_argument("--all", action="store_true", help="连原版残留也全报（默认给 baseline 时只报改动）")
     ap.add_argument("--data", help="★ 直接给 data.unity3d（会用**按内容扫**的方式导出全部表，见下）")
     ap.add_argument("--baseline-package", help="★ 直接给**原版** data.unity3d 当基线（同样按内容扫导出）")
-    ap.add_argument("--pid", type=int, default=52084, help="要导出/检查的 DataBaseCompiled pathID（默认 52084 = 游戏实际加载那份）")
+    ap.add_argument("--pid", type=int, default=None,
+                    help="要导出/检查哪一份 DataBaseCompiled：**默认自动**（= 游戏实际加载的那份）。"
+                         "也可给 1/2 选副本；⚠ 别写死 52084 —— 游戏更新会改这个编号（实测已变 52085）")
+    ap.add_argument("--copy", type=int, choices=(1, 2), default=2,
+                    help="不用 --pid 时选哪一份（默认 2 = 游戏实际加载的那份 / 1 = 副本）")
     ap.add_argument("--json", help="把结果写成 JSON")
     a = ap.parse_args()
 
     import subprocess
     # ⛔ 2026-10 第 33 轮踩到：这些目录以前写成**相对路径** ⇒ 按**调用者的 cwd** 解析 ✗
     #   ⇒ 从别的目录调用（例如回归套件）就报「没有这个目录」；一律用**基于模块位置**的绝对路径 ✓
+
+    def copy_of(pkg):
+        """用哪一份 DataBaseCompiled（1/2）——★ 不靠写死的 pathID：
+        `db_tables_scan.py` 是**按内容**扫表的，`--copy 2` 就是"第 2 组 24 张" = 游戏实际加载的那份 ✓
+        （实测：新包 48 个表载荷里第 2 组 = Units 540 行那份）
+        `--pid` 若给的是老编号，就现场解析它到底是正本还是副本，别再写死比较 ✗"""
+        if a.pid is None:
+            return a.copy
+        if a.pid in (1, 2):
+            return a.pid
+        try:
+            sys.path.insert(0, os.path.join(WS, TABLES_SUBDIR))
+            import db_pids
+            live, _other, _m, _i = db_pids.resolve(pkg)
+            return 2 if a.pid == live else 1
+        except Exception:                                     # noqa: BLE001
+            return a.copy
 
     def export_pkg(pkg, out):
         """★ 用 **按内容扫** 的 `db_tables_scan.py --export-dir`（**不是**偏移式的 db_table_census ✗）
@@ -336,7 +592,7 @@ def main():
         if not os.path.isfile(scanner):
             print("✗ 找不到 %s（无法按内容导出全量表）" % scanner)
             return False
-        cmd = [sys.executable, scanner, pkg, "--export-dir", out, "--copy", "2" if a.pid == 52084 else "1"]
+        cmd = [sys.executable, scanner, pkg, "--export-dir", out, "--copy", str(copy_of(pkg))]
         print("导出中（按内容扫，能拿全 24 张）：%s" % " ".join(cmd[1:]))
         r = subprocess.run(cmd, cwd=WS)
         return r.returncode in (0, 1)              # 该工具"有表解不开"时返回 1，但已导出的表仍可用

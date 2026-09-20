@@ -77,6 +77,13 @@ from ba_glossary import (  # noqa: E402
     # v1.8.56：位掩码拆解（Ammunitions.TargetType / Units.Type 按位相加）
     enum_key, enum_label, enum_member, enum_note,
     enum_is_mask, enum_mask_parts, enum_mask_label,
+    # ★ ⑧ 日志可归因：症状行（游戏日志原文）↔ 真因（词典窗口「故障排查」页用，与生成的
+    #   数据库词典.md 同名节**同一份数据**）
+    troubleshoot_pairs,
+    # ★ ① 词典并入：知识层（字段层/引用层/格式层 + ★跨表 + 附录·铁律）——「格式与要点」页用；
+    #   ⛔ 正文单一来源在 ba_glossary，生成器只负责渲染成 md
+    KNOW_LAYERS, KNOW_SECTIONS, REFS, REF_KINDS, resolve_constants,
+    MOUNT_CATEGORIES, COMPONENTS, ADDRESS_MAP, ADDRESS_RULES,
 )
 # 模型修改功能已整体迁移到 Blender 插件（BA Mod Maker Blender 插件 v2.0）：
 # 模型导入/挂载点编辑/构建写回/CRC 计算都在 Blender 里做，本工具只保留数据表编辑。
@@ -467,13 +474,52 @@ def cjk_family():
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    try:                                    # GUI/无控制台环境 sys.stdout 可能是 None
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 except Exception:
     pass
 
 
+#: ★★[界面-06 · 2026-09-20 · 裁定 (甲)] **同屏只允许一个悬浮提示**（单例登记）。
+#:   ⛔ 原先每个 `ToolTip` 实例各自持 `self.tip` ⇒ 表／箭头／字段三处可**同时**各挂一个 ⇒
+#:   同屏多框、互相压叠（用户所说的"串行／重叠"）✓ ⇒ 现在「**显示新的 ⇒ 先把旧的收掉**」。
+TIP_SINGLETON = {"live": None}
+
+
+def tooltip_anchor(row_box, tip_w, tip_h, screen_w, screen_h, margin=8):
+    r"""★[界面-06] 算悬浮提示的位置：**放到被悬停行旁边、⛔ 不覆盖那一行**。
+
+    `row_box` ＝ `(x, y, w, h)`（Treeview 的 `bbox(row)`，**控件坐标**，含 `tv.winfo_rootx/y` 之前）
+    → 返回 `(x, y, mode)`：`mode` ∈ `"right"`（行右侧）／`"below"`（行下方）／`"none"`（行矩形拿不到）。
+
+    ★ 为什么不能再用「指针 + 偏移」（原实现 `x = pointerx + 16; y = pointery + 14`）：
+      对 Treeview 悬停，**指针就在那一行里** ⇒ +16/+14 仍落在该行（或紧邻下一行）⇒ **盖住被悬停行** ✗
+      ⇒ 用户看到的就是「提示框与底表文字**视觉重叠／串行**」。
+    ★ 优先右侧（读起来不挡行）；右侧放不下 ⇒ 放**行下方**；都不行 ⇒ 交回调用方走指针回退（`"none"`）。
+    """
+    if not row_box:
+        return (0, 0, "none")
+    bx, by, bw, bh = row_box
+    x = bx + bw + margin
+    if x + tip_w <= screen_w - margin:                 # 右侧放得下 ⇒ 放右侧（不压该行 ✓）
+        return (x, by, "right")
+    x = bx                                        # 否则放**该行下方**（⛔ 不压该行 ✓）
+    y = by + bh + margin
+    if y + tip_h <= screen_h - margin:
+        return (x, y, "below")
+    return (0, 0, "none")                          # 交回调用方（指针回退），并**如实记 mode**
+
+
 class ToolTip:
-    """Small delayed hover tooltip (brief field/table meaning)."""
+    """Small delayed hover tooltip (brief field/table meaning).
+
+    ★[界面-06 · 2026-09-20] 显示层级两项（承中枢裁定）：
+      · **(甲)** 单例化（`TIP_SINGLETON`）＋ 定位到**被悬停行旁**（`tooltip_anchor`，⛔ 不压该行）；
+      · **(乙)** `wm_transient(表所在窗)` 作**层级保险**（DWM/owner 关系 ⇒ 浮层不会掉到父窗**下面**）。
+      ⛔ 本轮**不动标题栏**（用户已裁：留着、必须深色）—— 本项只做显示层级。
+    """
 
     def __init__(self, widget, text_getter, colors=None):
         import tkinter as tk
@@ -483,13 +529,21 @@ class ToolTip:
         self.colors = colors or {}
         self.tip = None
         self._after = None
+        self._last_event = None            # ★[界面-06] 记住最近一次悬停事件（定位"被悬停行"要用 y）
+        self._last_mode = None             # ★ 定位模式：right／below／pointer（判据可读）
+        self._last_row_box = None          # ★ 被悬停行的矩形（控件坐标）——判据 (a) 的读数
+        self._transient_state = None       # ★ (乙) `wm_transient` 的**回读**值（⛔ 不静默）
+        self._transient_err = None
         widget.bind("<Enter>", self._schedule, add="+")
+        widget.bind("<Motion>", self._schedule, add="+")
         widget.bind("<Leave>", self._hide, add="+")
         widget.bind("<ButtonPress>", self._hide, add="+")
         widget.bind("<Destroy>", self._hide, add="+")
 
-    def _schedule(self, _event=None):
+    def _schedule(self, event=None):
         self._cancel()
+        if event is not None:
+            self._last_event = event
         self._after = self.widget.after(400, self._show)
 
     def _cancel(self):
@@ -505,10 +559,31 @@ class ToolTip:
         text = self.text_getter()
         if not text:
             return
+        # ★[界面-06 · (甲)] **单例化**：显示新的之前，先把**别的**存活提示收掉（⛔ 同屏 ≤ 1）
+        other = TIP_SINGLETON.get("live")
+        if other is not None and other is not self:
+            try:
+                other._hide()
+            except Exception:                                           # noqa: BLE001
+                pass
         if self.tip is not None:
             return
         self.tip = self.tk.Toplevel(self.widget)
         self.tip.wm_overrideredirect(True)
+        # ★[界面-06 · (乙)] **层级保险**：让提示从属于"控件所在的那个顶层窗" ⇒ 不会掉到它下面。
+        #   ⚠ 如实回读：`wm_transient()` 无参返回当前值；设不上/不支持 ⇒ **记下来**（⛔ 不静默假装成功）。
+        self._transient_state = None
+        self._transient_err = None
+        try:
+            host = self.widget.winfo_toplevel()
+            self.tip.wm_transient(host)
+            try:
+                self._transient_state = str(self.tip.wm_transient())
+            except Exception as e:                                      # noqa: BLE001
+                self._transient_err = "回读失败：%r" % (e,)
+        except Exception as e:                                          # noqa: BLE001
+            self._transient_err = "设置失败：%r" % (e,)
+            print("[界面-06] wm_transient 未生效（层级保险）：%s" % self._transient_err)
         try:
             self.tip.attributes("-topmost", True)
         except Exception:
@@ -530,9 +605,39 @@ class ToolTip:
             row = self.tk.Label(wrap, text=line, justify="left", anchor="w",
                                 bg=c.get("list_bg", "#ffffff"), fg=fg, font=f)
             row.pack(fill="x", padx=1, pady=0)
-        x = self.widget.winfo_pointerx() + 16
-        y = self.widget.winfo_pointery() + 14
-        self.tip.wm_geometry("+%d+%d" % (x, y))
+        # ★[界面-06 · (甲)] **定位到被悬停行旁**（⛔ 不覆盖该行）；拿不到行 ⇒ 指针回退并**记 mode**
+        self.tip.update_idletasks()
+        tw = max(int(self.tip.winfo_reqwidth()), 1)
+        th = max(int(self.tip.winfo_reqheight()), 1)
+        tx, ty, mode = self._anchor(tw, th)
+        self._last_mode = mode
+        self.tip.wm_geometry("+%d+%d" % (tx, ty))
+        TIP_SINGLETON["live"] = self
+
+    def _anchor(self, tw, th):
+        """→ (屏幕 x, 屏幕 y, mode)。Treeview 行 → **行旁**；否则 → 指针（如实记 `pointer`）。"""
+        ev = self._last_event
+        y = getattr(ev, "y", None)
+        tv = self.widget
+        self._last_row_box = None
+        if y is not None and hasattr(tv, "identify_row") and hasattr(tv, "bbox"):
+            try:
+                rid = tv.identify_row(y)
+                box = tv.bbox(rid) if rid else ""
+                if box:
+                    bx, by, bw, bh = box
+                    self._last_row_box = (bx, by, bw, bh)
+                    ox, oy = tv.winfo_rootx(), tv.winfo_rooty()
+                    rx, ry, mode = tooltip_anchor((bx, by, bw, bh), tw, th,
+                                                  tv.winfo_screenwidth(), tv.winfo_screenheight())
+                    if mode != "none":
+                        return (ox + rx, oy + ry, mode)
+            except Exception as e:                                      # noqa: BLE001
+                print("[界面-06] 行定位失败（回退指针）：%r" % (e,))
+        try:
+            return (tv.winfo_pointerx() + 16, tv.winfo_pointery() + 14, "pointer")
+        except Exception:                                               # noqa: BLE001
+            return (0, 0, "pointer")
 
     def _hide(self, _event=None):
         self._cancel()
@@ -542,6 +647,8 @@ class ToolTip:
             except Exception:
                 pass
             self.tip = None
+        if TIP_SINGLETON.get("live") is self:                           # ★ 单例登记同步清理
+            TIP_SINGLETON["live"] = None
 
 
 # ---------------------------------------------------------------------------
@@ -1008,6 +1115,29 @@ def baseline_issue_sigs(force=False):
 # ---------------------------------------------------------------------------
 
 
+def _focus_inside(f, win):
+    """→ 焦点控件 `f` 是否在浮层 `win` **之内**（窗口本体或其任意后代）。
+
+    ★ 为什么要这一条（`[界面-10]` 坐实步 (iv) 的结论）：**施加面过宽**（`ui_fit` 的 `<Map>` 钩子对
+      `overrideredirect` 浮层也做 `allow_maximize`／DWM）会**抢走输入框焦点** ⇒ 触发 `<FocusOut>`
+      ⇒ 250 ms 后 `_check_focus` 判定「焦点不在输入框/候选列表」⇒ **浮层自杀**。
+      对照实验（`_rev_tools\\out\\probe_lookupbox_disappear.py`）：施加腿 **t=0 即消失**、输入框
+      `FocusOut` 计数 **1**；守卫腿 1.5 s 内**一直存活**、计数 **0**。
+    ★ 这是 doc17 `[界面-10]` 的 **(乙) 自我保护**：⛔ 原来只豁免 `entry` 与 `Listbox` **本体**
+      ⇒ 焦点一落到浮层窗口本体或**别的子控件**（新增控件、滚动条…）就照样自杀。
+    ★ 判法用 **Tk 路径前缀**（`.!toplevel.!listbox` 以 `.!toplevel.` 开头）—— 比维护一张
+      子控件清单可靠：**新增子控件不必改豁免名单** ✓
+    """
+    if f is None or win is None:
+        return False
+    if f is win:
+        return True
+    try:
+        return bool(str(f).startswith(str(win) + "."))
+    except Exception:                                                 # noqa: BLE001
+        return False
+
+
 class LookupBox:
     """Inline name-lookup entry with an auto-dropdown of matches.
 
@@ -1064,6 +1194,9 @@ class LookupBox:
         if f is self.entry:
             return
         if self._lb is not None and f is self._lb:
+            return
+        # ★ [界面-10] (乙)：焦点落在**浮层内任意控件**也豁免（⛔ 不再只认 Listbox 本体）
+        if _focus_inside(f, self._win):
             return
         self.hide()
 
@@ -1302,6 +1435,11 @@ class DetailWindow:
         right.add(rtop, minsize=160, stretch="always")
 
         mbottom = tk.Frame(right)
+        # ★ 第 74 轮（用户要求）：右下那块**只在显示"另一个"行时才出现** ——
+        #   若它显示的就是左边那一行，纯属重复 ⇒ `_set_mini_visible(False)` 把它从
+        #   PanedWindow 里 `forget` 掉（`right` 是 `tk.PanedWindow`，不是 pack 布局）✓
+        self.paned_right = right
+        self.mini_frame = mbottom
         self.mini_label_l = tk.Label(mbottom, anchor="w", font=(cjk_family(), 9, "bold"), fg="#33507a")
         self.mini_label_l.pack(fill="x", padx=6, pady=(2, 0))
         self.mini_canvas = tk.Canvas(mbottom, highlightthickness=0, bg=app.c["bg"])
@@ -1328,8 +1466,10 @@ class DetailWindow:
         app.theme_children(self.win)
         app.theme_children(self.fields_inner)
         app.theme_children(self.mini_inner)
-        self.win.after(200, lambda: app._set_title_bar(self.win, True))
-        self.win.bind("<Map>", lambda e: app._set_title_bar(self.win, True))
+        # ★[界面-11 · 2026-09-20] 原先这里还有 `after(200)` ＋ `bind("<Map>")` 各补一次暗色标题栏 ——
+        #   已**删除**：本类是 `Toplevel`（见本文件 `self.win = tk.Toplevel(app.root)`），
+        #   而 `ui_fit.install_autofit` 的 `<Map>` 钩子**对任何 Toplevel 都会补一次**
+        #   （且 [界面-11] 起改为**只补一次**）⇒ 这里再补就是重复施加（＝"打地鼠"体感来源之一）✓
 
     def apply_lang(self):
         tr = self.app.tr
@@ -1712,6 +1852,9 @@ class DetailWindow:
             return
         if app._fk_lb is not None and f is app._fk_lb:
             return
+        # ★ [界面-10] (乙) 同族：外键下拉浮层同样"焦点在浮层内即豁免"（doc17 L2705 要求一并核）
+        if _focus_inside(f, app._fk_win):
+            return
         self._fk_hide()
 
     def _field_tip_text(self, key, table=None):
@@ -2036,6 +2179,30 @@ class DetailWindow:
                     return True
         return False
 
+    def _set_mini_visible(self, show):
+        """右下角那块（`mbottom`）显示/隐藏。
+
+        ★ 第 74 轮用户要求：**若它显示的信息和左边完全一样，就不显示它**（只留左边）✓
+        实现要点：`right` 是 `tk.PanedWindow` ⇒ 隐藏要 `forget(pane)`、显示要 `add(...)`；
+        不能 `pack_forget()`（那是 pack 布局的 API，对 PanedWindow 无效 ✗）。
+        """
+        frame = getattr(self, "mini_frame", None)
+        right = getattr(self, "paned_right", None)
+        if frame is None or right is None:
+            return
+        try:
+            names = {str(p) for p in right.panes()}
+        except Exception:                                     # noqa: BLE001
+            return
+        has = str(frame) in names
+        try:
+            if show and not has:
+                right.add(frame, minsize=120, stretch="always")
+            elif not show and has:
+                right.forget(frame)
+        except Exception:                                     # noqa: BLE001
+            pass
+
     def _clear_mini(self):
         self._clear_fields(self.mini_inner)
         self.mini_widgets = {}
@@ -2043,6 +2210,7 @@ class DetailWindow:
         self.mini_pending = False
         self.mini_label_l.config(text=self.app.tr.t("rel_mini_hint"))
         self.mini_label_l._color_role = "hint"
+        self._set_mini_visible(False)                         # 没有目标行 ⇒ 整块收起来 ✓
 
     def _read_form(self, widgets, row):
         app = self.app
@@ -2239,11 +2407,26 @@ class DetailWindow:
         if table is None or table not in app.tables or not (0 <= idx < len(app.tables[table])):
             self.mini_state = None
             self.mini_label_l.config(text=tr.t("rel_mini_label"))
+            self._set_mini_visible(False)
             return
         row = app.tables[table][idx]
+        # ★ 第 74 轮：**要显示的就是左边那一行 ⇒ 整块不显示**（重复信息没必要占地方）✓
+        #   ⛔ 判据是 **`(table, idx)`**，不是对象身份：`self.row` 存的是**下标**（`load()` 里
+        #      `self.row = idx`），不是行对象 ⇒ 别写 `row is self.row`（永远为假，功能静默失效 ✗，
+        #      回归 `测试\test_rel_mini_hidden.py` 第一次就是这么抓到的）
+        if table == self.table and idx == self.row:
+            self._clear_fields(self.mini_inner)
+            self.mini_widgets = {}
+            self.mini_state = None
+            self.mini_pending = False
+            self.mini_label_l.config(text=tr.t("rel_mini_label"))
+            self._set_mini_visible(False)
+            return
+        self._set_mini_visible(True)
         if not isinstance(row, dict):
             self.mini_state = None
             self.mini_label_l.config(text=tr.t("rel_mini_label"))
+            self._set_mini_visible(False)
             return
         self.mini_state = (table, idx)
         name = row.get("Name") or row.get("HUDName") or ""
@@ -3019,18 +3202,14 @@ class EditorApp:
     # ---------------- theme ----------------
 
     def _set_title_bar(self, win, dark):
-        """Dark/light OS title bar (Windows 10+)."""
-        if sys.platform != "win32":
-            return
+        """Dark/light OS title bar (Windows 10+) —— ★[界面-05] 统一委托 `ui_fit` 的实现。
+
+        为什么改成委托：① 只有**一份**实现（不再两处漂移）；② 那版**返回回读值**，
+        能进判据（`ui_fit.title_bar_dark_state`）；⛔ 调用点一行不动。
+        """
         try:
-            import ctypes
-            hwnd = ctypes.windll.user32.GetParent(win.winfo_id())
-            value = ctypes.c_int(1 if dark else 0)
-            for attr in (20, 19):  # DWMWA_USE_IMMERSIVE_DARK_MODE / fallback
-                res = ctypes.windll.dwmapi.DwmSetWindowAttribute(
-                    hwnd, attr, ctypes.byref(value), ctypes.sizeof(value))
-                if res == 0:
-                    break
+            import ui_fit
+            ui_fit.apply_dark_title_bar(win, dark)
         except Exception:
             pass
 
@@ -3097,32 +3276,20 @@ class EditorApp:
             style.theme_use("clam")
         except Exception:
             pass
-        style.configure(".", background=c["bg"], foreground=c["fg"],
-                        fieldbackground=c["entry_bg"], bordercolor=c["border"])
-        style.configure("TFrame", background=c["bg"])
-        style.configure("TLabel", background=c["bg"], foreground=c["fg"])
-        style.configure("TButton", background=c["btn_bg"], foreground=c["btn_fg"],
-                        lightcolor=c["btn_bg"], darkcolor=c["btn_bg"],
-                        bordercolor=c["border"], padding=4)
-        style.map("TButton",
-                  background=[("active", c["btn_active"]), ("pressed", c["btn_active"])],
-                  foreground=[("disabled", c["disabled"])])
-        style.configure("TCheckbutton", background=c["bg"], foreground=c["fg"],
-                        indicatorbackground=c["entry_bg"], indicatorforeground=c["fg"],
-                        bordercolor=c["border"])
-        style.map("TCheckbutton",
-                  background=[("active", c["bg"]), ("pressed", c["bg"])],
-                  foreground=[("disabled", c["disabled"])])
-        style.configure("TEntry", fieldbackground=c["entry_bg"], foreground=c["entry_fg"],
-                        insertcolor=c["entry_fg"])
-        style.configure("TCombobox", fieldbackground=c["entry_bg"], background=c["btn_bg"],
-                        foreground=c["entry_fg"], arrowcolor=c["btn_fg"],
-                        selectbackground=c["sel"], selectforeground=c["sel_fg"])
-        style.map("TCombobox",
-                  fieldbackground=[("readonly", c["btn_bg"])],
-                  foreground=[("readonly", c["btn_fg"])],
-                  selectbackground=[("readonly", c["btn_bg"])],
-                  selectforeground=[("readonly", c["btn_fg"])])
+        # ★★[界面-08 · 2026-09-20 · 一次修净] **通用 ttk 样式全部交给全局兜底** ——
+        #   ⛔ 这里**不再逐条** `style.configure`（否则就是"两套表"，日后必然漂移）；
+        #   ★ 兜底补上了原表里**缺的类型**（尤其 `TRadiobutton` —— `my_bundle.py` L1924／L1926
+        #     那行单选按钮正是用户截图里**白底**的那一处：本件原先 0 条 style、全树表里又没有
+        #     `TRadiobutton` ⇒ 走默认主题 ⇒ 白底 ✗）。色值一律从下面这个 palette `c` 取 ✓
+        #   ⇒ ⛔ **不许新写死色值、⛔ 不许留两套板子**（`ui_fit._TTK_SPECS` 里存的是**键名**不是色值）
+        import ui_fit as _uf_ttk
+        _ttk_ok, _ttk_bad = _uf_ttk.apply_ttk_dark(
+            self.root, c,
+            extra={"Treeview": {"rowheight": self._rowheight, "font": self._data_font},
+                   "Treeview.Heading": {"font": self._data_font}})
+        if not _ttk_ok or _ttk_bad:
+            # ⛔ 不吞：配不上的样式**点名打出来**（判据/排查都靠这行）
+            print("[ttk] 全局兜底未配上的样式：%s" % "；".join(_ttk_bad or ["（未知名）"]))
         style.configure("Treeview", background=c["tree_bg"], fieldbackground=c["tree_bg"],
                         foreground=c["tree_fg"], rowheight=self._rowheight,
                         font=self._data_font)
@@ -3150,14 +3317,8 @@ class EditorApp:
                   background=[("selected", c["sel"])],
                   foreground=[("selected", c["sel_fg"])])
 
-        # Notebook (unit browser / table grid tabs): dark tabs + dark body.
-        style.configure("TNotebook", background=c["bg"], borderwidth=0,
-                        tabmargins=(0, 4, 0, 0))
-        style.configure("TNotebook.Tab", background=c["btn_bg"], foreground=c["btn_fg"],
-                        padding=(16, 8), borderwidth=0)
-        style.map("TNotebook.Tab",
-                  background=[("selected", c["tree_bg"]), ("active", c["btn_active"])],
-                  foreground=[("selected", c["fg"])])
+        # Notebook（单元浏览器/表网格页签）与滚动条、进度条：★ 色值同样由**全局兜底**配（见上）；
+        # ⛔ 这里不再重复 configure（历史上正是这种"各处各配一份"造成漂移与漏配）。
 
         # Hide the tiny built-in ttk indicator; the relation tree draws its
         # own large "▼ / ▶" marker in the item text instead.
@@ -3171,10 +3332,7 @@ class EditorApp:
                               self._blank_indicator_img, "-width", 1, "-height", 1)
         except Exception:
             pass
-        style.configure("TScrollbar", background=c["btn_bg"], troughcolor=c["panel"],
-                        bordercolor=c["panel"], arrowcolor=c["btn_fg"])
-        style.map("TScrollbar", background=[("active", c["btn_active"])])
-        style.configure("TProgressbar", background=c["accent"], troughcolor=c["panel"])
+        # 滚动条 / 进度条：★ 同样由全局兜底配（`ui_fit._TTK_SPECS`）⇒ ⛔ 这里不再重复一份。
         for m in self._menus:
             try:
                 m.config(bg=c["menu_bg"], fg=c["menu_fg"],
@@ -3190,10 +3348,26 @@ class EditorApp:
         except Exception:
             pass
         self._set_title_bar(self.root, True)
-        # the immersive dark title bar only takes effect once the window is
-        # really shown, so (re)apply it shortly after mapping
-        self.root.after(200, lambda: self._set_title_bar(self.root, True))
-        self.root.bind("<Map>", lambda e: self._set_title_bar(self.root, True))
+        # ★[界面-11 · 2026-09-20 · **实测分流**] ⛔ **本处不再用 `after(200)` 延迟补**（原写法另挂一条 200 ms
+        #   的路径 ⇒ 那 200 ms 里标题栏仍是**浅色** ⇒ 正是用户看到的「**白条 → 深色**」跳变）。
+        #   ★ 三条腿真值（`_rev_tools\out\probe_firstframe_dark.py`，读数＝`ui_fit.title_bar_dark_state`
+        #     **回读** DWM 属性 20）：
+        #     · **先设后显不可行**：`withdraw()` 时设成暗（读 **1**）⇒ `deiconify()` **之后又变回 0**
+        #       ⇒ doc17 `[界面-11]` 落点①（「创建时 `withdraw()` → 设好 → `deiconify()`」）**在本平台不可行**，
+        #       ⛔ 别照它改（表面更"正确"，实际会被显示过程冲掉）；
+        #     · **显后立即有效**：`update()` 之后立刻施加 ⇒ 读 **1** ✓；
+        #     · **显后延迟 200 ms**（＝原现状）⇒ t≈120 ms 时仍是 **0** ⇒ **跳变窗口 ≈200 ms** ✓（与用户观察吻合）。
+        #   ⇒ 采用「**首次 map 的同一瞬间**施加」＝ 平台能达到的**最早**时刻（下面的 `<Map>` 绑定，一次即自解除）✓
+        #   ★ 主窗必须自己补这一次：全局钩子 `ui_fit._on_map` 开头就 `w is root ⇒ return`（⛔ 不碰主窗，v1.8.65 教训）✓
+
+        def _root_title_once(_e=None):
+            self._set_title_bar(self.root, True)
+            try:
+                self.root.unbind("<Map>", self._root_map_bid)
+            except Exception:                                             # noqa: BLE001
+                pass
+
+        self._root_map_bid = self.root.bind("<Map>", _root_title_once, add="+")
         self.theme_children(self.root)
         for d in self.details:
             self.theme_children(d.fields_inner)
@@ -3228,7 +3402,37 @@ class EditorApp:
         多个 mod 会互相踩）；这里是**你自己的** bundle，可反复加资产、整体搬迁/卸载都方便。
         """
         import my_bundle
-        my_bundle.MyBundleDialog(self.root)
+        # ★⑥ 2026-10-16：把主程序传进去 —— 地址命名辅助要用**已加载的数据库**（`app.tables`）
+        #   算出「这个地址字段的原值有几个字符」，从而校验新地址能不能被定长回填放下 ✓
+        #   （实机踩过：`FLYACV2`(7) 写不进 DB，`FLACV2`(6) 才行 —— 原值 `US_ACV` 就是 6 字符）
+        my_bundle.MyBundleDialog(self.root, app=self)
+
+    def open_config_mod(self):
+        """★[配方-05] 打开「数值 mod（场景 configs.zip）」面板。
+
+        为什么单独一个工具：`Scenarios\\<场景名>\\configs.zip` 覆盖通道**实机验证过**
+        ⇒ 改数值**不用碰 6.8 GB 的 `data.unity3d`**、产物几十字节、也不会被 Steam 校验还原 ✓
+        ⛔ 生效条件：单机 / Scenario(2) / Skirmish(3)（联机时游戏直接拒绝加载）。
+        """
+        import config_mod
+        config_mod.ConfigModDialog(self.root, app=self)
+
+    def open_recoil_mod(self):
+        """★★ ★⑳ 打开「补后坐力节点（`[配方-04]`）」面板。
+
+        为什么产品化这条（doc17 ★⑳）：工具 `_rev_tools\\add_recoil_point.py` 以前**只在源码包里**，
+        而且硬依赖三样**只有逆向工作台才有**的素材（`dump.cs` / DB 导出 / 纯净包备份）
+        ⇒ **只装 exe 的用户既找不到也跑不了**这条配方。
+
+        v1.12.1 一次解决两头：
+          · **GUI 入口** = 本面板（`recoil_mod.py`，进程内调 `add_recoil_point.run_recipe()`）；
+          · **素材降级** = 缺 `dump.cs` 走免 dump 读法、缺 DB 导出报「未判定」、缺纯净包退回
+            **游戏目录**那份只读源包（已在真包 1107 个 `UnitPrefabTurretInfo` 上与 registry 逐条对过）。
+        ⚠ 判据只有一条且**只有用户能做**：进游戏让那件武器开火 ⇒ **真的抖**
+        （负向对照：不加 `recoil_<i>` 也能开火、只是不抖）。
+        """
+        import recoil_mod
+        recoil_mod.RecoilModDialog(self.root, app=self)
 
     def open_audio_import(self):
         """打开音频导入对话框（FMOD 音库文件级：列表/备份/替换/还原/批量）。"""
@@ -3351,6 +3555,14 @@ class EditorApp:
         tools_menu.add_command(label="Mod 自查（军械库可见性 / 关联 / 重复 / 名字）…",
                                command=self.open_mod_checkup)
         tools_menu.add_command(label="游戏文件快照（备份 / 还原）…", command=self.open_game_snapshot)
+        # ★[配方-05] v1.8.118：**数值 mod → 场景 configs.zip**
+        #   唯一一条"用户不用重下 6.8 GB、也不会被 Steam 校验还原"的发布路线（实机已验证）✓
+        tools_menu.add_command(label="数值 mod（场景 configs.zip：改数值不用碰 data.unity3d）…",
+                               command=self.open_config_mod)
+        # ★★ ★⑳ v1.12.1：**补后坐力节点**（[配方-04]）—— 只装 exe 的用户以前**跑不了**这条配方
+        #   （工具只在源码包里 + 硬依赖 dump.cs/db_live/纯净包三样工作台素材）⇒ 现在有 GUI 入口 + 三条降级 ✓
+        tools_menu.add_command(label="补后坐力节点（让某件武器有后坐力动画）…",
+                               command=self.open_recoil_mod)
         bar.add_cascade(label=tr.t("menu_tools"), menu=tools_menu)
         lang_menu = tk.Menu(bar, tearoff=0)
         for code in LANGS:
@@ -6555,6 +6767,8 @@ class EditorApp:
         txt.tag_configure("field", foreground=c["label_key"], font=(cjk_family(), 10, "bold"))
         txt.tag_configure("dim", foreground=c["hint"])
         txt.tag_configure("val", foreground=c["fg"])
+        # ★ ① 引用层那一行用绿色（与「产品内入口」同色）：告诉用户"这个值指向哪儿、怎么查"
+        txt.tag_configure("ref", foreground=c["ok"])
         # v1.8.55：枚举的「真实作用」说明用绿色突出（与字段编辑器的绿色箭头同色）
         txt.tag_configure("enum_note", foreground=c["ok"])
 
@@ -6596,6 +6810,19 @@ class EditorApp:
                     txt.insert("end", line + "\n", "field")
                     if f_desc:
                         txt.insert("end", "      " + f_desc + "\n", "dim")
+                    # ★ ① 引用层（规格卡 §1 ②）：这个字段的值**是键还是字面量还是外键** ——
+                    #   改数据前先看这一行，能避免"改了没反应"（例：改 internalId 无效、改键才是换资产）
+                    _ref = REFS.get((table, f))
+                    if _ref:
+                        txt.insert("end", "      ↳ " + tr.t("ref_layer") + "：" + _ref["kind"]
+                                   + " —— " + _ref["target"] + "\n", "ref")
+                        if _ref.get("formula"):
+                            # ★ 反推公式：用户改的正是"路径类"字段时，直接告诉他值对应哪条资产路径
+                            txt.insert("end", "         " + tr.t("ref_formula") + "：" + _ref["formula"] + "\n",
+                                       "ref")
+                        if _ref.get("probe"):
+                            txt.insert("end", "         " + tr.t("trouble_probe") + "：" + _ref["probe"] + "\n",
+                                       "dim")
                 txt.insert("end", "\n")
 
             enum_shown = False
@@ -6758,24 +6985,181 @@ class EditorApp:
         tree.bind("<Control-c>", loc_copy)
         loc_var.trace_add("write", lambda *a: loc_render())
 
+        # ---- tab 4: 故障排查（症状行 → 真因行）★ ⑧ 日志可归因 --------------------
+        # 用户场景：游戏日志里冒出一句英文报错，作者不知道该改哪儿（"光贴英文原文"对他没用）。
+        # 这里给：**日志原文片段**（可直接拿去找）→ **中文真因 + 怎么改** + 出处 + 产品内能直接点的入口。
+        # 数据来自 `ba_glossary.TROUBLESHOOT`（与 `generate_glossary.py` 生成的 数据库词典.md
+        # 的「故障排查」节**同源**，⛔ 不在这里另抄一份）。
+        trouble_tab = tk.Frame(nb, bg=c["bg"])
+        tbar = tk.Frame(trouble_tab, bg=c["bg"])
+        tbar.pack(side="top", fill="x", pady=(4, 2))
+        tk.Label(tbar, text=tr.t("dict_search") + ":", bg=c["bg"], fg=c["fg"]).pack(side="left")
+        trouble_var = tk.StringVar()
+        tk.Entry(tbar, textvariable=trouble_var, bg=c["entry_bg"],
+                 fg=c["entry_fg"], insertbackground=c["entry_fg"]).pack(
+                     side="left", fill="x", expand=True, padx=6)
+        tk.Label(trouble_tab, text=tr.t("trouble_hint"), bg=c["bg"], fg=c["hint"],
+                 anchor="w", justify="left", wraplength=880).pack(
+                     side="top", fill="x", padx=8, pady=(0, 2))
+
+        twrap = tk.Frame(trouble_tab, bg=c["bg"])
+        twrap.pack(fill="both", expand=True)
+        ttxt = tk.Text(twrap, wrap="word", bg=c["tree_bg"], fg=c["tree_fg"],
+                       insertbackground=c["tree_fg"], relief="flat", padx=10, pady=8,
+                       font=(cjk_family(), 10), cursor="arrow")
+        tsb = tk.Scrollbar(twrap, command=ttxt.yview)
+        ttxt.configure(yscrollcommand=tsb.set)
+        tsb.pack(side="right", fill="y")
+        ttxt.pack(side="left", fill="both", expand=True)
+        ttxt.tag_configure("sym", foreground=c["accent"], font=(cjk_family(), 11, "bold"), spacing1=8)
+        ttxt.tag_configure("fix", foreground=c["fg"])
+        ttxt.tag_configure("probe", foreground=c["ok"])
+        ttxt.tag_configure("dim", foreground=c["hint"])
+        # 静默症状（游戏**一条都不打**）单独标红：这类最容易被当成"工具没生效"
+        ttxt.tag_configure("silent", foreground=c["warn"], font=(cjk_family(), 10, "bold"))
+
+        def trouble_render():
+            lang = self.tr.lang
+            q = trouble_var.get().strip().lower()
+            ttxt.configure(state="normal")
+            ttxt.delete("1.0", "end")
+            shown = 0
+            for i, (sym, fix, src, probe, silent) in enumerate(troubleshoot_pairs(lang), 1):
+                if q and not (q in sym.lower() or q in fix.lower()
+                              or q in src.lower() or q in probe.lower()):
+                    continue
+                shown += 1
+                ttxt.insert("end", "%d. %s\n" % (i, sym), "sym")
+                if silent:
+                    ttxt.insert("end", "   " + tr.t("trouble_silent") + "\n", "silent")
+                ttxt.insert("end", "   " + tr.t("trouble_fix") + "：" + fix + "\n", "fix")
+                if probe:
+                    ttxt.insert("end", "   " + tr.t("trouble_probe") + "：" + probe + "\n", "probe")
+                ttxt.insert("end", "   " + tr.t("trouble_src") + "：" + src + "\n", "dim")
+                ttxt.insert("end", "\n")
+            if shown == 0:
+                ttxt.insert("end", tr.t("dict_no_result"), "dim")
+            ttxt.configure(state="disabled")
+
+        trouble_var.trace_add("write", lambda *a: trouble_render())
+
+        # ---- tab 5: 格式与要点（★ ① 词典并入：知识层 —— 格式层 / ★跨表 / 附录·铁律 / 引用层）-----
+        # 用户场景：知道字段名但不知道"这个文件格式长什么样""地址在哪一层""哪些坑一定会崩"。
+        # 这些正文以前只在 数据库词典.md（人读的文档）里 ⇒ 现在**并入内置词典**，exe 里也能搜。
+        # ⛔ 正文单一来源 = `ba_glossary.KNOW_SECTIONS` 等；本页只负责渲染与检索。
+        know_tab = tk.Frame(nb, bg=c["bg"])
+        kbar = tk.Frame(know_tab, bg=c["bg"])
+        kbar.pack(side="top", fill="x", pady=(4, 2))
+        tk.Label(kbar, text=tr.t("dict_search") + ":", bg=c["bg"], fg=c["fg"]).pack(side="left")
+        know_var = tk.StringVar()
+        tk.Entry(kbar, textvariable=know_var, bg=c["entry_bg"],
+                 fg=c["entry_fg"], insertbackground=c["entry_fg"]).pack(
+                     side="left", fill="x", expand=True, padx=6)
+        tk.Label(know_tab, text=tr.t("dict_know_hint"), bg=c["bg"], fg=c["hint"],
+                 anchor="w", justify="left", wraplength=880).pack(
+                     side="top", fill="x", padx=8, pady=(0, 2))
+        kwrap = tk.Frame(know_tab, bg=c["bg"])
+        kwrap.pack(fill="both", expand=True)
+        ktxt = tk.Text(kwrap, wrap="word", bg=c["tree_bg"], fg=c["tree_fg"],
+                       insertbackground=c["tree_fg"], relief="flat", padx=10, pady=8,
+                       font=(cjk_family(), 10), cursor="arrow")
+        ksb = tk.Scrollbar(kwrap, command=ktxt.yview)
+        ktxt.configure(yscrollcommand=ksb.set)
+        ksb.pack(side="right", fill="y")
+        ktxt.pack(side="left", fill="both", expand=True)
+        ktxt.tag_configure("layer", foreground=c["accent"], font=(cjk_family(), 12, "bold"), spacing1=10)
+        ktxt.tag_configure("sec", foreground=c["label_key"], font=(cjk_family(), 11, "bold"), spacing1=6)
+        ktxt.tag_configure("body", foreground=c["fg"])
+        ktxt.tag_configure("dim", foreground=c["hint"])
+        ktxt.tag_configure("ref", foreground=c["ok"])
+
+        def _md_table(headers, rows):
+            out = ["| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
+            for r in rows:
+                out.append("| " + " | ".join(str(x) for x in r) + " |")
+            return "\n".join(out)
+
+        def _know_blocks():
+            """→ [(layer, title, body)]：知识层全部内容（含把表渲染成 markdown 版）"""
+            blocks = [(s["layer"], s["title"], s["body"]) for s in KNOW_SECTIONS]
+            blocks.append(("format", "常量速查（表）",
+                           _md_table(["常量", "值", "用途"],
+                                     [[n, v, u] for n, v, u in resolve_constants()])))
+            blocks.append(("refs", "引用层（字段值引用了什么）",
+                           _md_table(["字段", "引用类型", "指向什么", "反推公式（值 ⇒ 资产路径）", "产品内入口"],
+                                     [["%s.%s" % (t, f), v["kind"], v["target"],
+                                       v.get("formula") or "—", v["probe"]]
+                                      for (t, f), v in REFS.items()])))
+            blocks.append(("refs", "引用类型（kind）含义",
+                           _md_table(["kind", "含义"], [[k, v] for k, v in REF_KINDS.items()])))
+            blocks.append(("xref", "地址映射与内部路径（表）",
+                           "\n".join(["### " + e["title"] + "\n" + _md_table(
+                               ["类型", "地址（数据表填）", "内部路径（bundle 内）"], e["rows"])
+                               for e in ADDRESS_MAP]) + "\n\n" + ADDRESS_RULES))
+            blocks.append(("xref", "挂载点与组件词典（表）",
+                           _md_table(["分类", "说明"], [[x["name"], x["desc"]] for x in MOUNT_CATEGORIES])
+                           + "\n\n" + _md_table(["组件", "类别", "关键字段"],
+                                                [[k, v.get("cat", ""), v.get("fields", "")]
+                                                 for k, v in sorted(COMPONENTS.items())])))
+            return blocks
+
+        _POINTER = {"fields": "（字段层：见「数据库词典」页 —— 24 张表的每个字段都在那儿）",
+                    "trouble": "（故障排查 18 对：见「故障排查」页）"}
+
+        def know_render():
+            q = know_var.get().strip().lower()
+            ktxt.configure(state="normal")
+            ktxt.delete("1.0", "end")
+            blocks = _know_blocks()
+            shown = 0
+            for key, lname, ldesc in KNOW_LAYERS:
+                if key in _POINTER:
+                    if not q or q in lname.lower() or q in _POINTER[key].lower():
+                        ktxt.insert("end", lname + "　" + ldesc + "\n", "layer")
+                        ktxt.insert("end", "  " + _POINTER[key] + "\n", "dim")
+                        shown += 1
+                    continue
+                mine = [b for b in blocks if b[0] == key]
+                hit = [b for b in mine if not q or q in (b[1] + b[2]).lower() or q in lname.lower()]
+                if not hit:
+                    continue
+                ktxt.insert("end", lname + "　" + ldesc + "\n", "layer")
+                shown += 1
+                for _l, title, body in hit:
+                    ktxt.insert("end", "### " + title + "\n", "sec")
+                    ktxt.insert("end", body + "\n\n", "body")
+            if shown == 0:
+                ktxt.insert("end", tr.t("dict_no_result"), "dim")
+            ktxt.configure(state="disabled")
+
+        know_var.trace_add("write", lambda *a: know_render())
+
         # ---- tab 3: mount points & templates (removed — knowledge lives in the Blender addon's dictionary)
         self._dict_render = render
         self._model_render = model_render
         self._dict_loc_render = loc_render
         self._dict_loc_var = loc_var
         self._dict_loc_tree = tree
+        self._dict_trouble_render = trouble_render
+        self._dict_trouble_var = trouble_var
+        self._dict_know_render = know_render
+        self._dict_know_var = know_var
         self._dict_search_var = query_var
         query_var.trace_add("write", lambda *a: render())
         model_query_var.trace_add("write", lambda *a: model_render())
         nb.add(dict_tab, text=tr.t("dict_title"))
         nb.add(model_tab, text=tr.t("dict_tab_models"))
         nb.add(loc_tab, text=tr.t("dict_loc_title"))
+        nb.add(trouble_tab, text=tr.t("dict_tab_trouble"))
+        nb.add(know_tab, text=tr.t("dict_tab_know"))
         if query:
             # 从字段编辑器的绿色箭头跳进来：直接在词典里定位该枚举
             query_var.set(query)
         render()
         model_render()
         loc_render()
+        trouble_render()
+        know_render()
         entry.focus_set()
 
     def _find_usage_of_loc_key(self, key):

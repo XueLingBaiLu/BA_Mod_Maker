@@ -170,6 +170,18 @@ STRINGS = {
         "loc_col_ru": "Русский",
         "loc_arrow_tip": "这是本地化键（游戏按语言显示不同名称）；点绿色箭头查看三语对照",
         "model_hint": "输入单位名、武器/弹药名或模型名进行检索，将列出该单位用到的所有模型（本体/炮塔/武器/弹药等）。",
+        "dict_tab_trouble": "故障排查",
+        "trouble_hint": "游戏日志里报错了但不知道改哪儿？把日志里的**英文原句片段**粘到这里搜（也可以搜中文关键词）："
+                         "每条都给「日志原文 → 中文真因 + 怎么改 + 出处」，标注 ⚠ 的是**游戏不报错**的静默症状。",
+        "trouble_silent": "⚠ 静默症状：游戏日志里**一条都不会打**（只能按现象认）",
+        "trouble_fix": "真因与怎么改",
+        "trouble_probe": "产品内入口",
+        "trouble_src": "出处",
+        "dict_tab_know": "格式与要点",
+        "dict_know_hint": "文件格式（加密 / UnityFS / catalog / .bamod）、地址分层、常量、挂载点与组件、"
+                          "防崩溃铁律、引用层（字段值到底引用了什么）—— 输入关键词即可检索（例：CRC、地址、挂载、铁律）。",
+        "ref_layer": "引用层",
+        "ref_formula": "反推公式（值 ⇒ 资产路径）",
         "dict_no_result": "（无匹配项）",
         "enum_arrow": "→",
         "enum_unknown": "未知值 {value}（游戏按兜底分支处理）",
@@ -406,6 +418,20 @@ STRINGS = {
         "loc_arrow_tip": "This is a localization key (the game shows a different name per language); click the green arrow for all three languages",
         "model_hint": "Type a unit, weapon/ammo or model name to list every model that unit uses (self/turret/weapon/ammo ...).",
         "dict_no_result": "(no matches)",
+        "dict_tab_trouble": "Troubleshooting",
+        "trouble_hint": "Game logged an error but you don't know what to fix? Paste the exact English fragment from "
+                         "the log here (Chinese keywords work too). Every row gives the log line → the real cause "
+                         "and what to change → where it comes from. Rows marked ⚠ are SILENT: the game logs nothing.",
+        "trouble_silent": "⚠ Silent symptom: the game writes NOTHING to the log (recognise it by the symptom)",
+        "trouble_fix": "Cause & fix",
+        "trouble_probe": "In-product entry",
+        "trouble_src": "Source",
+        "dict_tab_know": "Formats & essentials",
+        "dict_know_hint": "File formats (encryption / UnityFS / catalog / .bamod), the three layers of “address”, "
+                          "constants, mount points & components, crash rules, and the reference layer (what a "
+                          "field value actually points at). Type any keyword to search (e.g. CRC, address, mount).",
+        "ref_layer": "Reference layer",
+        "ref_formula": "Path formula (value → asset path)",
         "enum_arrow": "→",
         "enum_unknown": "unknown value {value} (game uses the fallback branch)",
         "enum_invalid": "enter a number",
@@ -641,6 +667,21 @@ STRINGS = {
         "loc_arrow_tip": "Это ключ локализации (игра показывает разное имя для каждого языка); нажмите зелёную стрелку, чтобы увидеть все три языка",
         "model_hint": "Введите имя юнита, оружия/боеприпаса или модели, чтобы увидеть все модели, которые использует этот юнит (свой/башня/оружие/боеприпас ...).",
         "dict_no_result": "(ничего не найдено)",
+        "dict_tab_trouble": "Диагностика",
+        "trouble_hint": "Игра что-то записала в лог, а что править — непонятно? Вставьте точный фрагмент "
+                         "английской строки из лога (можно и по-китайски искать): каждая запись даёт "
+                         "«строка лога → настоящая причина и что изменить → источник». Строки с ⚠ — ТИХИЕ: "
+                         "игра не пишет ничего.",
+        "trouble_silent": "⚠ Тихий симптом: в логе НЕТ ни одной строки (узнаётся по поведению)",
+        "trouble_fix": "Причина и что делать",
+        "trouble_probe": "Где это в программе",
+        "trouble_src": "Источник",
+        "dict_tab_know": "Форматы и главное",
+        "dict_know_hint": "Форматы файлов (шифрование / UnityFS / catalog / .bamod), три уровня «адреса», "
+                          "константы, точки крепления и компоненты, правила против падений и слой ссылок "
+                          "(на что реально указывает значение поля). Введите слово для поиска.",
+        "ref_layer": "Слой ссылок",
+        "ref_formula": "Формула пути (значение → путь ассета)",
         "enum_arrow": "→",
         "enum_unknown": "неизвестное значение {value} (игра использует резервную ветку)",
         "enum_invalid": "введите число",

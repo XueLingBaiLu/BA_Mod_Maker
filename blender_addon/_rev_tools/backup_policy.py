@@ -241,3 +241,79 @@ def scan_tree_backups(root, max_files=4000):
             except OSError:
                 pass
     return out
+
+
+# ---------------------------------------------------------------------------
+# 滚动保留：带时间戳的备份**同类只留最近 KEEP_BACKUPS 份**（用户要求，2026-10-15）
+# ---------------------------------------------------------------------------
+# 需求原话：「不希望备份文件一大堆，**最多五个**」。
+# 场景：`安装到游戏` 每点一次就写一份 `catalog.json.bak_<YYYYmmdd_HHMMSS>`，用几次就攒一堆。
+#
+# ⛔ 只认**我们自己生成的那种时间戳格式**（`<原文件名>.bak_YYYYmmdd_HHMMSS`）：
+#    用户手动改名/另存的备份（`catalog.json.bak`、`foo.bak`、`xxx.bak_old`）**一个都不碰** ✗
+#    —— 判据是"名字完全匹配这个正则"，不是"以 .bak 开头"。
+import re as _re
+
+KEEP_BACKUPS = 5          # ★ 同类备份最多保留几份（用户口径：最多五个）
+_STAMPED_BAK_RE = _re.compile(r"\.bak_(\d{8})_(\d{6})$")
+
+
+def stamped_backups(path):
+    """→ [备份文件路径]，只包含 `<path>.bak_YYYYmmdd_HHMMSS` 这种**自动生成的**。
+
+    ⛔ 故意不做"以 .bak 开头的都算"——那会误删用户自己的备份。
+    """
+    import glob
+    out = []
+    for p in glob.glob(path + ".bak_*"):
+        if _STAMPED_BAK_RE.search(p) and os.path.isfile(p):
+            out.append(p)
+    return out
+
+
+def rotate_backups(path, keep=None, log=None):
+    """把 `<path>.bak_<时间戳>` 滚动保留 `keep` 份（默认 5），**按 mtime 从旧到新删**。
+
+    → (删除个数, 释放字节数)。**绝不抛异常** —— 清理失败不该让安装流程挂掉。
+
+    ⛔ 排序用 **mtime** 不用文件名：用户可能手工复制过备份，
+       文件名时间戳会与真实新旧不一致（复制出来的会把 mtime 更新到"现在"）。
+       两条判据都留着：先按 mtime，mtime 相同再按名字（名字格式本身可排序）。
+    """
+    def say(msg):
+        if log:
+            try:
+                log(msg)
+            except Exception:                                          # noqa: BLE001
+                pass
+    keep = KEEP_BACKUPS if keep is None else int(keep)
+    if keep < 0:
+        return 0, 0
+    try:
+        baks = stamped_backups(path)
+    except OSError:
+        return 0, 0
+    if len(baks) <= keep:
+        return 0, 0
+    def _key(p):
+        try:
+            st = os.stat(p)
+            return (st.st_mtime, p)
+        except OSError:
+            return (0.0, p)
+    baks.sort(key=_key)
+    doomed = baks[:len(baks) - keep]            # ★ 最旧的先删，**最新的那份一定留下**
+    n, freed = 0, 0
+    for b in doomed:
+        try:
+            size = os.path.getsize(b)
+            os.remove(b)
+            n += 1
+            freed += size
+        except OSError as e:
+            say("⚠ 清理旧备份失败 %s：%s" % (os.path.basename(b), e))
+    if n:
+        say("已删除 %d 个旧备份（释放 %.2f MB），同类保留最近 %d 份 ✓"
+            % (n, freed / 1048576.0, keep))
+    return n, freed
+

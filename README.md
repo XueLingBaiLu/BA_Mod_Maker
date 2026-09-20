@@ -11,7 +11,7 @@
 
 ---
 
-# BA Mod Maker — 断箭 Mod 制作工具 v1.8.112
+# BA Mod Maker — 断箭 Mod 制作工具 v1.12.9
 
 [English](#english) | [Русский](#russian)
 
@@ -20,19 +20,22 @@
 保存时**自动重新加密、保持原文件名**；同时支持把 Blender 插件导出的 **.bamod 素材包**
 （模型/皮肤/姿势）合并进游戏 bundle。
 
-配套 Blender 插件（`BA_Mod_Maker_blender_addon.zip`，v2.7.112）负责模型侧：
-提取游戏模型、可视化编辑挂载点、构建写回 .bamod、动画编辑、皮肤重涂。
+配套 Blender 插件（`BA_Mod_Maker_blender_addon.zip`，v2.12.9）负责模型侧：
+提取游戏模型、可视化编辑挂载点、构建写回 .bamod、动画编辑、皮肤重涂、贴图替换。
 （注：早期版本的「步兵姿势/动画」功能已于 v1.8.52 整体移除。）
 
 ## 文档
 
 - **《使用教程-BA_Mod_Maker.md》** —— 本工具全部功能的操作教程（数据库编辑、.bamod 导入、
-  图片导入、四个标准工作流、常见问题）。
-- **《使用教程-Blender插件.md》** —— Blender 插件全部面板（①导入 ②挂载点 ③词典 ④构建
-  ⑤动画 ⑥皮肤 ⑦步兵姿势）的操作教程与工作流速查。
+  图片导入、四个标准工作流、常见问题）。**§9** 专职讲**内置词典窗口的 5 页**：
+  ① 数据库词典 ② 模型 ③ 名称（本地化）④ **故障排查** ⑤ **格式与要点**。
+- **《使用教程-Blender插件.md》** —— Blender 插件全部面板（① 模型导入 ② 挂载点 ③ 工具
+  ④ 动画 ⑤ 皮肤 ⑥ 涂装 ⑦ 模型自带动画 ⑧ 组件字段）的操作教程与工作流速查；
+  **§5+++** 讲**贴图替换包**：两种范围（整车 / 只对选中对象生效）、覆盖面边界、必须用新版打包。
 - **《数据库词典.md》** —— 唯一词典文档：24 张表全字段释义、实证枚举值、数据结构与文件格式
-  （数据库加密 / bundle+CRC / catalog / .bamod / IL2CPP 组件 / 网格顶点流 / 载具皮肤 / 步兵姿势）、
-  地址映射与内部路径、常量速查、挂载点与组件词典、防崩溃铁律。
+  （数据库加密 / bundle+CRC / catalog / .bamod / IL2CPP 组件 / 网格顶点流 / 载具皮肤 / 步兵模型与姿势）、
+  地址映射与内部路径、常量速查、挂载点与组件词典、防崩溃铁律、**故障排查（18 对症状↔真因）**。
+  ⛔ 由 `generate_glossary.py` 生成 —— 要改内容就改 `ba_glossary.py` 再重新生成。
 - `Change Log.txt` —— 版本历史。
 
 ## 功能
@@ -40,7 +43,12 @@
 - 打开 UABEA 导出的数据库 JSON（自动解密：AES-256-CBC），24 张表全量编辑
 - 搜索、按列筛选、类型化字段编辑；外键自动显示指向名称，按名称或 Id 都能搜到
 - 添加 / 复制 / 删除行（自动分配新 Id）；撤销 / 重做（Ctrl+Z/Y，最多 100 步）
-- 字段悬浮提示 + 内置词典窗口（中英俄），枚举值已按 Il2CppDumper 实证值修正
+- 字段悬浮提示 + 内置词典窗口（中英俄，**5 页**：数据库词典 / 模型 / 名称（本地化）/
+  **故障排查** / **格式与要点**），枚举值已按 Il2CppDumper 实证值修正
+- **词典「故障排查」页**：**18 对**「症状行（游戏日志原文）→ 真因（中文 + 怎么改）」+ **产品内入口**
+  + 出处（含 **2 条**游戏**不报错**的静默症状）—— 拿 `GameLogs\Gamelog__*.log` 里的原文片段直接搜
+- **词典「格式与要点」页**：**6 层**知识（字段层指针 / 引用层 / 格式层 / ★跨表 / 附录·铁律 /
+  故障排查指针）—— 文件格式、地址分层、常量、挂载点与组件、防崩溃铁律都能在 exe 内搜
 - **绿色箭头 →（枚举与外键统一字形）**：单位大类 `Type` / 槽位类别 `CategoryType` / 角色 `Role`（以及武器类型、
   弹道/目标类型等全部枚举字段）右侧直接显示该 ID 对应的种类（`Role=11` → 绿色 `→ 主战坦克 (Tank)`），
   点箭头打开词典对照表；外键箭头点击跳到被引用行；**位掩码按加法拆解**
@@ -57,6 +65,12 @@
 - **导入图片/图标/肖像**（多选图片，每行自定义容器路径与映射地址，按类别自动导入对应
   bundle——肖像/标签/武器图标/弹药图标，自动 CRC + 注册地址；也可只打包 .bamod）
 - **打包图标 / 肖像**（Texture2D+Sprite 成对写进 unitportraits bundle + 自动 CRC）
+- **Blender ⑤ 皮肤 →「打包贴图替换包」**：两种范围（**不勾 = 整车** / **勾「只对选中对象生效」=
+  只换选中网格**，勾了没选会明确报错中止）；整车模式会把 prefab 子树里**构建期生成的渲染器**
+  （各级 LOD 克隆等）一并认领，判不出归属的**一律不动**并在构建日志里逐条写明原因
+  ⇒ 拉远 / 切低 LOD 时那一小部分可能仍是旧图（见《使用教程-Blender插件.md》§5+++）
+- ⛔ 贴图替换包导入到「**我的 bundle（自建资源包）**」时**必须用 v2.11.0+ 重新打包**：包里带
+  网格名/材质名，导入端**先按 pid、查不到再按名字**；旧包在自建包上会报 `找不到原材质 pid …` 中止
 - 界面语言：中文 / English / Русский（F10）
 
 ## 快速上手
@@ -65,7 +79,7 @@
 
 1. 用 UABEA 打开 `data.unity3d`，找到资产 `DataBaseCompiled`（路径 51978）→ Export Dump
    （或本工具 文件 → 从 data.unity3d 打开，全自动）
-2. 双击 `BA_Mod_Maker_v1.8.11\BA_Mod_Maker_v1.8.11.exe`（免安装版）或源码版 `启动编辑器.bat`
+2. 双击 `BA_Mod_Maker_vX.Y.Z\BA_Mod_Maker_vX.Y.Z.exe`（免安装版）或源码版 `启动编辑器.bat`
 3. 文件 → 打开数据库文件（自动解密）→ 编辑 → 保存并加密 → UABEA Import Dump（或 文件 → 导入到 data.unity3d）
 4. 改模型/皮肤/姿势：Blender 插件打包 .bamod → 本工具 文件 → 导入 .bamod 素材包（自动合并 + CRC）
 
@@ -144,18 +158,32 @@ python ba_db_tool.py find     dump.json Units 1           :: 查找引用 Units.
 <a id="english"></a>
 # English
 
-Broken Arrow modding tool v1.6.0: database editor (all 24 tables, automatic AES-256-CBC
+Broken Arrow modding tool v1.12.9: database editor (all 24 tables, automatic AES-256-CBC
 encrypt/decrypt) + .bamod asset-pack importer + icon/portrait packer, paired with the
-Blender addon v2.5.0 for model extraction / mount-point editing / .bamod export.
+Blender addon v2.12.9 for model extraction / mount-point editing / .bamod export.
 
 All modding knowledge now lives in one dictionary — **《数据库词典.md》** (Chinese):
 24 tables & fields, verified enum values, data structures & formats, address mapping,
-constants, mount/component dictionary, and anti-crash rules. No separate tutorials.
+constants, mount/component dictionary, anti-crash rules, and a troubleshooting table.
 
 - Open UABEA dump JSON (auto-decrypt) → edit → Save & Encrypt (same filename) → UABEA Import Dump.
 - File → Import .bamod pack: merges new objects into the game bundle + auto CRC (+ address registration).
 - F7 validation, undo/redo, per-row drill-down editor with relation tree, name→Id lookup,
-  built-in dictionary window (zh/en/ru).
+  built-in dictionary window (zh/en/ru) with **5 tabs**: Database dictionary / Models / Names
+  (localised) / **Troubleshooting** / **Formats & essentials**.
+- **Troubleshooting tab** — **18 pairs** of “log line → real cause + how to fix”, each with an
+  in-product entry point and a source, including **2 *silent* symptoms** the game never logs:
+  copy a fragment of the English line from `GameLogs\Gamelog__*.log` and search for it.
+- **Formats & essentials tab** — **6 layers** (field pointer / reference / format / ★ cross-table /
+  anti-crash rules / troubleshooting pointer): file formats, the three layers of “address”,
+  constants, mount & component dictionary, anti-crash rules — searchable inside the exe.
+- Blender ⑤ Skin → **texture-swap pack**: two scopes (checkbox off = whole vehicle / on = selected
+  meshes only, erroring out if nothing is selected) plus a documented coverage limit — renderers
+  generated at build time live in the prefab subtree, not in the `.blend`, so the ones that cannot
+  be attributed keep the old texture when you zoom out / drop to a lower LOD.
+- ⛔ Importing a texture-swap pack into **My bundle (self-built pack)** requires **re-packing with
+  v2.11.0+**: the pack carries mesh/material names and the importer tries the pid first, then the
+  name. Old packs fail there with `找不到原材质 pid …`.
 - CLI: `python ba_db_tool.py decrypt|encrypt|validate|tables|find ...`（`BA_LANG=en`）.
 
 ---
@@ -163,17 +191,31 @@ constants, mount/component dictionary, and anti-crash rules. No separate tutoria
 <a id="russian"></a>
 # Русский
 
-Инструмент для моддинга Broken Arrow v1.6.0: редактор базы данных (все 24 таблицы,
+Инструмент для моддинга Broken Arrow v1.12.9: редактор базы данных (все 24 таблицы,
 автоматическое шифрование/дешифрование AES-256-CBC) + импорт пакетов .bamod +
-упаковка иконок/портретов, в связке с аддоном Blender v2.5.0 (извлечение моделей,
+упаковка иконок/портретов, в связке с аддоном Blender v2.12.9 (извлечение моделей,
 редактирование точек крепления, экспорт .bamod).
 
 Все знания по моддингу собраны в одном словаре — **《数据库词典.md》** (на китайском):
 24 таблицы и поля, проверенные значения enum, структуры данных и форматы, карта адресов,
-константы, словарь точек/компонентов и правила против крашей. Отдельных туториалов нет.
+константы, словарь точек/компонентов, правила против крашей и таблица диагностики.
 
 - Открыть дамп UABEA (автодешифровка) → редактировать → Сохранить и зашифровать (то же имя файла) → Import Dump в UABEA.
 - Файл → Импорт .bamod: слияние новых объектов в bundle игры + авто-CRC (+ регистрация адреса).
 - F7 валидация, отмена/повтор, редактор строки с деревом связей, поиск Id по имени,
-  встроенное окно словаря (zh/en/ru).
+  встроенное окно словаря (zh/en/ru) из **5 вкладок**: словарь БД / модели / названия
+  (локализация) / **Диагностика** / **Форматы и главное**.
+- **Вкладка «Диагностика»** — **18 пар** «строка лога → настоящая причина и что править»,
+  у каждой — вход в программе и источник, включая **2 «тихих» симптома**, которых в логе нет:
+  скопируйте фрагмент английской строки из `GameLogs\Gamelog__*.log` и найдите его поиском.
+- **Вкладка «Форматы и главное»** — **6 слоёв** (поля-указатель / ссылки / форматы / ★ межтабличные /
+  правила против крашей / указатель на диагностику): форматы файлов, три уровня «адреса»,
+  константы, словарь точек и компонентов, правила против крашей — ищется прямо в exe.
+- Blender ⑤ Кожа → **пакет замены текстур**: два диапазона (галочка снята = вся машина /
+  стоит = только выбранные меши, при пустом выборе — явная ошибка) и документированная граница
+  покрытия: рендереры, созданные при сборке, живут в поддереве prefab, а не в `.blend`,
+  поэтому неопознанные сохраняют старую текстуру при отдалении / низком LOD.
+- ⛔ Импорт пакета замены текстур в **«Мой bundle» (самосборный пакет)** требует **пересборки
+  на v2.11.0+**: пакет несёт имена мешей/материалов, импортёр сначала ищет по pid, затем по имени.
+  Старые пакеты падают там с `找不到原材质 pid …`.
 - CLI: `python ba_db_tool.py decrypt|encrypt|validate|tables|find ...`（`BA_LANG=ru`）.
