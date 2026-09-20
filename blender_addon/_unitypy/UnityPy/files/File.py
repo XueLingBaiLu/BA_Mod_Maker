@@ -78,7 +78,16 @@ class File:
         for node in files:
             reader.Position = node.offset
             name = node.path
-            node_reader = EndianBinaryReader(reader.read(node.size), offset=(reader.BaseOffset + node.offset))
+            # P0-2：零拷贝取该 entry 的字节。
+            # 原实现 reader.read(node.size) 会**整份拷一份**（本例 84.8 MiB），
+            # 而 reader 背后常已是内存里的连续缓冲 ⇒ 直接切视图即可，⛔ 不拷。
+            # 非内存视图形态（文件流等）没有 .view ⇒ 退回原来的拷贝行为（⛔ 不改语义）。
+            node_view = getattr(reader, "view", None)
+            if node_view is None:
+                node_bytes = reader.read(node.size)
+            else:
+                node_bytes = node_view[node.offset : node.offset + node.size]
+            node_reader = EndianBinaryReader(node_bytes, offset=(reader.BaseOffset + node.offset))
             f = ImportHelper.parse_file(node_reader, self, name, is_dependency=self.is_dependency)
 
             if isinstance(f, (EndianBinaryReader, SerializedFile.SerializedFile)):
